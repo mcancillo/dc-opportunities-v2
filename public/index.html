@@ -59,12 +59,20 @@
     <div id="results-summary" class="hidden">
       <h3>Results</h3>
       <div class="stat-row">
-        <span class="stat-label">Properties (for sale)</span>
+        <span class="stat-label">Industrial (for sale)</span>
         <span id="stat-for-sale" class="stat-value red">0</span>
       </div>
       <div class="stat-row">
-        <span class="stat-label">Properties (not for sale)</span>
+        <span class="stat-label">Industrial (not for sale)</span>
         <span id="stat-not-for-sale" class="stat-value orange">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Commercial (for sale)</span>
+        <span id="stat-comm-sale" class="stat-value purple">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Commercial (not for sale)</span>
+        <span id="stat-comm-not-sale" class="stat-value pink">0</span>
       </div>
       <div class="stat-row">
         <span class="stat-label">Existing Datacenters</span>
@@ -76,8 +84,10 @@
 
     <div class="legend">
       <h3>Legend</h3>
-      <div class="legend-item"><span class="legend-dot red"></span> Property — For Sale</div>
-      <div class="legend-item"><span class="legend-dot orange"></span> Property — Not For Sale</div>
+      <div class="legend-item"><span class="legend-dot red"></span> Industrial — For Sale (≥10 MW)</div>
+      <div class="legend-item"><span class="legend-dot orange"></span> Industrial — Not For Sale</div>
+      <div class="legend-item"><span class="legend-dot purple"></span> Commercial — For Sale (≥10 kW)</div>
+      <div class="legend-item"><span class="legend-dot pink"></span> Commercial — Not For Sale</div>
       <div class="legend-item"><span class="legend-dot blue"></span> Existing Datacenter</div>
       <div class="legend-item"><span class="legend-dot green"></span> Internet Exchange</div>
       <div class="legend-item"><span class="legend-line cyan"></span> Subsea Cable</div>

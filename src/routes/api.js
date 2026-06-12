@@ -3,6 +3,7 @@ const router = express.Router();
 const peeringdb = require('../services/peeringdb');
 const overpass = require('../services/overpass');
 const properties = require('../services/properties');
+const commercial = require('../services/commercial');
 const cables = require('../services/cables');
 
 // Get IX locations for supported countries
@@ -52,6 +53,20 @@ router.get('/properties', async (req, res) => {
   } catch (err) {
     console.error('Properties error:', err.message);
     res.status(500).json({ error: 'Failed to fetch properties' });
+  }
+});
+
+// Get commercial real estate near a point (≥3000 m², ≥10 kW)
+router.get('/commercial', async (req, res) => {
+  try {
+    const { lat, lng, radius } = req.query;
+    const data = commercial.getCommercial(
+      parseFloat(lat), parseFloat(lng), parseFloat(radius) || 50000
+    );
+    res.json(data);
+  } catch (err) {
+    console.error('Commercial error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch commercial properties' });
   }
 });
 

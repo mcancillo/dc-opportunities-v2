@@ -137,6 +137,8 @@ input[type="range"] {
 }
 .stat-value.red { color: #ff4444; }
 .stat-value.orange { color: #ff8c00; }
+.stat-value.purple { color: #aa44ff; }
+.stat-value.pink { color: #ff69b4; }
 .stat-value.blue { color: #4da6ff; }
 
 /* Property list */
@@ -161,6 +163,8 @@ input[type="range"] {
 
 .property-card.for-sale { border-color: #ff4444; }
 .property-card.not-for-sale { border-color: #ff8c00; }
+.property-card.comm-for-sale { border-color: #aa44ff; }
+.property-card.comm-not-for-sale { border-color: #ff69b4; }
 
 .property-card h4 {
   font-size: 0.85rem;
@@ -226,6 +230,8 @@ input[type="range"] {
 
 .legend-dot.red { background: #ff4444; }
 .legend-dot.orange { background: #ff8c00; }
+.legend-dot.purple { background: #aa44ff; }
+.legend-dot.pink { background: #ff69b4; }
 .legend-dot.blue { background: #4da6ff; }
 .legend-dot.green { background: #33cc66; }
 
@@ -408,5 +414,25 @@ input[type="range"] {
 
 .popup-badge.sale { background: #ff4444; color: white; }
 .popup-badge.not-sale { background: #ff8c00; color: white; }
+.popup-badge.comm-sale { background: #aa44ff; color: white; }
+.popup-badge.comm-not-sale { background: #ff69b4; color: white; }
 .popup-badge.dc { background: #4da6ff; color: white; }
 .popup-badge.ix { background: #33cc66; color: white; }
+
+.section-divider {
+  text-align: center;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #aa44ff;
+  border-top: 1px solid #0f3460;
+  margin-top: 4px;
+}
+
+.listing-link.comm {
+  color: #aa44ff;
+}
+
+.listing-link.comm:hover {
+  color: #cc66ff;
+}

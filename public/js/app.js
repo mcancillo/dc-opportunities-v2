@@ -24,6 +24,8 @@ function makeCircleIcon(color, radius = 10) {
 const ICONS = {
   forSale:    () => makeCircleIcon('#ff4444', 11),
   notForSale: () => makeCircleIcon('#ff8c00', 11),
+  commForSale:    () => makeCircleIcon('#aa44ff', 10),
+  commNotForSale: () => makeCircleIcon('#ff69b4', 10),
   datacenter: () => makeCircleIcon('#4da6ff', 8),
   ix:         () => makeCircleIcon('#33cc66', 13)
 };
@@ -46,6 +48,27 @@ function propertyPopup(p) {
       📐 ${p.area_m2.toLocaleString()} m²<br>
       ⚡ ~${p.estimated_power_mw} MW (est.)${price}<br>
       🏭 ${p.sector}<br>
+      📏 ${p.distance_km} km from IX
+    </div>
+    ${badge}${listing}
+    <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
+  `;
+}
+
+function commercialPopup(p) {
+  const badge = p.for_sale
+    ? '<span class="popup-badge comm-sale">FOR SALE</span>'
+    : '<span class="popup-badge comm-not-sale">NOT FOR SALE</span>';
+  const listing = p.for_sale && p.listing_url
+    ? `<div style="margin-top:6px"><a href="${p.listing_url}" target="_blank" rel="noopener" style="color:#aa44ff;font-weight:600;font-size:0.85rem;text-decoration:none;">🔗 View Listing →</a></div>`
+    : '';
+  return `
+    <div class="popup-title">${p.name}</div>
+    <div class="popup-meta">
+      📍 ${p.city}, ${p.country}<br>
+      📐 ${p.area_m2.toLocaleString()} m²<br>
+      ⚡ ~${p.estimated_power_kw} kW (est.)<br>
+      🏢 ${p.sector}<br>
       📏 ${p.distance_km} km from IX
     </div>
     ${badge}${listing}
@@ -134,14 +157,27 @@ async function runSearch() {
   propertyList.innerHTML = '';
   searchBtn.disabled = true;
 
-  // Clear old layers
-  Object.values(layers).forEach(lg => { if (lg) map.removeLayer(lg); });
+  // Clear old layers — preserve infrastructure overlays
+  ['properties', 'commercial', 'datacenters', 'ix'].forEach(k => {
+    if (layers[k]) { map.removeLayer(layers[k]); layers[k] = null; }
+  });
   if (searchCircle) map.removeLayer(searchCircle);
+
+  // Re-add infrastructure overlays if enabled
+  if (document.getElementById('toggle-subsea').checked) {
+    if (layers.subseaCables) layers.subseaCables.addTo(map);
+    if (layers.landingPoints) layers.landingPoints.addTo(map);
+    if (layers.backboneLinks) layers.backboneLinks.addTo(map);
+  }
+  if (document.getElementById('toggle-fiber').checked) {
+    if (layers.fiberBackbone) layers.fiberBackbone.addTo(map);
+  }
 
   try {
     // Fetch data in parallel
-    const [propertiesResp, datacentersResp] = await Promise.all([
+    const [propertiesResp, commercialResp, datacentersResp] = await Promise.all([
       fetchJSON(`/api/properties?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`),
+      fetchJSON(`/api/commercial?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`),
       fetchJSON(`/api/datacenters?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`)
     ]);
 
@@ -175,6 +211,19 @@ async function runSearch() {
     });
     layers.properties.addTo(map);
 
+    // Commercial properties
+    layers.commercial = L.layerGroup();
+    const commForSale = commercialResp.filter(p => p.for_sale);
+    const commNotForSale = commercialResp.filter(p => !p.for_sale);
+
+    commercialResp.forEach(p => {
+      const icon = p.for_sale ? ICONS.commForSale() : ICONS.commNotForSale();
+      L.marker([p.lat, p.lng], { icon })
+        .bindPopup(commercialPopup(p))
+        .addTo(layers.commercial);
+    });
+    layers.commercial.addTo(map);
+
     // Datacenters
     layers.datacenters = L.layerGroup();
     datacentersResp.forEach(dc => {
@@ -190,10 +239,12 @@ async function runSearch() {
     // Update stats
     document.getElementById('stat-for-sale').textContent = forSale.length;
     document.getElementById('stat-not-for-sale').textContent = notForSale.length;
+    document.getElementById('stat-comm-sale').textContent = commForSale.length;
+    document.getElementById('stat-comm-not-sale').textContent = commNotForSale.length;
     document.getElementById('stat-datacenters').textContent = datacentersResp.length;
     resultsSummary.classList.remove('hidden');
 
-    // Property cards
+    // Property cards — industrial first, then commercial
     propertiesResp
       .sort((a, b) => a.distance_km - b.distance_km)
       .forEach(p => {
@@ -215,6 +266,35 @@ async function runSearch() {
         });
         propertyList.appendChild(card);
       });
+
+    // Commercial cards
+    if (commercialResp.length > 0) {
+      const divider = document.createElement('div');
+      divider.className = 'section-divider';
+      divider.innerHTML = '<span>🏢 Commercial Real Estate</span>';
+      propertyList.appendChild(divider);
+
+      commercialResp
+        .sort((a, b) => a.distance_km - b.distance_km)
+        .forEach(p => {
+          const card = document.createElement('div');
+          card.className = `property-card ${p.for_sale ? 'comm-for-sale' : 'comm-not-for-sale'}`;
+          card.innerHTML = `
+            <h4>${p.name}</h4>
+            <div class="meta">
+              <span>📍 ${p.city}</span>
+              <span>📐 ${p.area_m2.toLocaleString()} m²</span>
+              <span>⚡ ~${p.estimated_power_kw} kW</span>
+              <span>📏 ${p.distance_km} km</span>
+            </div>
+            ${p.for_sale && p.listing_url ? `<a href="${p.listing_url}" target="_blank" rel="noopener" class="listing-link comm" onclick="event.stopPropagation()">🔗 View Listing →</a>` : ''}
+          `;
+          card.addEventListener('click', () => {
+            map.setView([p.lat, p.lng], 13);
+          });
+          propertyList.appendChild(card);
+        });
+    }
 
   } catch (err) {
     console.error('Search error:', err);
