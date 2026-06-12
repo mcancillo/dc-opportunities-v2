@@ -28,7 +28,8 @@ async function getIXLocations() {
   const cached = readCache('ix-locations');
   if (cached) return cached;
 
-  const url = 'https://www.peeringdb.com/api/ix?depth=1';
+  // Use depth=2 so fac_set includes facility coordinates
+  const url = 'https://www.peeringdb.com/api/ix?depth=2';
   const resp = await fetch(url, {
     headers: { 'Accept': 'application/json' }
   });
@@ -37,16 +38,26 @@ async function getIXLocations() {
 
   const filtered = json.data
     .filter(ix => SUPPORTED_COUNTRIES.includes(ix.country))
-    .map(ix => ({
-      id: ix.id,
-      name: ix.name,
-      name_long: ix.name_long,
-      city: ix.city,
-      country: ix.country,
-      website: ix.website,
-      lat: ix.latitude,
-      lng: ix.longitude
-    }))
+    .map(ix => {
+      // IX records don't have lat/lng — resolve from the first facility
+      let lat = ix.latitude || null;
+      let lng = ix.longitude || null;
+      if ((!lat || !lng) && ix.fac_set && ix.fac_set.length > 0) {
+        const fac = ix.fac_set.find(f => f.latitude && f.longitude) || ix.fac_set[0];
+        lat = fac.latitude;
+        lng = fac.longitude;
+      }
+      return {
+        id: ix.id,
+        name: ix.name,
+        name_long: ix.name_long,
+        city: ix.city,
+        country: ix.country,
+        website: ix.website,
+        lat: parseFloat(lat) || null,
+        lng: parseFloat(lng) || null
+      };
+    })
     .filter(ix => ix.lat && ix.lng);
 
   writeCache('ix-locations', filtered);
