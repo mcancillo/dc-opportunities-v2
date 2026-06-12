@@ -234,6 +234,7 @@ input[type="range"] {
 
 .legend-line.cyan { background: #00ccff; }
 .legend-line.yellow { background: #ffcc00; }
+.legend-line.magenta { background: #ff66ff; }
 
 .legend-dot.cyan-sm {
   width: 10px;

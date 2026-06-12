@@ -1,6 +1,6 @@
 // ─── State ───────────────────────────────────────────────────────
-let map, ixData = [], searchCircle;
-const layers = { properties: null, datacenters: null, ix: null, subseaCables: null, landingPoints: null, fiberBackbone: null };
+let map, ixData = [], landingData = [], searchCircle;
+const layers = { properties: null, datacenters: null, ix: null, subseaCables: null, landingPoints: null, fiberBackbone: null, backboneLinks: null };
 
 // ─── Map Init ────────────────────────────────────────────────────
 function initMap() {
@@ -273,12 +273,105 @@ document.getElementById('sources-modal').addEventListener('click', (e) => {
 });
 
 // ─── Infrastructure Layers (Cables & Fiber) ────────────────────
+
+// Map landing point country names to IX country codes
+const COUNTRY_MAP = {
+  'Netherlands': 'NL', 'Germany': 'DE', 'Poland': 'PL', 'Spain': 'ES'
+};
+
+function extractCountry(lpName) {
+  for (const [full, code] of Object.entries(COUNTRY_MAP)) {
+    if (lpName.includes(full)) return code;
+  }
+  return null;
+}
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Primary national IX hubs — landing points always connect to these
+const PRIMARY_IX = {
+  'NL': ['AMS-IX'],
+  'DE': ['DE-CIX Frankfurt'],
+  'PL': ['PLIX'],
+  'ES': ['ESPANIX']
+};
+
+function buildBackboneLinks() {
+  if (!landingData.length || !ixData.length) return;
+
+  layers.backboneLinks = L.layerGroup();
+
+  const drawn = new Set();
+
+  landingData.forEach(lp => {
+    const cc = extractCountry(lp.name);
+    if (!cc) return;
+
+    const countryIXs = ixData.filter(ix => ix.country === cc);
+    if (!countryIXs.length) return;
+
+    const targets = new Map();
+
+    // 1) Closest IX in the same country
+    let closest = null, closestDist = Infinity;
+    countryIXs.forEach(ix => {
+      const d = haversineKm(lp.lat, lp.lng, ix.lat, ix.lng);
+      if (d < closestDist) { closestDist = d; closest = ix; }
+    });
+    if (closest) targets.set(closest.id, { ix: closest, dist: closestDist });
+
+    // 2) Primary national IX (if different from closest)
+    const primaryNames = PRIMARY_IX[cc] || [];
+    countryIXs.forEach(ix => {
+      if (primaryNames.some(p => ix.name.includes(p)) && !targets.has(ix.id)) {
+        targets.set(ix.id, { ix, dist: haversineKm(lp.lat, lp.lng, ix.lat, ix.lng) });
+      }
+    });
+
+    targets.forEach(({ ix, dist }) => {
+      const key = `${lp.lat.toFixed(3)},${lp.lng.toFixed(3)}-${ix.lat.toFixed(3)},${ix.lng.toFixed(3)}`;
+      if (drawn.has(key)) return;
+      drawn.add(key);
+
+      const distLabel = Math.round(dist);
+      const cityName = lp.name.split(',')[0];
+
+      L.polyline([[lp.lat, lp.lng], [ix.lat, ix.lng]], {
+        color: '#ff66ff',
+        weight: 2.5,
+        opacity: 0.7,
+        dashArray: '8 5'
+      })
+        .bindPopup(`
+          <div class="popup-title">🔗 Backbone Link</div>
+          <div class="popup-meta">
+            📡 ${cityName} landing → ${ix.name}<br>
+            📏 ~${distLabel} km terrestrial
+          </div>
+          <span class="popup-badge" style="background:#ff66ff;color:#000">LAND ROUTE</span>
+        `)
+        .addTo(layers.backboneLinks);
+    });
+  });
+
+  layers.backboneLinks.addTo(map);
+  console.log(`Built ${drawn.size} backbone links`);
+}
+
 async function loadSubseaCables() {
   try {
-    const [cablesData, landingData] = await Promise.all([
+    const [cablesData, lpData] = await Promise.all([
       fetchJSON('/api/subsea-cables'),
       fetchJSON('/api/landing-points')
     ]);
+
+    landingData = lpData;
 
     // Subsea cable routes
     layers.subseaCables = L.layerGroup();
@@ -305,14 +398,14 @@ async function loadSubseaCables() {
       iconSize: [14, 14],
       iconAnchor: [7, 13]
     });
-    landingData.forEach(lp => {
+    lpData.forEach(lp => {
       L.marker([lp.lat, lp.lng], { icon: landingIcon })
         .bindPopup(`<div class="popup-title">${lp.name}</div><div class="popup-meta">📍 Cable Landing Point</div><span class="popup-badge dc">LANDING STATION</span>`)
         .addTo(layers.landingPoints);
     });
     layers.landingPoints.addTo(map);
 
-    console.log(`Loaded ${cablesData.length} subsea cables, ${landingData.length} landing points`);
+    console.log(`Loaded ${cablesData.length} subsea cables, ${lpData.length} landing points`);
   } catch (err) {
     console.error('Failed to load subsea cables:', err);
   }
@@ -348,9 +441,11 @@ document.getElementById('toggle-subsea').addEventListener('change', (e) => {
   if (e.target.checked) {
     if (layers.subseaCables) layers.subseaCables.addTo(map);
     if (layers.landingPoints) layers.landingPoints.addTo(map);
+    if (layers.backboneLinks) layers.backboneLinks.addTo(map);
   } else {
     if (layers.subseaCables) map.removeLayer(layers.subseaCables);
     if (layers.landingPoints) map.removeLayer(layers.landingPoints);
+    if (layers.backboneLinks) map.removeLayer(layers.backboneLinks);
   }
 });
 
@@ -365,12 +460,14 @@ document.getElementById('toggle-fiber').addEventListener('change', (e) => {
 // ─── Boot ───────────────────────────────────────────────────────
 initMap();
 
-// Load IX data and infrastructure layers in parallel
+// Load IX data and infrastructure layers, then build backbone links
 Promise.all([
   loadIXLocations(),
   loadSubseaCables(),
   loadFiberBackbone()
-]).catch(err => {
+]).then(() => {
+  buildBackboneLinks();
+}).catch(err => {
   console.error('Failed to load initial data:', err);
   document.getElementById('property-list').innerHTML =
     '<div style="color:#ff4444;padding:10px;">Failed to load data. Please refresh.</div>';
