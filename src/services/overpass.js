@@ -23,34 +23,47 @@ function writeCache(key, data) {
   fs.writeFileSync(path.join(CACHE_DIR, `${key}.json`), JSON.stringify(data));
 }
 
+const OVERPASS_ENDPOINTS = [
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass-api.de/api/interpreter'
+];
+
+async function queryOverpass(query) {
+  const encoded = encodeURIComponent(query);
+  for (const endpoint of OVERPASS_ENDPOINTS) {
+    try {
+      const resp = await fetch(`${endpoint}?data=${encoded}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (resp.ok) return await resp.json();
+    } catch (e) { /* try next endpoint */ }
+  }
+  throw new Error('All Overpass endpoints failed');
+}
+
 async function getDatacenters(lat, lng, radiusMeters) {
   const cacheKey = `dc-${lat.toFixed(2)}-${lng.toFixed(2)}-${radiusMeters}`;
   const cached = readCache(cacheKey);
   if (cached) return cached;
 
-  // Query multiple datacenter tags for better coverage
-  const query = `
-    [out:json][timeout:30];
-    (
-      node["telecom"="data_center"](around:${radiusMeters},${lat},${lng});
-      way["telecom"="data_center"](around:${radiusMeters},${lat},${lng});
-      node["man_made"="data_center"](around:${radiusMeters},${lat},${lng});
-      way["man_made"="data_center"](around:${radiusMeters},${lat},${lng});
-      node["building"="data_center"](around:${radiusMeters},${lat},${lng});
-      way["building"="data_center"](around:${radiusMeters},${lat},${lng});
-    );
-    out center body;
-  `;
+  // Query multiple datacenter tags (including British spelling) for better coverage
+  const query = [
+    '[out:json][timeout:30];',
+    '(',
+    `node["telecom"="data_center"](around:${radiusMeters},${lat},${lng});`,
+    `way["telecom"="data_center"](around:${radiusMeters},${lat},${lng});`,
+    `node["building"="data_centre"](around:${radiusMeters},${lat},${lng});`,
+    `way["building"="data_centre"](around:${radiusMeters},${lat},${lng});`,
+    `node["building"="data_center"](around:${radiusMeters},${lat},${lng});`,
+    `way["building"="data_center"](around:${radiusMeters},${lat},${lng});`,
+    `node["man_made"="data_center"](around:${radiusMeters},${lat},${lng});`,
+    `way["man_made"="data_center"](around:${radiusMeters},${lat},${lng});`,
+    ');',
+    'out body center;'
+  ].join('');
 
-  const url = 'https://overpass-api.de/api/interpreter';
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `data=${encodeURIComponent(query)}`
-  });
-
-  if (!resp.ok) throw new Error(`Overpass returned ${resp.status}`);
-  const json = await resp.json();
+  const json = await queryOverpass(query);
 
   const seen = new Set();
   const datacenters = json.elements
