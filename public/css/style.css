@@ -1,0 +1,357 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+#sidebar {
+  width: 380px;
+  min-width: 380px;
+  background: #16213e;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-right: 2px solid #0f3460;
+}
+
+.sidebar-header h1 {
+  font-size: 1.4rem;
+  color: #e94560;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #8899aa;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #aabbcc;
+}
+
+select, input[type="range"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+select:disabled {
+  opacity: 0.5;
+}
+
+input[type="range"] {
+  padding: 4px 0;
+  accent-color: #e94560;
+}
+
+#search-btn {
+  padding: 12px;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#search-btn:hover:not(:disabled) {
+  background: #c73652;
+}
+
+#search-btn:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+#map {
+  flex: 1;
+  height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+/* Loading */
+#loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  color: #aaa;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #333;
+  border-top-color: #e94560;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Stats */
+#results-summary {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 14px;
+  border: 1px solid #0f3460;
+}
+
+#results-summary h3 {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: #e94560;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+
+.stat-value {
+  font-weight: 700;
+}
+.stat-value.red { color: #ff4444; }
+.stat-value.orange { color: #ff8c00; }
+.stat-value.blue { color: #4da6ff; }
+
+/* Property list */
+#property-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.property-card {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 4px solid;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.property-card:hover {
+  background: #1f2a45;
+}
+
+.property-card.for-sale { border-color: #ff4444; }
+.property-card.not-for-sale { border-color: #ff8c00; }
+
+.property-card h4 {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  color: #ddd;
+}
+
+.property-card .meta {
+  font-size: 0.75rem;
+  color: #8899aa;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.property-card .meta span {
+  white-space: nowrap;
+}
+
+/* Legend */
+.legend {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #0f3460;
+}
+
+.legend h3 {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: #aabbcc;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  padding: 2px 0;
+}
+
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.legend-dot.red { background: #ff4444; }
+.legend-dot.orange { background: #ff8c00; }
+.legend-dot.blue { background: #4da6ff; }
+.legend-dot.green { background: #33cc66; }
+
+.legend-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px dashed #e94560;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Data notice */
+.data-notice {
+  font-size: 0.75rem;
+  color: #8899aa;
+  background: #1a1a2e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 10px;
+  line-height: 1.5;
+}
+
+.data-notice a {
+  color: #4da6ff;
+  text-decoration: none;
+}
+
+.data-notice a:hover {
+  text-decoration: underline;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 90%;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-content h2 {
+  color: #e94560;
+  margin-bottom: 16px;
+}
+
+.modal-content h3 {
+  color: #4da6ff;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.modal-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.modal-content li {
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+
+.modal-content a {
+  color: #4da6ff;
+  text-decoration: none;
+}
+
+.modal-content a:hover {
+  text-decoration: underline;
+}
+
+.source-category {
+  font-size: 0.75rem;
+  color: #8899aa;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+/* Custom Leaflet popup */
+.leaflet-popup-content-wrapper {
+  background: #16213e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #0f3460;
+  border-radius: 8px !important;
+}
+
+.leaflet-popup-tip {
+  background: #16213e !important;
+}
+
+.popup-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.popup-meta {
+  font-size: 0.8rem;
+  color: #aabbcc;
+  line-height: 1.6;
+}
+
+.popup-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.popup-badge.sale { background: #ff4444; color: white; }
+.popup-badge.not-sale { background: #ff8c00; color: white; }
+.popup-badge.dc { background: #4da6ff; color: white; }
+.popup-badge.ix { background: #33cc66; color: white; }

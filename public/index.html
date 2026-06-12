@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC Opportunities v2</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <h1>🏢 DC Opportunities v2</h1>
+      <p class="subtitle">Find datacenter real estate near Internet Exchanges</p>
+    </div>
+
+    <div class="control-group">
+      <label for="country-select">Country</label>
+      <select id="country-select">
+        <option value="">Select a country…</option>
+        <option value="NL">🇳🇱 Netherlands</option>
+        <option value="DE">🇩🇪 Germany</option>
+        <option value="PL">🇵🇱 Poland</option>
+        <option value="ES">🇪🇸 Spain</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="ix-select">Internet Exchange</label>
+      <select id="ix-select" disabled>
+        <option value="">Select an IX…</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="radius-slider">Search Radius: <span id="radius-value">50</span> km</label>
+      <input type="range" id="radius-slider" min="10" max="100" value="50" step="5" />
+    </div>
+
+    <button id="search-btn" disabled>🔍 Search Opportunities</button>
+
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <span>Searching…</span>
+    </div>
+
+    <div id="results-summary" class="hidden">
+      <h3>Results</h3>
+      <div class="stat-row">
+        <span class="stat-label">Properties (for sale)</span>
+        <span id="stat-for-sale" class="stat-value red">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Properties (not for sale)</span>
+        <span id="stat-not-for-sale" class="stat-value orange">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Existing Datacenters</span>
+        <span id="stat-datacenters" class="stat-value blue">0</span>
+      </div>
+    </div>
+
+    <div id="property-list"></div>
+
+    <div class="legend">
+      <h3>Legend</h3>
+      <div class="legend-item"><span class="legend-dot red"></span> Property — For Sale</div>
+      <div class="legend-item"><span class="legend-dot orange"></span> Property — Not For Sale</div>
+      <div class="legend-item"><span class="legend-dot blue"></span> Existing Datacenter</div>
+      <div class="legend-item"><span class="legend-dot green"></span> Internet Exchange</div>
+      <div class="legend-item"><span class="legend-circle"></span> Search Radius</div>
+    </div>
+
+    <div class="data-notice">
+      <strong>⚠ Data Notice:</strong> Property listings are illustrative samples.
+      Datacenter locations from OpenStreetMap may be incomplete. IX data from PeeringDB.
+      See <a href="#" id="sources-link">Data Sources</a> for integration details per country.
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- Sources modal -->
+  <div id="sources-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="sources-close">&times;</button>
+      <h2>Data Sources by Country</h2>
+      <div id="sources-body"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

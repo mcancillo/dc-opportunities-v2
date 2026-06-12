@@ -1,0 +1,119 @@
+{
+  "NL": {
+    "country": "Netherlands",
+    "internet_exchanges": {
+      "primary": "AMS-IX (Amsterdam Internet Exchange)",
+      "others": ["NL-ix", "Speed-IX"],
+      "source": "https://www.peeringdb.com"
+    },
+    "commercial_real_estate": {
+      "portals": [
+        {"name": "Funda in Business", "url": "https://www.fundainbusiness.nl", "type": "Commercial listings"},
+        {"name": "NVM Business", "url": "https://www.nvm.nl/business", "type": "Broker network"},
+        {"name": "Cushman & Wakefield NL", "url": "https://www.cushmanwakefield.com/nl-nl", "type": "Industrial & logistics"},
+        {"name": "CBRE NL", "url": "https://www.cbre.nl", "type": "Commercial & industrial"}
+      ],
+      "cadastral_data": {
+        "name": "Kadaster / PDOK",
+        "url": "https://www.pdok.nl",
+        "notes": "Open geodata portal with building footprints, land use, and BAG registration"
+      }
+    },
+    "energy_grid": {
+      "tso": {"name": "TenneT", "url": "https://www.tennet.eu", "notes": "Transmission system operator for NL and parts of DE"},
+      "capacity_map": "https://capaciteitskaart.netbeheernederland.nl",
+      "notes": "The Dutch grid capacity map shows available capacity per substation"
+    },
+    "datacenter_associations": [
+      {"name": "Dutch Data Center Association", "url": "https://www.dutchdatacenters.nl"}
+    ]
+  },
+  "DE": {
+    "country": "Germany",
+    "internet_exchanges": {
+      "primary": "DE-CIX (Frankfurt)",
+      "others": ["ECIX (Berlin, Düsseldorf, Hamburg)", "BCIX (Berlin)", "KleyReX (Frankfurt)"],
+      "source": "https://www.peeringdb.com"
+    },
+    "commercial_real_estate": {
+      "portals": [
+        {"name": "ImmobilienScout24", "url": "https://www.immobilienscout24.de", "type": "Commercial & industrial listings"},
+        {"name": "Immowelt", "url": "https://www.immowelt.de", "type": "Commercial listings"},
+        {"name": "JLL Germany", "url": "https://www.jll.de", "type": "Industrial & logistics"},
+        {"name": "Colliers Germany", "url": "https://www.colliers.de", "type": "Commercial & industrial"}
+      ],
+      "cadastral_data": {
+        "name": "Geoportal.de / AdV",
+        "url": "https://www.geoportal.de",
+        "notes": "Federal geoportal; cadastral data varies by state (Landesvermessung)"
+      }
+    },
+    "energy_grid": {
+      "tso": [
+        {"name": "TenneT", "url": "https://www.tennet.eu"},
+        {"name": "50Hertz", "url": "https://www.50hertz.com"},
+        {"name": "Amprion", "url": "https://www.amprion.net"},
+        {"name": "TransnetBW", "url": "https://www.transnetbw.de"}
+      ],
+      "notes": "Germany has four TSO zones. Grid capacity data available via Netzentwicklungsplan (NEP)."
+    },
+    "datacenter_associations": [
+      {"name": "German Datacenter Association (GDA)", "url": "https://www.germandatacenters.com"},
+      {"name": "eco — Association of the Internet Industry", "url": "https://www.eco.de"}
+    ]
+  },
+  "PL": {
+    "country": "Poland",
+    "internet_exchanges": {
+      "primary": "PLIX (Warsaw)",
+      "others": ["TPIX (Warsaw)", "EPIX (Katowice/Warsaw)"],
+      "source": "https://www.peeringdb.com"
+    },
+    "commercial_real_estate": {
+      "portals": [
+        {"name": "Otodom", "url": "https://www.otodom.pl", "type": "Commercial & industrial listings"},
+        {"name": "Gratka", "url": "https://gratka.pl", "type": "Commercial listings"},
+        {"name": "JLL Poland", "url": "https://www.jll.pl", "type": "Industrial & logistics"},
+        {"name": "Savills Poland", "url": "https://www.savills.pl", "type": "Commercial & industrial"}
+      ],
+      "cadastral_data": {
+        "name": "Geoportal.gov.pl",
+        "url": "https://www.geoportal.gov.pl",
+        "notes": "Polish national geoportal with cadastral and land-use data"
+      }
+    },
+    "energy_grid": {
+      "tso": {"name": "PSE (Polskie Sieci Elektroenergetyczne)", "url": "https://www.pse.pl"},
+      "notes": "PSE publishes grid connection capacity data"
+    },
+    "datacenter_associations": []
+  },
+  "ES": {
+    "country": "Spain",
+    "internet_exchanges": {
+      "primary": "ESPANIX (Madrid)",
+      "others": ["CATNIX (Barcelona)", "DE-CIX Madrid"],
+      "source": "https://www.peeringdb.com"
+    },
+    "commercial_real_estate": {
+      "portals": [
+        {"name": "Idealista", "url": "https://www.idealista.com", "type": "Commercial & industrial listings"},
+        {"name": "Fotocasa", "url": "https://www.fotocasa.es", "type": "Commercial listings"},
+        {"name": "CBRE Spain", "url": "https://www.cbre.es", "type": "Industrial & logistics"},
+        {"name": "Savills Spain", "url": "https://www.savills.es", "type": "Commercial & industrial"}
+      ],
+      "cadastral_data": {
+        "name": "Sede Electrónica del Catastro",
+        "url": "https://www.sedecatastro.gob.es",
+        "notes": "Spanish cadastral data with INSPIRE WMS/WFS services"
+      }
+    },
+    "energy_grid": {
+      "tso": {"name": "Red Eléctrica de España (REE)", "url": "https://www.ree.es"},
+      "notes": "REE publishes grid infrastructure maps and capacity data"
+    },
+    "datacenter_associations": [
+      {"name": "Spain DC", "url": "https://spaindc.es"}
+    ]
+  }
+}

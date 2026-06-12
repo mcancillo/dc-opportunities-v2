@@ -1,0 +1,17 @@
+{
+  "name": "dc-opportunities-v2",
+  "version": "1.0.0",
+  "description": "Data Center Opportunity Finder - Discover commercial real estate near Internet Exchange points suitable for data center development",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["datacenter", "real-estate", "internet-exchange", "gis", "leaflet"],
+  "author": "mcancillo",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "node-fetch": "^2.7.0"
+  }
+}
