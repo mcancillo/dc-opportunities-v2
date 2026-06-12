@@ -180,6 +180,20 @@ input[type="range"] {
   white-space: nowrap;
 }
 
+.listing-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: #ff6666;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.listing-link:hover {
+  text-decoration: underline;
+  color: #ff4444;
+}
+
 /* Legend */
 .legend {
   background: #1a1a2e;

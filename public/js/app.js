@@ -36,6 +36,9 @@ function propertyPopup(p) {
   const price = p.for_sale && p.price_eur
     ? `<br>💰 €${(p.price_eur / 1e6).toFixed(1)}M`
     : '';
+  const listing = p.for_sale && p.listing_url
+    ? `<div style="margin-top:6px"><a href="${p.listing_url}" target="_blank" rel="noopener" style="color:#ff6666;font-weight:600;font-size:0.85rem;text-decoration:none;">🔗 View Listing →</a></div>`
+    : '';
   return `
     <div class="popup-title">${p.name}</div>
     <div class="popup-meta">
@@ -45,7 +48,7 @@ function propertyPopup(p) {
       🏭 ${p.sector}<br>
       📏 ${p.distance_km} km from IX
     </div>
-    ${badge}
+    ${badge}${listing}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
 }
@@ -205,6 +208,7 @@ async function runSearch() {
             <span>📏 ${p.distance_km} km</span>
             ${p.for_sale && p.price_eur ? `<span>💰 €${(p.price_eur/1e6).toFixed(1)}M</span>` : ''}
           </div>
+          ${p.for_sale && p.listing_url ? `<a href="${p.listing_url}" target="_blank" rel="noopener" class="listing-link" onclick="event.stopPropagation()">🔗 View Listing →</a>` : ''}
         `;
         card.addEventListener('click', () => {
           map.setView([p.lat, p.lng], 13);

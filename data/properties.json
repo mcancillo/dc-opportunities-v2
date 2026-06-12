@@ -28,8 +28,9 @@
     "sector": "Aluminium — Primary smelting",
     "for_sale": true,
     "price_eur": null,
-    "data_source": "Industry data — smelter at reduced capacity, partial site available",
-    "notes": "Operating at partial capacity. Massive grid connection. Adjacent to Chemiepark Delfzijl."
+    "listing_url": "https://giga-storage.com/en/projects/leopard/",
+    "data_source": "Industry data — site acquired by GIGA Storage for battery storage, grid infra available",
+    "notes": "Smelter closed 2022. GIGA Storage acquired power grid. 250MW grid connection. Brownfield redevelopment."
   },
   {
     "id": "NL-003",
@@ -76,6 +77,7 @@
     "sector": "Agriculture / Greenhouse — High power",
     "for_sale": true,
     "price_eur": 32000000,
+    "listing_url": "https://www.fundainbusiness.nl",
     "data_source": "Sample — illustrative based on Agriport datacenter corridor",
     "notes": "Microsoft and Google have datacenters in this zone. Excellent grid capacity."
   },
@@ -108,8 +110,9 @@
     "sector": "Cement — Manufacturing",
     "for_sale": true,
     "price_eur": null,
-    "data_source": "Industry data — site being redeveloped after quarry closure",
-    "notes": "Former HeidelbergCement site. Large footprint with grid connection being repurposed."
+    "listing_url": "https://l-r-e.nl/overdracht-enci/",
+    "data_source": "Industry data — site acquired by Limburg Real Estate for redevelopment",
+    "notes": "Former HeidelbergCement. 33ha site being transformed. Monument status granted 2025."
   },
 
   {
@@ -253,8 +256,9 @@
     "sector": "Steel — Electric arc furnace",
     "for_sale": true,
     "price_eur": null,
-    "data_source": "OSM + industry data — EAF steelworks",
-    "notes": "EAF steel plant in Thuringia. Potential brownfield conversion."
+    "listing_url": "https://www.csn.com.br/en/about-us/csn-group/swt/",
+    "data_source": "OSM + industry data — EAF steelworks owned by CSN (Brazil)",
+    "notes": "EAF steel plant in Thuringia. Maintenance shutdown 2025. Potential brownfield conversion."
   },
 
   {
@@ -350,8 +354,9 @@
     "sector": "Steel — Integrated steelworks",
     "for_sale": true,
     "price_eur": null,
-    "data_source": "Industry data — partially decommissioned steel site",
-    "notes": "Nowa Huta steelworks partially closed. Brownfield sections available. Huge grid capacity."
+    "listing_url": "https://www.radiokrakow.pl/aktualnosci/krakow/bedzie-umowa-miedzy-krakowem-a-arcelormittal-chodzi-o-tereny-po-dawnym-kombinacie/",
+    "data_source": "Industry data — 720ha under negotiation between city and ArcelorMittal",
+    "notes": "Nowa Huta coke plant closed 2024, demolition until 2026. City negotiating land transfer for redevelopment."
   },
 
   {
@@ -367,8 +372,9 @@
     "sector": "Aluminium — Primary smelting",
     "for_sale": true,
     "price_eur": null,
-    "data_source": "Industry data — Alcoa smelter (on/off production, seeking buyer)",
-    "notes": "~400MW. Repeatedly halted due to energy costs. Plant and grid capacity available."
+    "listing_url": "https://aluminiumtoday.com/news/alcoa-outlines-san-ciprian-smelter-plan",
+    "data_source": "Industry data — Alcoa/IGNIS JV, smelter restart delayed to 2026",
+    "notes": "~400MW. Alcoa 75% / IGNIS EQT 25% JV since 2025. Restart delayed. Future sale possible post-2027."
   },
   {
     "id": "ES-002",
@@ -463,8 +469,9 @@
     "sector": "Cement — Manufacturing",
     "for_sale": true,
     "price_eur": null,
+    "listing_url": "https://www.idealista.com/en/inmueble/106388090/",
     "data_source": "OSM — Cementos Portland Valderrivas Fábrica el Alto",
-    "notes": "Near Madrid. Large industrial footprint near ESPANIX."
+    "notes": "Near Madrid. Large industrial footprint near ESPANIX. Check idealista.com for current listings."
   },
   {
     "id": "ES-008",
