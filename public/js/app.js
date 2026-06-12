@@ -1,6 +1,6 @@
 // ─── State ───────────────────────────────────────────────────────
 let map, ixData = [], searchCircle;
-const layers = { properties: null, datacenters: null, ix: null };
+const layers = { properties: null, datacenters: null, ix: null, subseaCables: null, landingPoints: null, fiberBackbone: null };
 
 // ─── Map Init ────────────────────────────────────────────────────
 function initMap() {
@@ -272,10 +272,106 @@ document.getElementById('sources-modal').addEventListener('click', (e) => {
   }
 });
 
+// ─── Infrastructure Layers (Cables & Fiber) ────────────────────
+async function loadSubseaCables() {
+  try {
+    const [cablesData, landingData] = await Promise.all([
+      fetchJSON('/api/subsea-cables'),
+      fetchJSON('/api/landing-points')
+    ]);
+
+    // Subsea cable routes
+    layers.subseaCables = L.layerGroup();
+    cablesData.forEach(cable => {
+      cable.segments.forEach(segment => {
+        if (segment.length < 2) return;
+        L.polyline(segment, {
+          color: cable.color || '#00ccff',
+          weight: 2,
+          opacity: 0.5,
+          dashArray: '6 4'
+        })
+          .bindPopup(`<div class="popup-title">${cable.name}</div><span class="popup-badge dc">SUBSEA CABLE</span>`)
+          .addTo(layers.subseaCables);
+      });
+    });
+    layers.subseaCables.addTo(map);
+
+    // Landing points
+    layers.landingPoints = L.layerGroup();
+    const landingIcon = L.divIcon({
+      className: '',
+      html: '<svg width="14" height="14"><polygon points="7,1 13,13 1,13" fill="#00ccff" stroke="#fff" stroke-width="1.5" opacity="0.9"/></svg>',
+      iconSize: [14, 14],
+      iconAnchor: [7, 13]
+    });
+    landingData.forEach(lp => {
+      L.marker([lp.lat, lp.lng], { icon: landingIcon })
+        .bindPopup(`<div class="popup-title">${lp.name}</div><div class="popup-meta">📍 Cable Landing Point</div><span class="popup-badge dc">LANDING STATION</span>`)
+        .addTo(layers.landingPoints);
+    });
+    layers.landingPoints.addTo(map);
+
+    console.log(`Loaded ${cablesData.length} subsea cables, ${landingData.length} landing points`);
+  } catch (err) {
+    console.error('Failed to load subsea cables:', err);
+  }
+}
+
+async function loadFiberBackbone() {
+  try {
+    const fiberData = await fetchJSON('/api/fiber-backbone');
+
+    layers.fiberBackbone = L.layerGroup();
+    fiberData.forEach(fiber => {
+      if (fiber.coords.length < 2) return;
+      const color = fiber.submarine ? '#00ccff' : '#ffcc00';
+      L.polyline(fiber.coords, {
+        color,
+        weight: fiber.submarine ? 2 : 1.5,
+        opacity: fiber.submarine ? 0.4 : 0.35,
+        dashArray: fiber.submarine ? '6 4' : null
+      })
+        .bindPopup(`<div class="popup-title">${fiber.name}</div>${fiber.operator ? '<div class="popup-meta">🏢 ' + fiber.operator + '</div>' : ''}<span class="popup-badge" style="background:${color};color:#000">${fiber.submarine ? 'SUBMARINE CABLE' : 'FIBER BACKBONE'}</span>`)
+        .addTo(layers.fiberBackbone);
+    });
+    layers.fiberBackbone.addTo(map);
+
+    console.log(`Loaded ${fiberData.length} fiber routes`);
+  } catch (err) {
+    console.error('Failed to load fiber backbone:', err);
+  }
+}
+
+// Toggle handlers
+document.getElementById('toggle-subsea').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    if (layers.subseaCables) layers.subseaCables.addTo(map);
+    if (layers.landingPoints) layers.landingPoints.addTo(map);
+  } else {
+    if (layers.subseaCables) map.removeLayer(layers.subseaCables);
+    if (layers.landingPoints) map.removeLayer(layers.landingPoints);
+  }
+});
+
+document.getElementById('toggle-fiber').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    if (layers.fiberBackbone) layers.fiberBackbone.addTo(map);
+  } else {
+    if (layers.fiberBackbone) map.removeLayer(layers.fiberBackbone);
+  }
+});
+
 // ─── Boot ───────────────────────────────────────────────────────
 initMap();
-loadIXLocations().catch(err => {
-  console.error('Failed to load IX data:', err);
+
+// Load IX data and infrastructure layers in parallel
+Promise.all([
+  loadIXLocations(),
+  loadSubseaCables(),
+  loadFiberBackbone()
+]).catch(err => {
+  console.error('Failed to load initial data:', err);
   document.getElementById('property-list').innerHTML =
-    '<div style="color:#ff4444;padding:10px;">Failed to load IX data. Please refresh.</div>';
+    '<div style="color:#ff4444;padding:10px;">Failed to load data. Please refresh.</div>';
 });

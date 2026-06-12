@@ -224,6 +224,46 @@ input[type="range"] {
   flex-shrink: 0;
 }
 
+.legend-line {
+  width: 20px;
+  height: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.legend-line.cyan { background: #00ccff; }
+.legend-line.yellow { background: #ffcc00; }
+
+.legend-dot.cyan-sm {
+  width: 10px;
+  height: 10px;
+  background: #00ccff;
+  border: 2px solid #fff;
+}
+
+/* Toggle rows */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 0.82rem;
+}
+
+.toggle-row input[type="checkbox"] {
+  accent-color: #e94560;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.toggle-row label {
+  cursor: pointer;
+  font-weight: normal;
+  color: #ccc;
+}
+
 /* Data notice */
 .data-notice {
   font-size: 0.75rem;

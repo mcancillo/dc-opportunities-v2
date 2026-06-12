@@ -3,6 +3,7 @@ const router = express.Router();
 const peeringdb = require('../services/peeringdb');
 const overpass = require('../services/overpass');
 const properties = require('../services/properties');
+const cables = require('../services/cables');
 
 // Get IX locations for supported countries
 router.get('/ix-locations', async (req, res) => {
@@ -51,6 +52,37 @@ router.get('/properties', async (req, res) => {
   } catch (err) {
     console.error('Properties error:', err.message);
     res.status(500).json({ error: 'Failed to fetch properties' });
+  }
+});
+
+// Get subsea cable landing points
+router.get('/landing-points', (req, res) => {
+  try {
+    res.json(cables.getLandingPoints());
+  } catch (err) {
+    console.error('Landing points error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch landing points' });
+  }
+});
+
+// Get subsea cable routes (TeleGeography, European segments)
+router.get('/subsea-cables', (req, res) => {
+  try {
+    res.json(cables.getSubseaCables());
+  } catch (err) {
+    console.error('Subsea cables error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch subsea cables' });
+  }
+});
+
+// Get fiber backbone routes (OSM)
+router.get('/fiber-backbone', async (req, res) => {
+  try {
+    const data = await cables.getFiberBackbone();
+    res.json(data);
+  } catch (err) {
+    console.error('Fiber backbone error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch fiber backbone' });
   }
 });
 

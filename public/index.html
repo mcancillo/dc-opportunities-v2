@@ -37,6 +37,18 @@
       <input type="range" id="radius-slider" min="10" max="300" value="50" step="10" />
     </div>
 
+    <div class="control-group">
+      <label>Infrastructure Overlays</label>
+      <div class="toggle-row">
+        <input type="checkbox" id="toggle-subsea" checked />
+        <label for="toggle-subsea">🔵 Subsea cables &amp; landing points</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="toggle-fiber" checked />
+        <label for="toggle-fiber">🟡 Fiber backbone (OSM)</label>
+      </div>
+    </div>
+
     <button id="search-btn" disabled>🔍 Search Opportunities</button>
 
     <div id="loading" class="hidden">
@@ -68,6 +80,9 @@
       <div class="legend-item"><span class="legend-dot orange"></span> Property — Not For Sale</div>
       <div class="legend-item"><span class="legend-dot blue"></span> Existing Datacenter</div>
       <div class="legend-item"><span class="legend-dot green"></span> Internet Exchange</div>
+      <div class="legend-item"><span class="legend-line cyan"></span> Subsea Cable</div>
+      <div class="legend-item"><span class="legend-dot cyan-sm"></span> Cable Landing Point</div>
+      <div class="legend-item"><span class="legend-line yellow"></span> Fiber Backbone (OSM)</div>
       <div class="legend-item"><span class="legend-circle"></span> Search Radius</div>
     </div>
 
