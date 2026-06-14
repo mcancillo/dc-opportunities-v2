@@ -165,6 +165,7 @@ input[type="range"] {
 .property-card.not-for-sale { border-color: #ff8c00; }
 .property-card.comm-for-sale { border-color: #aa44ff; }
 .property-card.comm-not-for-sale { border-color: #ff69b4; }
+.property-card.portal-link-card { border-color: #4da6ff; background: #16213e; }
 
 .property-card h4 {
   font-size: 0.85rem;

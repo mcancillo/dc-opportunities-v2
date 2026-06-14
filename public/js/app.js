@@ -168,6 +168,7 @@ async function runSearch() {
   const ixInfo = JSON.parse(ixSelect.value);
   const radiusKm = parseInt(radiusSlider.value);
   const radiusM = radiusKm * 1000;
+  const country = countrySelect.value;
 
   // UI state
   loading.classList.remove('hidden');
@@ -193,10 +194,11 @@ async function runSearch() {
 
   try {
     // Fetch data in parallel
-    const [propertiesResp, commercialResp, datacentersResp] = await Promise.all([
-      fetchJSON(`/api/properties?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`),
-      fetchJSON(`/api/commercial?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`),
-      fetchJSON(`/api/datacenters?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`)
+    const [propertiesResp, commercialResp, datacentersResp, portalLinks] = await Promise.all([
+      fetchJSON(`/api/properties?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}&country=${country}`),
+      fetchJSON(`/api/commercial?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}&country=${country}`),
+      fetchJSON(`/api/datacenters?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`),
+      fetchJSON(`/api/portal-links?country=${country}&lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`)
     ]);
 
     // Draw search radius
@@ -312,6 +314,45 @@ async function runSearch() {
           });
           propertyList.appendChild(card);
         });
+    }
+
+    // Portal links section — links to RE websites for more listings
+    if (portalLinks && portalLinks.length > 0) {
+      const portalDiv = document.createElement('div');
+      portalDiv.className = 'section-divider';
+      portalDiv.innerHTML = '<span>🌐 Search RE Portals</span>';
+      propertyList.appendChild(portalDiv);
+
+      portalLinks.forEach(link => {
+        const card = document.createElement('div');
+        card.className = 'property-card portal-link-card';
+        card.innerHTML = `
+          <h4><a href="${link.url}" target="_blank" rel="noopener" style="color:#4da6ff;text-decoration:none;">${link.name} ↗</a></h4>
+          <div class="meta">
+            <span>🏷️ ${link.type}</span>
+            <span>📝 ${link.note}</span>
+          </div>
+        `;
+        propertyList.appendChild(card);
+      });
+
+      // Show live data stats
+      const liveIndustrial = propertiesResp.filter(p => p.source_type === 'osm_industrial' || p.source_type === 'pdok_bag');
+      const liveCommercial = commercialResp.filter(p => p.source_type === 'osm_commercial');
+      if (liveIndustrial.length > 0 || liveCommercial.length > 0) {
+        const statsDiv = document.createElement('div');
+        statsDiv.className = 'property-card';
+        statsDiv.style.borderColor = '#4da6ff';
+        statsDiv.innerHTML = `
+          <h4 style="color:#4da6ff">📡 Live Data Sources</h4>
+          <div class="meta">
+            <span>🏭 ${liveIndustrial.length} industrial from OSM/PDOK</span>
+            <span>🏢 ${liveCommercial.length} commercial from OSM</span>
+            <span>📦 ${propertiesResp.length - liveIndustrial.length + commercialResp.length - liveCommercial.length} curated</span>
+          </div>
+        `;
+        propertyList.appendChild(statsDiv);
+      }
     }
 
   } catch (err) {

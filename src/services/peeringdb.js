@@ -24,14 +24,22 @@ function writeCache(key, data) {
   fs.writeFileSync(path.join(CACHE_DIR, `${key}.json`), JSON.stringify(data));
 }
 
+// In-memory IX cache to avoid repeated PeeringDB calls
+let ixMemoryCache = null;
+
 async function getIXLocations() {
+  if (ixMemoryCache) return ixMemoryCache;
+
   const cached = readCache('ix-locations');
-  if (cached) return cached;
+  if (cached) { ixMemoryCache = cached; return cached; }
 
   // Use depth=2 so fac_set includes facility coordinates
   const url = 'https://www.peeringdb.com/api/ix?depth=2';
   const resp = await fetch(url, {
-    headers: { 'Accept': 'application/json' }
+    headers: {
+      'Accept': 'application/json',
+      'User-Agent': 'DC-Opportunities-v2/1.0 (datacenter-site-analysis)'
+    }
   });
   if (!resp.ok) throw new Error(`PeeringDB returned ${resp.status}`);
   const json = await resp.json();
@@ -62,6 +70,7 @@ async function getIXLocations() {
     .filter(ix => ix.lat && ix.lng);
 
   writeCache('ix-locations', filtered);
+  ixMemoryCache = filtered;
   return filtered;
 }
 
