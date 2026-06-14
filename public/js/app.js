@@ -27,7 +27,8 @@ const ICONS = {
   commForSale:    () => makeCircleIcon('#aa44ff', 10),
   commNotForSale: () => makeCircleIcon('#ff69b4', 10),
   datacenter: () => makeCircleIcon('#4da6ff', 8),
-  ix:         () => makeCircleIcon('#33cc66', 13)
+  ix:         () => makeCircleIcon('#33cc66', 13),
+  landing:    () => makeCircleIcon('#4488ff', 13)
 };
 
 // ─── Score Helpers ──────────────────────────────────────────────
@@ -131,6 +132,7 @@ async function loadIXLocations() {
 // ─── UI Wiring ──────────────────────────────────────────────────
 const countrySelect = document.getElementById('country-select');
 const ixSelect = document.getElementById('ix-select');
+const lpSelect = document.getElementById('lp-select');
 const radiusSlider = document.getElementById('radius-slider');
 const radiusValue = document.getElementById('radius-value');
 const searchBtn = document.getElementById('search-btn');
@@ -141,7 +143,8 @@ const propertyList = document.getElementById('property-list');
 countrySelect.addEventListener('change', () => {
   const country = countrySelect.value;
   ixSelect.innerHTML = '<option value="">Select an IX…</option>';
-  if (!country) { ixSelect.disabled = true; searchBtn.disabled = true; return; }
+  lpSelect.innerHTML = '<option value="">Select a landing point…</option>';
+  if (!country) { ixSelect.disabled = true; lpSelect.disabled = true; searchBtn.disabled = true; return; }
 
   const countryIXs = ixData.filter(ix => ix.country === country);
   countryIXs.forEach(ix => {
@@ -151,10 +154,29 @@ countrySelect.addEventListener('change', () => {
     ixSelect.appendChild(opt);
   });
   ixSelect.disabled = false;
+
+  const countryLPs = landingData.filter(lp => {
+    const cc = extractCountry(lp.name);
+    return cc === country;
+  });
+  countryLPs.forEach(lp => {
+    const opt = document.createElement('option');
+    const city = lp.name.split(',')[0].trim();
+    opt.value = JSON.stringify({ lat: lp.lat, lng: lp.lng, name: city });
+    opt.textContent = `🔵 ${city}`;
+    lpSelect.appendChild(opt);
+  });
+  lpSelect.disabled = false;
 });
 
 ixSelect.addEventListener('change', () => {
-  searchBtn.disabled = !ixSelect.value;
+  if (ixSelect.value) lpSelect.value = '';
+  searchBtn.disabled = !ixSelect.value && !lpSelect.value;
+});
+
+lpSelect.addEventListener('change', () => {
+  if (lpSelect.value) ixSelect.value = '';
+  searchBtn.disabled = !ixSelect.value && !lpSelect.value;
 });
 
 radiusSlider.addEventListener('input', () => {
@@ -165,10 +187,12 @@ searchBtn.addEventListener('click', runSearch);
 
 // ─── Search ─────────────────────────────────────────────────────
 async function runSearch() {
-  const ixInfo = JSON.parse(ixSelect.value);
+  const activeSelect = ixSelect.value ? ixSelect : lpSelect;
+  const locationInfo = JSON.parse(activeSelect.value);
   const radiusKm = parseInt(radiusSlider.value);
   const radiusM = radiusKm * 1000;
   const country = countrySelect.value;
+  const searchLabel = locationInfo.name;
 
   // UI state
   loading.classList.remove('hidden');
@@ -195,14 +219,14 @@ async function runSearch() {
   try {
     // Fetch data in parallel
     const [propertiesResp, commercialResp, datacentersResp, portalLinks] = await Promise.all([
-      fetchJSON(`/api/properties?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}&country=${country}`),
-      fetchJSON(`/api/commercial?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}&country=${country}`),
-      fetchJSON(`/api/datacenters?lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`),
-      fetchJSON(`/api/portal-links?country=${country}&lat=${ixInfo.lat}&lng=${ixInfo.lng}&radius=${radiusM}`)
+      fetchJSON(`/api/properties?lat=${locationInfo.lat}&lng=${locationInfo.lng}&radius=${radiusM}&country=${country}`),
+      fetchJSON(`/api/commercial?lat=${locationInfo.lat}&lng=${locationInfo.lng}&radius=${radiusM}&country=${country}`),
+      fetchJSON(`/api/datacenters?lat=${locationInfo.lat}&lng=${locationInfo.lng}&radius=${radiusM}`),
+      fetchJSON(`/api/portal-links?country=${country}&lat=${locationInfo.lat}&lng=${locationInfo.lng}&radius=${radiusM}`)
     ]);
 
     // Draw search radius
-    searchCircle = L.circle([ixInfo.lat, ixInfo.lng], {
+    searchCircle = L.circle([locationInfo.lat, locationInfo.lng], {
       radius: radiusM,
       color: '#e94560',
       fillColor: '#e94560',
@@ -211,10 +235,15 @@ async function runSearch() {
       weight: 2
     }).addTo(map);
 
-    // IX marker
+    // Search center marker
     layers.ix = L.layerGroup();
-    L.marker([ixInfo.lat, ixInfo.lng], { icon: ICONS.ix() })
-      .bindPopup(ixPopup(ixInfo))
+    const isLandingPoint = !!lpSelect.value;
+    const centerIcon = isLandingPoint ? ICONS.landing() : ICONS.ix();
+    const centerPopup = isLandingPoint
+      ? `<b>🔵 ${searchLabel}</b><br>Subsea cable landing point`
+      : ixPopup(locationInfo);
+    L.marker([locationInfo.lat, locationInfo.lng], { icon: centerIcon })
+      .bindPopup(centerPopup)
       .addTo(layers.ix);
     layers.ix.addTo(map);
 
