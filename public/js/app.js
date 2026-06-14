@@ -30,6 +30,22 @@ const ICONS = {
   ix:         () => makeCircleIcon('#33cc66', 13)
 };
 
+// ─── Score Helpers ──────────────────────────────────────────────
+function tierBadge(score) {
+  if (!score) return '';
+  const { tier, total_score, tier_label } = score;
+  const colors = { prime:'#00ff88', high:'#33cc66', medium:'#ffcc00', low:'#ff8c00', marginal:'#ff4444' };
+  const color = colors[tier] || '#888';
+  return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;background:${color}22;border:1px solid ${color};color:${color};font-size:0.78rem;font-weight:700;">${tier_label} — ${total_score}/100</span>`;
+}
+function scoreBreakdown(score) {
+  if (!score || !score.breakdown) return '';
+  const b = score.breakdown;
+  return `<div style="font-size:0.7rem;color:#aaa;margin-top:4px;line-height:1.5">
+    IX: ${b.ix_connectivity.score}/${b.ix_connectivity.max} · Power: ${b.power_potential.score}/${b.power_potential.max} · Size: ${b.site_size.score}/${b.site_size.max} · DC: ${b.dc_ecosystem.score}/${b.dc_ecosystem.max} · Fiber: ${b.fiber_proximity.score}/${b.fiber_proximity.max} · Avail: ${b.availability.score}/${b.availability.max}
+  </div>`;
+}
+
 // ─── Popup Builders ─────────────────────────────────────────────
 function propertyPopup(p) {
   const badge = p.for_sale
@@ -41,6 +57,7 @@ function propertyPopup(p) {
   const listing = p.for_sale && p.listing_url
     ? `<div style="margin-top:6px"><a href="${p.listing_url}" target="_blank" rel="noopener" style="color:#ff6666;font-weight:600;font-size:0.85rem;text-decoration:none;">🔗 View Listing →</a></div>`
     : '';
+  const scoreLine = p.score ? `<div style="margin-top:6px">${tierBadge(p.score)}</div>${scoreBreakdown(p.score)}` : '';
   return `
     <div class="popup-title">${p.name}</div>
     <div class="popup-meta">
@@ -50,7 +67,7 @@ function propertyPopup(p) {
       🏭 ${p.sector}<br>
       📏 ${p.distance_km} km from IX
     </div>
-    ${badge}${listing}
+    ${badge}${listing}${scoreLine}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
 }
@@ -62,6 +79,7 @@ function commercialPopup(p) {
   const listing = p.for_sale && p.listing_url
     ? `<div style="margin-top:6px"><a href="${p.listing_url}" target="_blank" rel="noopener" style="color:#aa44ff;font-weight:600;font-size:0.85rem;text-decoration:none;">🔗 View Listing →</a></div>`
     : '';
+  const scoreLine = p.score ? `<div style="margin-top:6px">${tierBadge(p.score)}</div>${scoreBreakdown(p.score)}` : '';
   return `
     <div class="popup-title">${p.name}</div>
     <div class="popup-meta">
@@ -71,7 +89,7 @@ function commercialPopup(p) {
       🏢 ${p.sector}<br>
       📏 ${p.distance_km} km from IX
     </div>
-    ${badge}${listing}
+    ${badge}${listing}${scoreLine}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
 }
@@ -244,14 +262,14 @@ async function runSearch() {
     document.getElementById('stat-datacenters').textContent = datacentersResp.length;
     resultsSummary.classList.remove('hidden');
 
-    // Property cards — industrial first, then commercial
+    // Property cards — industrial first, sorted by score (highest first)
     propertiesResp
-      .sort((a, b) => a.distance_km - b.distance_km)
+      .sort((a, b) => (b.score?.total_score || 0) - (a.score?.total_score || 0))
       .forEach(p => {
         const card = document.createElement('div');
         card.className = `property-card ${p.for_sale ? 'for-sale' : 'not-for-sale'}`;
         card.innerHTML = `
-          <h4>${p.name}</h4>
+          <h4>${p.name} ${p.score ? tierBadge(p.score) : ''}</h4>
           <div class="meta">
             <span>📍 ${p.city}</span>
             <span>📐 ${p.area_m2.toLocaleString()} m²</span>
@@ -275,12 +293,12 @@ async function runSearch() {
       propertyList.appendChild(divider);
 
       commercialResp
-        .sort((a, b) => a.distance_km - b.distance_km)
+        .sort((a, b) => (b.score?.total_score || 0) - (a.score?.total_score || 0))
         .forEach(p => {
           const card = document.createElement('div');
           card.className = `property-card ${p.for_sale ? 'comm-for-sale' : 'comm-not-for-sale'}`;
           card.innerHTML = `
-            <h4>${p.name}</h4>
+            <h4>${p.name} ${p.score ? tierBadge(p.score) : ''}</h4>
             <div class="meta">
               <span>📍 ${p.city}</span>
               <span>📐 ${p.area_m2.toLocaleString()} m²</span>

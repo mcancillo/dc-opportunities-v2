@@ -5,6 +5,22 @@ const overpass = require('../services/overpass');
 const properties = require('../services/properties');
 const commercial = require('../services/commercial');
 const cables = require('../services/cables');
+const { scoreProperty } = require('../services/scoring');
+
+// Cached context for scoring (populated lazily)
+let scoringContext = null;
+async function getScoringContext() {
+  if (scoringContext) return scoringContext;
+  const [ixLocations, landingPoints] = await Promise.all([
+    peeringdb.getIXLocations(),
+    Promise.resolve(cables.getLandingPoints())
+  ]);
+  // Fiber routes cached from previous calls (may be empty on first call)
+  let fiberRoutes = [];
+  try { fiberRoutes = await cables.getFiberBackbone(); } catch (e) { /* ok */ }
+  scoringContext = { ixLocations, landingPoints, fiberRoutes, datacenters: [] };
+  return scoringContext;
+}
 
 // Get IX locations for supported countries
 router.get('/ix-locations', async (req, res) => {
@@ -42,28 +58,50 @@ router.get('/datacenters', async (req, res) => {
   }
 });
 
-// Get property opportunities near a point
+// Get property opportunities near a point (with DC suitability scores)
 router.get('/properties', async (req, res) => {
   try {
     const { lat, lng, radius } = req.query;
-    const data = properties.getProperties(
-      parseFloat(lat), parseFloat(lng), parseFloat(radius) || 50000
-    );
-    res.json(data);
+    const pLat = parseFloat(lat), pLng = parseFloat(lng), pRadius = parseFloat(radius) || 50000;
+    const data = properties.getProperties(pLat, pLng, pRadius);
+
+    // Score each property
+    const ctx = await getScoringContext();
+    // Get nearby DCs for ecosystem scoring
+    let datacenters = [];
+    try { datacenters = await overpass.getDatacenters(pLat, pLng, Math.max(pRadius, 50000)); } catch (e) { /* ok */ }
+    const fullCtx = { ...ctx, datacenters };
+
+    const scored = data.map(p => ({
+      ...p,
+      score: scoreProperty(p, fullCtx, 'hyperscale')
+    }));
+
+    res.json(scored);
   } catch (err) {
     console.error('Properties error:', err.message);
     res.status(500).json({ error: 'Failed to fetch properties' });
   }
 });
 
-// Get commercial real estate near a point (≥3000 m², ≥10 kW)
+// Get commercial real estate near a point (with DC suitability scores)
 router.get('/commercial', async (req, res) => {
   try {
     const { lat, lng, radius } = req.query;
-    const data = commercial.getCommercial(
-      parseFloat(lat), parseFloat(lng), parseFloat(radius) || 50000
-    );
-    res.json(data);
+    const pLat = parseFloat(lat), pLng = parseFloat(lng), pRadius = parseFloat(radius) || 50000;
+    const data = commercial.getCommercial(pLat, pLng, pRadius);
+
+    const ctx = await getScoringContext();
+    let datacenters = [];
+    try { datacenters = await overpass.getDatacenters(pLat, pLng, Math.max(pRadius, 50000)); } catch (e) { /* ok */ }
+    const fullCtx = { ...ctx, datacenters };
+
+    const scored = data.map(p => ({
+      ...p,
+      score: scoreProperty(p, fullCtx, 'edge')
+    }));
+
+    res.json(scored);
   } catch (err) {
     console.error('Commercial error:', err.message);
     res.status(500).json({ error: 'Failed to fetch commercial properties' });

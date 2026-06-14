@@ -54,6 +54,7 @@ async function getIXLocations() {
         city: ix.city,
         country: ix.country,
         website: ix.website,
+        net_count: ix.net_count || 0,
         lat: parseFloat(lat) || null,
         lng: parseFloat(lng) || null
       };
