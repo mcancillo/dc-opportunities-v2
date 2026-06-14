@@ -41,6 +41,11 @@ async function getIXLocations() {
       'User-Agent': 'DC-Opportunities-v2/1.0 (datacenter-site-analysis)'
     }
   });
+  if (resp.status === 429) {
+    console.warn('PeeringDB rate-limited (429) — returning empty IX list');
+    ixMemoryCache = [];
+    return [];
+  }
   if (!resp.ok) throw new Error(`PeeringDB returned ${resp.status}`);
   const json = await resp.json();
 
@@ -84,6 +89,10 @@ async function getIXFacilities(ixId) {
   const resp = await fetch(url, {
     headers: { 'Accept': 'application/json' }
   });
+  if (resp.status === 429) {
+    console.warn('PeeringDB rate-limited (429) on facilities — returning empty');
+    return [];
+  }
   if (!resp.ok) throw new Error(`PeeringDB returned ${resp.status}`);
   const json = await resp.json();
 
