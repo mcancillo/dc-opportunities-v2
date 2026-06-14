@@ -1,6 +1,7 @@
-// DC Suitability Scoring Algorithm
+// DC Suitability Scoring Algorithm v2
 // Scores properties 0-100 for datacenter potential
 // Two profiles: HYPERSCALE (industrial) and EDGE (commercial)
+// 8 factors: IX, Power, Size, Ecosystem, Fiber, Grid Future, Climate/Water, Availability
 
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -11,35 +12,30 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// ─── Factor: IX Connectivity (30 pts max) ──────────────────────
-// Distance to nearest IX, weighted by IX quality (net_count)
+// ─── Factor 1: IX Connectivity (25 pts max) ────────────────────
 function scoreIXConnectivity(lat, lng, ixLocations) {
   if (!ixLocations.length) return { score: 0, detail: 'No IX data' };
 
-  let bestScore = 0;
-  let bestIX = null;
-  let bestDist = Infinity;
+  let bestScore = 0, bestIX = null, bestDist = Infinity;
 
   for (const ix of ixLocations) {
     const dist = haversineKm(lat, lng, ix.lat, ix.lng);
     const netCount = ix.net_count || 0;
 
-    // Distance score (0-20)
     let distScore;
-    if (dist <= 10)       distScore = 20;
-    else if (dist <= 25)  distScore = 17;
-    else if (dist <= 50)  distScore = 14;
-    else if (dist <= 100) distScore = 10;
-    else if (dist <= 200) distScore = 5;
+    if (dist <= 10)       distScore = 17;
+    else if (dist <= 25)  distScore = 14;
+    else if (dist <= 50)  distScore = 11;
+    else if (dist <= 100) distScore = 8;
+    else if (dist <= 200) distScore = 4;
     else                  distScore = 0;
 
-    // IX quality bonus (0-10): based on number of connected networks
     let qualityBonus;
-    if (netCount >= 500)      qualityBonus = 10;
-    else if (netCount >= 200) qualityBonus = 8;
-    else if (netCount >= 100) qualityBonus = 6;
-    else if (netCount >= 50)  qualityBonus = 4;
-    else if (netCount >= 10)  qualityBonus = 2;
+    if (netCount >= 500)      qualityBonus = 8;
+    else if (netCount >= 200) qualityBonus = 6;
+    else if (netCount >= 100) qualityBonus = 5;
+    else if (netCount >= 50)  qualityBonus = 3;
+    else if (netCount >= 10)  qualityBonus = 1;
     else                      qualityBonus = 0;
 
     const total = distScore + qualityBonus;
@@ -51,7 +47,7 @@ function scoreIXConnectivity(lat, lng, ixLocations) {
   }
 
   return {
-    score: Math.min(bestScore, 30),
+    score: Math.min(bestScore, 25),
     nearest_ix: bestIX ? bestIX.name : null,
     distance_km: Math.round(bestDist),
     detail: bestIX
@@ -60,67 +56,66 @@ function scoreIXConnectivity(lat, lng, ixLocations) {
   };
 }
 
-// ─── Factor: Power Potential (25 pts max) ──────────────────────
+// ─── Factor 2: Power Potential (20 pts max) ─────────────────────
 function scorePowerPotential(property, profile) {
   if (profile === 'hyperscale') {
     const mw = property.estimated_power_mw || 0;
     let score;
-    if (mw >= 200)      score = 25;
-    else if (mw >= 100) score = 22;
-    else if (mw >= 50)  score = 18;
-    else if (mw >= 20)  score = 14;
-    else if (mw >= 10)  score = 10;
+    if (mw >= 200)      score = 20;
+    else if (mw >= 100) score = 17;
+    else if (mw >= 50)  score = 14;
+    else if (mw >= 20)  score = 11;
+    else if (mw >= 10)  score = 8;
     else                score = 3;
     return { score, detail: `~${mw} MW est. power potential` };
   } else {
     const kw = property.estimated_power_kw || 0;
     let score;
-    if (kw >= 2000)     score = 25;
-    else if (kw >= 1000) score = 20;
-    else if (kw >= 500) score = 16;
-    else if (kw >= 200) score = 12;
-    else if (kw >= 100) score = 8;
-    else if (kw >= 10)  score = 4;
+    if (kw >= 2000)     score = 20;
+    else if (kw >= 1000) score = 17;
+    else if (kw >= 500) score = 13;
+    else if (kw >= 200) score = 10;
+    else if (kw >= 100) score = 6;
+    else if (kw >= 10)  score = 3;
     else                score = 1;
     return { score, detail: `~${kw} kW est. power potential` };
   }
 }
 
-// ─── Factor: Site Size (15 pts max) ────────────────────────────
+// ─── Factor 3: Site Size (10 pts max) ──────────────────────────
 function scoreSiteSize(area_m2, profile) {
   let score;
   if (profile === 'hyperscale') {
-    if (area_m2 >= 200000)     score = 15;
-    else if (area_m2 >= 100000) score = 13;
-    else if (area_m2 >= 50000)  score = 11;
-    else if (area_m2 >= 20000)  score = 9;
-    else if (area_m2 >= 10000)  score = 7;
-    else if (area_m2 >= 5000)   score = 5;
-    else                        score = 2;
+    if (area_m2 >= 200000)     score = 10;
+    else if (area_m2 >= 100000) score = 9;
+    else if (area_m2 >= 50000)  score = 8;
+    else if (area_m2 >= 20000)  score = 6;
+    else if (area_m2 >= 10000)  score = 5;
+    else if (area_m2 >= 5000)   score = 3;
+    else                        score = 1;
   } else {
-    if (area_m2 >= 50000)      score = 15;
-    else if (area_m2 >= 20000) score = 13;
-    else if (area_m2 >= 10000) score = 11;
-    else if (area_m2 >= 5000)  score = 9;
-    else if (area_m2 >= 3000)  score = 7;
-    else                       score = 3;
+    if (area_m2 >= 50000)      score = 10;
+    else if (area_m2 >= 20000) score = 9;
+    else if (area_m2 >= 10000) score = 8;
+    else if (area_m2 >= 5000)  score = 6;
+    else if (area_m2 >= 3000)  score = 4;
+    else                       score = 2;
   }
   return { score, detail: `${area_m2.toLocaleString()} m²` };
 }
 
-// ─── Factor: DC Ecosystem (15 pts max) ─────────────────────────
-// Existing DCs nearby = positive (connectivity, talent, customers)
+// ─── Factor 4: DC Ecosystem (10 pts max) ───────────────────────
 function scoreDCEcosystem(lat, lng, datacenters) {
   const within25 = datacenters.filter(dc => haversineKm(lat, lng, dc.lat, dc.lng) <= 25).length;
   const within50 = datacenters.filter(dc => haversineKm(lat, lng, dc.lat, dc.lng) <= 50).length;
 
   let score;
-  if (within25 >= 15)     score = 15;
-  else if (within25 >= 8) score = 13;
-  else if (within25 >= 4) score = 10;
-  else if (within25 >= 2) score = 7;
-  else if (within50 >= 3) score = 5;
-  else if (within50 >= 1) score = 3;
+  if (within25 >= 15)     score = 10;
+  else if (within25 >= 8) score = 9;
+  else if (within25 >= 4) score = 7;
+  else if (within25 >= 2) score = 5;
+  else if (within50 >= 3) score = 3;
+  else if (within50 >= 1) score = 2;
   else                    score = 0;
 
   return {
@@ -131,20 +126,18 @@ function scoreDCEcosystem(lat, lng, datacenters) {
   };
 }
 
-// ─── Factor: Fiber & Cable Proximity (10 pts max) ──────────────
+// ─── Factor 5: Fiber & Cable Proximity (8 pts max) ─────────────
 function scoreFiberProximity(lat, lng, landingPoints, fiberRoutes) {
   let score = 0;
   let details = [];
 
-  // Subsea cable landing proximity (0-5)
   if (landingPoints.length) {
     const nearestLP = Math.min(...landingPoints.map(lp => haversineKm(lat, lng, lp.lat, lp.lng)));
-    if (nearestLP <= 25)       { score += 5; details.push(`${Math.round(nearestLP)}km to cable landing`); }
-    else if (nearestLP <= 50)  { score += 3; details.push(`${Math.round(nearestLP)}km to cable landing`); }
+    if (nearestLP <= 25)       { score += 4; details.push(`${Math.round(nearestLP)}km to cable landing`); }
+    else if (nearestLP <= 50)  { score += 2; details.push(`${Math.round(nearestLP)}km to cable landing`); }
     else if (nearestLP <= 100) { score += 1; details.push(`${Math.round(nearestLP)}km to cable landing`); }
   }
 
-  // Fiber route diversity (0-5): count distinct routes within 10km
   if (fiberRoutes.length) {
     let nearbyRoutes = 0;
     for (const route of fiberRoutes) {
@@ -155,45 +148,150 @@ function scoreFiberProximity(lat, lng, landingPoints, fiberRoutes) {
       if (minDist <= 10) nearbyRoutes++;
       if (nearbyRoutes >= 10) break;
     }
-    if (nearbyRoutes >= 8)      { score += 5; }
-    else if (nearbyRoutes >= 4) { score += 3; }
+    if (nearbyRoutes >= 8)      { score += 4; }
+    else if (nearbyRoutes >= 4) { score += 2; }
     else if (nearbyRoutes >= 1) { score += 1; }
     details.push(`${nearbyRoutes} fiber routes within 10km`);
   }
 
-  return { score, detail: details.join(', ') || 'No fiber data' };
+  return { score: Math.min(score, 8), detail: details.join(', ') || 'No fiber data' };
 }
 
-// ─── Factor: Availability (5 pts max) ──────────────────────────
-function scoreAvailability(property) {
-  if (property.for_sale) {
-    return { score: 5, detail: 'For sale — immediately actionable' };
+// ─── Factor 6: Grid Expansion & Future Power (12 pts max) ──────
+// Scores proximity to planned grid upgrades, renewable energy zones,
+// and existing HV substations — forward-looking indicator
+function scoreGridFuture(lat, lng, country, context) {
+  let score = 0;
+  let details = [];
+  const gridExpansion = context.gridExpansion || [];
+  const renewableZones = context.renewableZones || [];
+
+  // Planned grid expansions (substations, HV lines) — 0-7 pts
+  if (gridExpansion.length) {
+    let nearestProject = Infinity;
+    let nearestName = '';
+    for (const proj of gridExpansion) {
+      if (proj.country && proj.country !== country) continue;
+      const dist = haversineKm(lat, lng, proj.lat, proj.lng);
+      if (dist < nearestProject) { nearestProject = dist; nearestName = proj.name; }
+    }
+    if (nearestProject <= 10)      { score += 7; details.push(`${Math.round(nearestProject)}km to ${nearestName}`); }
+    else if (nearestProject <= 25) { score += 5; details.push(`${Math.round(nearestProject)}km to ${nearestName}`); }
+    else if (nearestProject <= 50) { score += 3; details.push(`${Math.round(nearestProject)}km to ${nearestName}`); }
+    else if (nearestProject <= 100){ score += 1; details.push(`${Math.round(nearestProject)}km to grid project`); }
   }
-  return { score: 0, detail: 'Not listed for sale' };
+
+  // Renewable energy zones (wind/solar farms) — 0-5 pts
+  // Proximity to planned renewables = future cheap/green power
+  if (renewableZones.length) {
+    const nearRenewables = renewableZones.filter(rz => {
+      if (rz.country && rz.country !== country) return false;
+      return haversineKm(lat, lng, rz.lat, rz.lng) <= 50;
+    }).length;
+    if (nearRenewables >= 5)      { score += 5; details.push(`${nearRenewables} renewable projects nearby`); }
+    else if (nearRenewables >= 3) { score += 3; details.push(`${nearRenewables} renewable projects nearby`); }
+    else if (nearRenewables >= 1) { score += 2; details.push(`${nearRenewables} renewable project nearby`); }
+  }
+
+  // Country-level grid capacity bonus (base infrastructure quality)
+  const gridQuality = { NL: 2, DE: 2, ES: 1, PL: 0 };
+  if (!gridExpansion.length && !renewableZones.length) {
+    score = gridQuality[country] || 0;
+    details.push(score > 0 ? 'Country base grid quality' : 'Limited grid data');
+  }
+
+  return { score: Math.min(score, 12), detail: details.join('; ') || 'No grid expansion data' };
+}
+
+// ─── Factor 7: Climate & Cooling (10 pts max) ──────────────────
+// Cooler climate = lower PUE = lower operating cost
+// Proximity to water = cooling option
+function scoreClimateCooling(lat, lng, country) {
+  let score = 0;
+  let details = [];
+
+  // Latitude-based temperature proxy (higher lat = cooler = better for DCs)
+  // European DC sweet spot: 50-60°N (NL, northern DE, PL)
+  if (lat >= 55)      { score += 5; details.push('Cold climate — excellent PUE'); }
+  else if (lat >= 52) { score += 4; details.push('Cool climate — good PUE'); }
+  else if (lat >= 48) { score += 3; details.push('Moderate climate'); }
+  else if (lat >= 43) { score += 2; details.push('Warm climate — higher cooling cost'); }
+  else                { score += 1; details.push('Hot climate — high cooling cost'); }
+
+  // Coastal / water proximity bonus (crude: distance to nearest coast)
+  // NL is almost entirely coastal; northern DE/PL coast; ES has both coast and interior
+  const coastalProximity = estimateCoastalProximity(lat, lng, country);
+  if (coastalProximity <= 15)      { score += 5; details.push('Coastal — water cooling available'); }
+  else if (coastalProximity <= 30) { score += 4; details.push('Near coast/river — cooling potential'); }
+  else if (coastalProximity <= 60) { score += 3; details.push('Moderate water access'); }
+  else if (coastalProximity <= 100){ score += 2; details.push('Limited water cooling access'); }
+  else                             { score += 1; details.push('Inland — air cooling only'); }
+
+  return { score: Math.min(score, 10), detail: details.join('; ') };
+}
+
+// Crude coastal proximity estimate using known coastlines
+function estimateCoastalProximity(lat, lng, country) {
+  // Key coastal reference points per country
+  const coastPoints = {
+    NL: [[52.95, 4.75], [52.50, 4.55], [51.92, 4.48], [53.32, 5.25], [53.45, 6.85]],
+    DE: [[54.30, 10.10], [54.00, 8.80], [53.55, 8.55], [54.32, 13.10], [54.18, 12.10]],
+    PL: [[54.35, 18.65], [54.45, 16.87], [54.18, 15.60], [54.50, 17.05]],
+    ES: [[43.37, -8.40], [43.26, -2.93], [41.38, 2.16], [39.47, -0.37], [36.72, -4.42], [37.37, -5.97]]
+  };
+  const points = coastPoints[country] || [];
+  if (!points.length) return 200;
+  return Math.min(...points.map(([clat, clng]) => haversineKm(lat, lng, clat, clng)));
+}
+
+// ─── Factor 8: Availability & Market (5 pts max) ──────────────
+function scoreAvailability(property) {
+  let score = 0;
+  let detail;
+
+  if (property.for_sale) {
+    score = 5;
+    detail = 'For sale — immediately actionable';
+  } else if (property.listing_url) {
+    score = 2;
+    detail = 'Not for sale — but listing link available';
+  } else {
+    score = 0;
+    detail = 'Not listed for sale';
+  }
+
+  return { score, detail };
 }
 
 // ─── Main Scoring Function ─────────────────────────────────────
+// 8 factors, 100 pts total:
+//   IX Connectivity:  25  |  Power Potential:  20  |  Grid Future: 12
+//   Site Size:        10  |  DC Ecosystem:     10  |  Climate:     10
+//   Fiber Proximity:   8  |  Availability:      5
 function scoreProperty(property, context, profile = 'hyperscale') {
-  const { ixLocations, datacenters, landingPoints, fiberRoutes } = context;
+  const { ixLocations = [], datacenters = [], landingPoints = [], fiberRoutes = [] } = context;
 
   const ix = scoreIXConnectivity(property.lat, property.lng, ixLocations);
   const power = scorePowerPotential(property, profile);
   const size = scoreSiteSize(property.area_m2, profile);
   const ecosystem = scoreDCEcosystem(property.lat, property.lng, datacenters);
   const fiber = scoreFiberProximity(property.lat, property.lng, landingPoints, fiberRoutes);
+  const gridFuture = scoreGridFuture(property.lat, property.lng, property.country, context);
+  const climate = scoreClimateCooling(property.lat, property.lng, property.country);
   const availability = scoreAvailability(property);
 
-  const totalScore = ix.score + power.score + size.score + ecosystem.score + fiber.score + availability.score;
+  const totalScore = ix.score + power.score + size.score + ecosystem.score +
+    fiber.score + gridFuture.score + climate.score + availability.score;
 
   // Gating: top tiers require minimum power and connectivity scores
   let tier, tierLabel;
-  if (totalScore >= 90 && power.score >= 20 && ix.score >= 15) {
+  if (totalScore >= 85 && power.score >= 16 && ix.score >= 12) {
     tier = 'prime'; tierLabel = '⭐ Prime';
-  } else if (totalScore >= 70 && power.score >= 14 && ix.score >= 10) {
+  } else if (totalScore >= 65 && power.score >= 11 && ix.score >= 8) {
     tier = 'high'; tierLabel = '🟢 High';
-  } else if (totalScore >= 50) {
+  } else if (totalScore >= 45) {
     tier = 'medium'; tierLabel = '🟡 Medium';
-  } else if (totalScore >= 30) {
+  } else if (totalScore >= 25) {
     tier = 'low'; tierLabel = '🟠 Low';
   } else {
     tier = 'marginal'; tierLabel = '🔴 Marginal';
@@ -205,11 +303,13 @@ function scoreProperty(property, context, profile = 'hyperscale') {
     tier_label: tierLabel,
     profile,
     breakdown: {
-      ix_connectivity: { max: 30, ...ix },
-      power_potential: { max: 25, ...power },
-      site_size: { max: 15, ...size },
-      dc_ecosystem: { max: 15, ...ecosystem },
-      fiber_proximity: { max: 10, ...fiber },
+      ix_connectivity: { max: 25, ...ix },
+      power_potential: { max: 20, ...power },
+      grid_future: { max: 12, ...gridFuture },
+      site_size: { max: 10, ...size },
+      dc_ecosystem: { max: 10, ...ecosystem },
+      climate_cooling: { max: 10, ...climate },
+      fiber_proximity: { max: 8, ...fiber },
       availability: { max: 5, ...availability }
     }
   };

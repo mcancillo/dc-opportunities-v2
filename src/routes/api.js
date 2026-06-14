@@ -8,6 +8,14 @@ const cables = require('../services/cables');
 const { scoreProperty } = require('../services/scoring');
 const liveListings = require('../services/live-listings');
 
+// Load grid expansion and renewable zones data
+const path = require('path');
+const fs = require('fs');
+let gridExpansion = [];
+let renewableZones = [];
+try { gridExpansion = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/grid-expansion.json'), 'utf8')); } catch (e) { console.warn('Grid expansion data not loaded:', e.message); }
+try { renewableZones = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/renewable-zones.json'), 'utf8')); } catch (e) { console.warn('Renewable zones data not loaded:', e.message); }
+
 // Cached context for scoring (populated lazily)
 let scoringContext = null;
 async function getScoringContext() {
@@ -18,7 +26,7 @@ async function getScoringContext() {
   try { landingPoints = cables.getLandingPoints(); } catch (e) { /* ok */ }
   let fiberRoutes = [];
   try { fiberRoutes = await cables.getFiberBackbone(); } catch (e) { /* ok */ }
-  scoringContext = { ixLocations, landingPoints, fiberRoutes, datacenters: [] };
+  scoringContext = { ixLocations, landingPoints, fiberRoutes, datacenters: [], gridExpansion, renewableZones };
   return scoringContext;
 }
 
@@ -201,4 +209,40 @@ router.get('/sources', (req, res) => {
   res.json(sources);
 });
 
+// ─── Credential Management ─────────────────────────────────────
+// In-memory credential store (not persisted server-side — comes from browser)
+let apiCredentials = {};
+
+router.post('/credentials', (req, res) => {
+  apiCredentials = req.body || {};
+  const count = Object.keys(apiCredentials).filter(k => apiCredentials[k]).length;
+  console.log(`[creds] ${count} API credentials configured`);
+  res.json({ ok: true, count });
+});
+
+router.get('/credentials/status', (req, res) => {
+  const configured = Object.keys(apiCredentials).filter(k => apiCredentials[k]);
+  res.json({ configured });
+});
+
+// Test a credential
+router.get('/test-credential', async (req, res) => {
+  const { type, token } = req.query;
+  try {
+    if (type === 'entsoe' && token) {
+      const fetch = require('node-fetch');
+      const r = await fetch(`https://web-api.tp.entsoe.eu/api?securityToken=${token}&documentType=A11&processType=A01&outBiddingZone_Domain=10YNL----------L&periodStart=202401010000&periodEnd=202401020000`, { timeout: 10000 });
+      res.json({ ok: r.ok, status: r.status });
+    } else {
+      res.json({ ok: false, error: 'Unknown credential type' });
+    }
+  } catch (err) {
+    res.json({ ok: false, error: err.message });
+  }
+});
+
+// Expose credentials to other services
+function getCredential(key) { return apiCredentials[key] || null; }
+
 module.exports = router;
+module.exports.getCredential = getCredential;

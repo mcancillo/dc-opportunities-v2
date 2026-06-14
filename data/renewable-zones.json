@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Borssele Offshore Wind Zone",
+    "country": "NL",
+    "lat": 51.60,
+    "lng": 3.40,
+    "type": "offshore_wind",
+    "capacity_mw": 1400,
+    "description": "Operational offshore wind farm zone in North Sea (Zeeland)"
+  },
+  {
+    "name": "Hollandse Kust Zuid Offshore Wind",
+    "country": "NL",
+    "lat": 52.30,
+    "lng": 4.10,
+    "type": "offshore_wind",
+    "capacity_mw": 1500,
+    "description": "Vattenfall offshore wind farm off South Holland coast"
+  },
+  {
+    "name": "Hollandse Kust Noord Offshore Wind",
+    "country": "NL",
+    "lat": 52.55,
+    "lng": 4.30,
+    "type": "offshore_wind",
+    "capacity_mw": 759,
+    "description": "CrossWind offshore wind farm off North Holland"
+  },
+  {
+    "name": "IJmuiden Ver Offshore Wind",
+    "country": "NL",
+    "lat": 52.70,
+    "lng": 3.60,
+    "type": "offshore_wind",
+    "capacity_mw": 4000,
+    "description": "Planned 4GW offshore wind zone, largest NL project"
+  },
+  {
+    "name": "Flevoland Wind Cluster",
+    "country": "NL",
+    "lat": 52.45,
+    "lng": 5.50,
+    "type": "onshore_wind",
+    "capacity_mw": 1400,
+    "description": "Major onshore wind repowering in Flevoland"
+  },
+  {
+    "name": "Wieringermeer Wind Farm",
+    "country": "NL",
+    "lat": 52.80,
+    "lng": 5.00,
+    "type": "onshore_wind",
+    "capacity_mw": 300,
+    "description": "Vattenfall onshore wind cluster, North Holland"
+  },
+  {
+    "name": "Zeeland Solar + Wind Corridor",
+    "country": "NL",
+    "lat": 51.50,
+    "lng": 3.60,
+    "type": "mixed",
+    "capacity_mw": 800,
+    "description": "Combined wind + solar projects in Zeeland province"
+  },
+  {
+    "name": "Energiepark Brandenburg-Lausitz",
+    "country": "DE",
+    "lat": 51.75,
+    "lng": 14.33,
+    "type": "mixed",
+    "capacity_mw": 2000,
+    "description": "Large-scale renewable zone in former coal region Lausitz"
+  },
+  {
+    "name": "Schleswig-Holstein Wind Zone North",
+    "country": "DE",
+    "lat": 54.50,
+    "lng": 9.50,
+    "type": "onshore_wind",
+    "capacity_mw": 8000,
+    "description": "Germany's highest onshore wind density region"
+  },
+  {
+    "name": "North Sea German Bight Offshore Wind",
+    "country": "DE",
+    "lat": 54.10,
+    "lng": 6.60,
+    "type": "offshore_wind",
+    "capacity_mw": 8000,
+    "description": "Multiple offshore wind farms (Alpha Ventus, BARD, etc.)"
+  },
+  {
+    "name": "Baltic Sea Offshore Wind Zone",
+    "country": "DE",
+    "lat": 54.60,
+    "lng": 12.50,
+    "type": "offshore_wind",
+    "capacity_mw": 3000,
+    "description": "Offshore wind cluster in Baltic Sea (Mecklenburg-Vorpommern)"
+  },
+  {
+    "name": "Saxony-Anhalt Solar Belt",
+    "country": "DE",
+    "lat": 51.90,
+    "lng": 11.70,
+    "type": "solar",
+    "capacity_mw": 2500,
+    "description": "Large solar PV concentration on former military/mining lands"
+  },
+  {
+    "name": "Brandenburg Solar Parks",
+    "country": "DE",
+    "lat": 52.40,
+    "lng": 13.80,
+    "type": "solar",
+    "capacity_mw": 3000,
+    "description": "Germany's largest solar PV installed base around Berlin"
+  },
+  {
+    "name": "NRW Industrial Wind Repowering",
+    "country": "DE",
+    "lat": 51.95,
+    "lng": 7.60,
+    "type": "onshore_wind",
+    "capacity_mw": 1500,
+    "description": "Wind repowering program in North Rhine-Westphalia"
+  },
+  {
+    "name": "Pomerania Offshore Wind Zone",
+    "country": "PL",
+    "lat": 55.00,
+    "lng": 17.50,
+    "type": "offshore_wind",
+    "capacity_mw": 5900,
+    "description": "Poland's largest planned offshore wind zone in Baltic Sea"
+  },
+  {
+    "name": "West Pomerania Onshore Wind Cluster",
+    "country": "PL",
+    "lat": 54.00,
+    "lng": 15.50,
+    "type": "onshore_wind",
+    "capacity_mw": 1200,
+    "description": "High wind resource zone near German border"
+  },
+  {
+    "name": "Greater Poland Wind Belt",
+    "country": "PL",
+    "lat": 52.40,
+    "lng": 16.90,
+    "type": "onshore_wind",
+    "capacity_mw": 1800,
+    "description": "Dense onshore wind development in Wielkopolska"
+  },
+  {
+    "name": "Łódź Region Solar Parks",
+    "country": "PL",
+    "lat": 51.75,
+    "lng": 19.45,
+    "type": "solar",
+    "capacity_mw": 600,
+    "description": "Growing solar PV cluster in central Poland"
+  },
+  {
+    "name": "Extremadura Solar Mega-Zone",
+    "country": "ES",
+    "lat": 38.90,
+    "lng": -6.30,
+    "type": "solar",
+    "capacity_mw": 8000,
+    "description": "Europe's largest solar concentration zone (Badajoz/Cáceres)"
+  },
+  {
+    "name": "Castilla-La Mancha Solar Belt",
+    "country": "ES",
+    "lat": 39.50,
+    "lng": -2.80,
+    "type": "solar",
+    "capacity_mw": 5000,
+    "description": "Massive solar PV corridor (Cuenca/Toledo/Ciudad Real)"
+  },
+  {
+    "name": "Aragón Renewable Corridor",
+    "country": "ES",
+    "lat": 41.40,
+    "lng": -0.88,
+    "type": "mixed",
+    "capacity_mw": 6000,
+    "description": "Wind + solar mega-zone in Zaragoza/Teruel provinces"
+  },
+  {
+    "name": "Andalucía Solar Zone",
+    "country": "ES",
+    "lat": 37.40,
+    "lng": -3.80,
+    "type": "solar",
+    "capacity_mw": 4000,
+    "description": "CSP and PV concentration in Córdoba/Jaén/Granada"
+  },
+  {
+    "name": "Galicia Wind Zone",
+    "country": "ES",
+    "lat": 42.90,
+    "lng": -8.10,
+    "type": "onshore_wind",
+    "capacity_mw": 3500,
+    "description": "Spain's densest onshore wind region"
+  },
+  {
+    "name": "Murcia Solar Concentration Zone",
+    "country": "ES",
+    "lat": 37.80,
+    "lng": -1.50,
+    "type": "solar",
+    "capacity_mw": 2500,
+    "description": "High irradiance solar zone with CSP projects"
+  }
+]

@@ -42,7 +42,7 @@ function scoreBreakdown(score) {
   if (!score || !score.breakdown) return '';
   const b = score.breakdown;
   return `<div style="font-size:0.7rem;color:#aaa;margin-top:4px;line-height:1.5">
-    IX: ${b.ix_connectivity.score}/${b.ix_connectivity.max} · Power: ${b.power_potential.score}/${b.power_potential.max} · Size: ${b.site_size.score}/${b.site_size.max} · DC: ${b.dc_ecosystem.score}/${b.dc_ecosystem.max} · Fiber: ${b.fiber_proximity.score}/${b.fiber_proximity.max} · Avail: ${b.availability.score}/${b.availability.max}
+    IX: ${b.ix_connectivity.score}/${b.ix_connectivity.max} · Power: ${b.power_potential.score}/${b.power_potential.max} · Grid: ${b.grid_future?.score || 0}/${b.grid_future?.max || 12} · Size: ${b.site_size.score}/${b.site_size.max} · DC: ${b.dc_ecosystem.score}/${b.dc_ecosystem.max} · Climate: ${b.climate_cooling?.score || 0}/${b.climate_cooling?.max || 10} · Fiber: ${b.fiber_proximity.score}/${b.fiber_proximity.max} · Avail: ${b.availability.score}/${b.availability.max}
   </div>`;
 }
 
@@ -599,6 +599,137 @@ document.getElementById('toggle-fiber').addEventListener('change', (e) => {
     if (layers.fiberBackbone) map.removeLayer(layers.fiberBackbone);
   }
 });
+
+// ─── Tab Switching ──────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ─── Credential Management ─────────────────────────────────────
+const CRED_KEYS = [
+  { id: 'is24-key', storageKey: 'cred_is24_key' },
+  { id: 'is24-secret', storageKey: 'cred_is24_secret' },
+  { id: 'idealista-key', storageKey: 'cred_idealista_key' },
+  { id: 'idealista-secret', storageKey: 'cred_idealista_secret' },
+  { id: 'kadaster-key', storageKey: 'cred_kadaster_key' },
+  { id: 'otodom-key', storageKey: 'cred_otodom_key' },
+  { id: 'otodom-secret', storageKey: 'cred_otodom_secret' },
+  { id: 'entsoe-token', storageKey: 'cred_entsoe_token' },
+  { id: 'opencage-key', storageKey: 'cred_opencage_key' }
+];
+
+function loadCredentials() {
+  CRED_KEYS.forEach(({ id, storageKey }) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const val = localStorage.getItem(storageKey) || '';
+      el.value = val;
+    }
+  });
+  updateCredStatusDots();
+}
+
+function saveCredentials() {
+  CRED_KEYS.forEach(({ id, storageKey }) => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (el.value.trim()) localStorage.setItem(storageKey, el.value.trim());
+      else localStorage.removeItem(storageKey);
+    }
+  });
+  updateCredStatusDots();
+  showCredMsg('Credentials saved to browser storage.', 'success');
+
+  // Push credentials to backend
+  const creds = {};
+  CRED_KEYS.forEach(({ id, storageKey }) => {
+    const val = localStorage.getItem(storageKey);
+    if (val) creds[storageKey] = val;
+  });
+  fetch('/api/credentials', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(creds)
+  }).catch(() => {});
+}
+
+function clearCredentials() {
+  CRED_KEYS.forEach(({ id, storageKey }) => {
+    localStorage.removeItem(storageKey);
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  updateCredStatusDots();
+  showCredMsg('All credentials cleared.', 'error');
+}
+
+function updateCredStatusDots() {
+  const statusMap = {
+    'is24': ['is24-key', 'is24-secret'],
+    'idealista': ['idealista-key', 'idealista-secret'],
+    'kadaster': ['kadaster-key'],
+    'otodom': ['otodom-key', 'otodom-secret'],
+    'entsoe': ['entsoe-token'],
+    'opencage': ['opencage-key']
+  };
+
+  Object.entries(statusMap).forEach(([name, fields]) => {
+    const dot = document.getElementById(`status-${name}`);
+    if (!dot) return;
+    const allFilled = fields.every(f => {
+      const el = document.getElementById(f);
+      return el && el.value.trim();
+    });
+    dot.className = `cred-status ${allFilled ? 'configured' : ''}`;
+  });
+}
+
+async function testCredentials() {
+  showCredMsg('Testing connections...', 'success');
+  const results = [];
+
+  // Test ENTSO-E
+  const entsoeToken = document.getElementById('entsoe-token')?.value;
+  if (entsoeToken) {
+    try {
+      const r = await fetch(`/api/test-credential?type=entsoe&token=${encodeURIComponent(entsoeToken)}`);
+      results.push(r.ok ? '✅ ENTSO-E: connected' : '❌ ENTSO-E: failed');
+    } catch { results.push('❌ ENTSO-E: network error'); }
+  }
+
+  // Test OpenCage
+  const opencageKey = document.getElementById('opencage-key')?.value;
+  if (opencageKey) {
+    try {
+      const r = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=52.37,4.90&key=${opencageKey}&limit=1`);
+      const j = await r.json();
+      results.push(j.status?.code === 200 ? '✅ OpenCage: connected' : `❌ OpenCage: ${j.status?.message || 'failed'}`);
+    } catch { results.push('❌ OpenCage: network error'); }
+  }
+
+  if (results.length === 0) results.push('No testable credentials configured');
+  showCredMsg(results.join('<br>'), results.some(r => r.includes('❌')) ? 'error' : 'success');
+}
+
+function showCredMsg(msg, type) {
+  const el = document.getElementById('cred-status-msg');
+  el.innerHTML = msg;
+  el.className = type;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 8000);
+}
+
+document.getElementById('save-credentials')?.addEventListener('click', saveCredentials);
+document.getElementById('test-credentials')?.addEventListener('click', testCredentials);
+document.getElementById('clear-credentials')?.addEventListener('click', clearCredentials);
+
+// Load saved credentials on startup
+loadCredentials();
 
 // ─── Boot ───────────────────────────────────────────────────────
 initMap();

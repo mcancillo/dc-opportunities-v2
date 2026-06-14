@@ -9,6 +9,14 @@
 </head>
 <body>
   <div id="sidebar">
+    <!-- Tab navigation -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="search-tab">🔍 Search</button>
+      <button class="tab-btn" data-tab="settings-tab">⚙️ Data Feeds</button>
+    </div>
+
+    <!-- SEARCH TAB -->
+    <div id="search-tab" class="tab-content active">
     <div class="sidebar-header">
       <h1>🏢 DC Opportunities v2</h1>
       <p class="subtitle">Find datacenter real estate near Internet Exchanges</p>
@@ -102,6 +110,128 @@
       Datacenter locations from OpenStreetMap may be incomplete. IX data from PeeringDB.
       See <a href="#" id="sources-link">Data Sources</a> for integration details per country.
     </div>
+    </div><!-- /search-tab -->
+
+    <!-- SETTINGS TAB — Data Feed Credentials -->
+    <div id="settings-tab" class="tab-content">
+      <div class="sidebar-header">
+        <h1>⚙️ Data Feed Settings</h1>
+        <p class="subtitle">Configure API credentials for enhanced data sources</p>
+      </div>
+
+      <div class="settings-section">
+        <h3>🏢 Real Estate Portals</h3>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-is24"></span>
+            <strong>ImmobilienScout24</strong>
+            <span class="cred-country">🇩🇪 DE</span>
+          </div>
+          <p class="cred-desc">Commercial/industrial listings. OAuth 1.0a partner API.</p>
+          <a href="https://api.immobilienscout24.de/" target="_blank" class="cred-signup">Apply for API access ↗</a>
+          <div class="cred-fields">
+            <input type="text" id="is24-key" placeholder="Consumer Key" autocomplete="off" />
+            <input type="password" id="is24-secret" placeholder="Consumer Secret" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-idealista"></span>
+            <strong>Idealista</strong>
+            <span class="cred-country">🇪🇸 ES</span>
+          </div>
+          <p class="cred-desc">Industrial/commercial listings. OAuth 2.0 client credentials.</p>
+          <a href="https://developers.idealista.com/access-request" target="_blank" class="cred-signup">Request developer access ↗</a>
+          <div class="cred-fields">
+            <input type="text" id="idealista-key" placeholder="API Key" autocomplete="off" />
+            <input type="password" id="idealista-secret" placeholder="API Secret" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-kadaster"></span>
+            <strong>Kadaster BAG API</strong>
+            <span class="cred-country">🇳🇱 NL</span>
+          </div>
+          <p class="cred-desc">Dutch building registry — richer data than WFS. Free key.</p>
+          <a href="https://formulieren.kadaster.nl/aanvraag_bag_api_individuele_bevragingen_productie" target="_blank" class="cred-signup">Get free API key ↗</a>
+          <div class="cred-fields">
+            <input type="text" id="kadaster-key" placeholder="X-Api-Key" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-otodom"></span>
+            <strong>OLX/Otodom</strong>
+            <span class="cred-country">🇵🇱 PL</span>
+          </div>
+          <p class="cred-desc">Polish commercial listings. Partner API (publish-only, no search).</p>
+          <a href="https://developer.olxgroup.com/" target="_blank" class="cred-signup">OLX Developer Portal ↗</a>
+          <div class="cred-fields">
+            <input type="text" id="otodom-key" placeholder="Client ID" autocomplete="off" />
+            <input type="password" id="otodom-secret" placeholder="Client Secret" autocomplete="off" />
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>⚡ Energy &amp; Grid Data</h3>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-entsoe"></span>
+            <strong>ENTSO-E Transparency</strong>
+            <span class="cred-country">🇪🇺 EU</span>
+          </div>
+          <p class="cred-desc">European grid data — generation, capacity, cross-border flows. Free registration.</p>
+          <a href="https://transparency.entsoe.eu/" target="_blank" class="cred-signup">Register for API token ↗</a>
+          <div class="cred-fields">
+            <input type="text" id="entsoe-token" placeholder="Security Token" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-gridcap"></span>
+            <strong>NL Grid Capacity Map</strong>
+            <span class="cred-country">🇳🇱 NL</span>
+          </div>
+          <p class="cred-desc">Dutch grid capacity per substation. No auth — auto-enabled.</p>
+          <a href="https://capaciteitskaart.netbeheernederland.nl" target="_blank" class="cred-signup">View capacity map ↗</a>
+          <div class="cred-fields">
+            <span class="cred-auto">✅ No credentials needed — uses open API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>🗺️ Mapping &amp; Geocoding</h3>
+
+        <div class="credential-card">
+          <div class="cred-header">
+            <span class="cred-status" id="status-opencage"></span>
+            <strong>OpenCage Geocoding</strong>
+            <span class="cred-country">🌐</span>
+          </div>
+          <p class="cred-desc">Reverse geocoding for address enrichment. Free tier: 2,500 req/day.</p>
+          <a href="https://opencagedata.com/users/sign_up" target="_blank" class="cred-signup">Get free API key ↗</a>
+          <div class="cred-fields">
+            <input type="text" id="opencage-key" placeholder="API Key" autocomplete="off" />
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-actions">
+        <button id="save-credentials" class="btn-save">💾 Save Credentials</button>
+        <button id="test-credentials" class="btn-test">🔌 Test Connections</button>
+        <button id="clear-credentials" class="btn-clear">🗑️ Clear All</button>
+      </div>
+      <div id="cred-status-msg" class="hidden"></div>
+    </div><!-- /settings-tab -->
   </div>
 
   <div id="map"></div>
