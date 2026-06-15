@@ -458,6 +458,87 @@ input[type="range"] {
   color: #aa44ff;
 }
 
+/* ─── Infrastructure Tab ─── */
+.infra-section { margin-bottom: 12px; }
+.infra-section h3 {
+  font-size: 0.9rem;
+  color: #e94560;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #0f3460;
+}
+.infra-desc {
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 10px;
+}
+.infra-list { display: flex; flex-direction: column; gap: 8px; }
+
+.infra-card {
+  background: #1a1a2e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.infra-card:hover { border-color: #4da6ff; background: #1a2240; }
+.infra-card.highlighted {
+  border-color: #e94560;
+  background: #2a1a2e;
+  box-shadow: 0 0 8px rgba(233, 69, 96, 0.3);
+}
+.infra-card-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.infra-card-meta {
+  font-size: 0.75rem;
+  color: #aaa;
+  line-height: 1.4;
+}
+.infra-status {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.infra-status.operational { background: #33cc6633; color: #33cc66; }
+.infra-status.expanding { background: #ffcc0033; color: #ffcc00; }
+.infra-status.planned { background: #4da6ff33; color: #4da6ff; }
+.infra-status.upgrading { background: #ff8c0033; color: #ff8c00; }
+.infra-tag {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: #0f346033;
+  color: #4da6ff;
+  margin-left: 4px;
+}
+.infra-distance {
+  font-size: 0.7rem;
+  color: #e94560;
+  font-weight: 600;
+}
+.infra-highlight {
+  background: #e9456022;
+  border: 1px solid #e94560;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: #e94560;
+}
+
 /* ─── Settings Tab ─── */
 .settings-section { margin-bottom: 8px; }
 .settings-section h3 {

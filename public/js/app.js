@@ -144,6 +144,11 @@ countrySelect.addEventListener('change', () => {
   const country = countrySelect.value;
   ixSelect.innerHTML = '<option value="">Select an IX…</option>';
   lpSelect.innerHTML = '<option value="">Select a landing point…</option>';
+  infraSelectedLocation = null;
+  // Sync infra tab country selector
+  const infraCountry = document.getElementById('infra-country');
+  if (infraCountry) infraCountry.value = country || '';
+
   if (!country) { ixSelect.disabled = true; lpSelect.disabled = true; searchBtn.disabled = true; return; }
 
   const countryIXs = ixData.filter(ix => ix.country === country);
@@ -170,12 +175,24 @@ countrySelect.addEventListener('change', () => {
 });
 
 ixSelect.addEventListener('change', () => {
-  if (ixSelect.value) lpSelect.value = '';
+  if (ixSelect.value) {
+    lpSelect.value = '';
+    const info = JSON.parse(ixSelect.value);
+    setInfraLocation(info.lat, info.lng, info.name);
+  } else {
+    infraSelectedLocation = null;
+  }
   searchBtn.disabled = !ixSelect.value && !lpSelect.value;
 });
 
 lpSelect.addEventListener('change', () => {
-  if (lpSelect.value) ixSelect.value = '';
+  if (lpSelect.value) {
+    ixSelect.value = '';
+    const info = JSON.parse(lpSelect.value);
+    setInfraLocation(info.lat, info.lng, info.name);
+  } else {
+    infraSelectedLocation = null;
+  }
   searchBtn.disabled = !ixSelect.value && !lpSelect.value;
 });
 
@@ -636,8 +653,126 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'infra-tab') loadInfrastructureTab();
   });
 });
+
+// ─── Infrastructure Tab ─────────────────────────────────────────
+let infraData = null;
+let infraSelectedLocation = null; // {lat, lng, name} from IX or LP selection
+
+function setInfraLocation(lat, lng, name) {
+  infraSelectedLocation = { lat, lng, name };
+  // If infra tab is visible, refresh it
+  if (document.getElementById('infra-tab').classList.contains('active')) loadInfrastructureTab();
+}
+
+async function loadInfrastructureTab() {
+  const country = document.getElementById('infra-country').value || '';
+  const url = country ? `/api/infrastructure?country=${country}` : '/api/infrastructure';
+
+  try {
+    infraData = await fetchJSON(url);
+  } catch (e) {
+    console.error('Failed to load infrastructure data:', e);
+    return;
+  }
+
+  const loc = infraSelectedLocation;
+  const banner = document.getElementById('infra-highlight-banner');
+  if (loc) {
+    document.getElementById('infra-highlight-name').textContent = loc.name;
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+
+  renderInfraSection('infra-grid-list', [...infraData.gridExpansion, ...infraData.renewableZones], loc, 'grid');
+  renderInfraSection('infra-fiber-list', infraData.fiberPlans, loc, 'fiber');
+  renderInfraSection('infra-crossborder-list', infraData.crossborderLinks, loc, 'crossborder');
+}
+
+function renderInfraSection(containerId, items, location, sectionType) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  if (!items.length) {
+    container.innerHTML = '<div style="color:#666;font-size:0.8rem;padding:8px;">No data for selected country</div>';
+    return;
+  }
+
+  // Calculate distances and sort: nearby first if location selected
+  const enriched = items.map(item => {
+    let dist = null;
+    if (location && item.lat && item.lng) {
+      dist = haversineKm(location.lat, location.lng, item.lat, item.lng);
+    } else if (location && item.landing_points) {
+      // For crossborder items, use nearest landing point
+      const dists = item.landing_points.map(lp => haversineKm(location.lat, location.lng, lp.lat, lp.lng));
+      dist = Math.min(...dists);
+    }
+    return { ...item, _dist: dist, _nearby: dist !== null && dist <= 150 };
+  });
+
+  // Sort: highlighted (nearby) first, then by distance
+  enriched.sort((a, b) => {
+    if (a._nearby && !b._nearby) return -1;
+    if (!a._nearby && b._nearby) return 1;
+    if (a._dist !== null && b._dist !== null) return a._dist - b._dist;
+    return 0;
+  });
+
+  enriched.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'infra-card' + (item._nearby ? ' highlighted' : '');
+
+    const icon = sectionType === 'grid' ? (item.type === 'solar' || item.type === 'onshore_wind' || item.type === 'offshore_wind' || item.type === 'mixed' ? '🌿' : '⚡')
+      : sectionType === 'fiber' ? '🔗' : '🌊';
+
+    const statusClass = (item.status || 'planned').toLowerCase().replace(/\s+/g, '-');
+    const statusLabel = item.status || item.timeline || '';
+
+    const distLine = item._dist !== null
+      ? `<span class="infra-distance">${Math.round(item._dist)} km away</span>`
+      : '';
+
+    const typeBadge = item.type
+      ? `<span class="infra-tag">${item.type.replace(/_/g, ' ')}</span>`
+      : '';
+
+    const voltLine = item.voltage_kv ? `${item.voltage_kv} kV · ` : '';
+    const capLine = item.capacity_mw ? `${item.capacity_mw.toLocaleString()} MW · ` : '';
+    const opLine = item.operator ? `${item.operator} · ` : '';
+    const coverLine = item.coverage ? `<br>📍 ${item.coverage}` : '';
+    const countriesLine = item.countries ? `<br>🌐 ${item.countries.join(', ')}` : '';
+    const cityLine = item.relevant_cities ? ` · ${item.relevant_cities.join(', ')}` : '';
+
+    card.innerHTML = `
+      <div class="infra-card-title">
+        ${icon} ${item.name}
+        <span class="infra-status ${statusClass}">${statusLabel}</span>
+        ${typeBadge}
+      </div>
+      <div class="infra-card-meta">
+        ${voltLine}${capLine}${opLine}${item.country || ''}${cityLine}
+        ${coverLine}${countriesLine}
+        <br>${item.description}
+        ${distLine ? '<br>' + distLine : ''}
+      </div>
+    `;
+
+    // Click to fly to location on map
+    if (item.lat && item.lng) {
+      card.addEventListener('click', () => map.flyTo([item.lat, item.lng], 10));
+    } else if (item.landing_points && item.landing_points.length) {
+      card.addEventListener('click', () => map.flyTo([item.landing_points[0].lat, item.landing_points[0].lng], 8));
+    }
+
+    container.appendChild(card);
+  });
+}
+
+document.getElementById('infra-country').addEventListener('change', loadInfrastructureTab);
 
 // ─── Credential Management ─────────────────────────────────────
 const CRED_KEYS = [

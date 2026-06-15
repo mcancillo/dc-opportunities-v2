@@ -13,8 +13,12 @@ const path = require('path');
 const fs = require('fs');
 let gridExpansion = [];
 let renewableZones = [];
+let fiberPlans = [];
+let crossborderLinks = [];
 try { gridExpansion = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/grid-expansion.json'), 'utf8')); } catch (e) { console.warn('Grid expansion data not loaded:', e.message); }
 try { renewableZones = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/renewable-zones.json'), 'utf8')); } catch (e) { console.warn('Renewable zones data not loaded:', e.message); }
+try { fiberPlans = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/fiber-plans.json'), 'utf8')); } catch (e) { console.warn('Fiber plans data not loaded:', e.message); }
+try { crossborderLinks = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/crossborder-links.json'), 'utf8')); } catch (e) { console.warn('Crossborder links data not loaded:', e.message); }
 
 // Cached context for scoring (populated lazily)
 let scoringContext = null;
@@ -243,6 +247,19 @@ router.get('/test-credential', async (req, res) => {
 
 // Expose credentials to other services
 function getCredential(key) { return apiCredentials[key] || null; }
+
+// Infrastructure intel — grid, fiber, crossborder data by country
+router.get('/infrastructure', (req, res) => {
+  const { country } = req.query;
+  const filter = item => !country || item.country === country || (item.countries && item.countries.includes(country));
+
+  res.json({
+    gridExpansion: gridExpansion.filter(filter),
+    renewableZones: renewableZones.filter(filter),
+    fiberPlans: fiberPlans.filter(filter),
+    crossborderLinks: crossborderLinks.filter(filter)
+  });
+});
 
 module.exports = router;
 module.exports.getCredential = getCredential;

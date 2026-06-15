@@ -1,0 +1,200 @@
+[
+  {
+    "name": "Randstad Metro Fiber Ring",
+    "country": "NL",
+    "lat": 52.30,
+    "lng": 4.87,
+    "type": "metro_ring",
+    "status": "operational",
+    "operator": "Eurofiber / KPN",
+    "coverage": "Amsterdam – The Hague – Rotterdam – Utrecht",
+    "description": "Dark fiber ring connecting all major NL data center hubs with 100G+ capacity"
+  },
+  {
+    "name": "Amsterdam Metro Connect",
+    "country": "NL",
+    "lat": 52.37,
+    "lng": 4.90,
+    "type": "metro_ring",
+    "status": "expanding",
+    "operator": "Eurofiber / Iron Mountain",
+    "coverage": "Amsterdam Science Park – Schiphol-Rijk – Sloterdijk",
+    "description": "Dense metro fiber connecting Amsterdam's DC clusters with multiple diverse routes"
+  },
+  {
+    "name": "Rotterdam–Antwerp Fiber Corridor",
+    "country": "NL",
+    "lat": 51.92,
+    "lng": 4.48,
+    "type": "intercity",
+    "status": "planned",
+    "operator": "Eurofiber",
+    "coverage": "Rotterdam – Breda – Antwerp (BE)",
+    "description": "Cross-border fiber corridor linking Rotterdam port DC zone to Belgium"
+  },
+  {
+    "name": "Groningen–Eemshaven Fiber Link",
+    "country": "NL",
+    "lat": 53.33,
+    "lng": 6.83,
+    "type": "intercity",
+    "status": "operational",
+    "operator": "KPN / Glaspoort",
+    "coverage": "Groningen – Eemshaven – Delfzijl",
+    "description": "Fiber to Eemshaven Google DC and QTS campus sites"
+  },
+  {
+    "name": "Frankfurt Metro Fiber Ring",
+    "country": "DE",
+    "lat": 50.11,
+    "lng": 8.68,
+    "type": "metro_ring",
+    "status": "operational",
+    "operator": "DE-CIX / e-shelter / Interxion",
+    "coverage": "Frankfurt Gutleutviertel – Sossenheim – Hattersheim – Hanau",
+    "description": "Europe's densest metro fiber ring, >500 connected DCs in Frankfurt metro"
+  },
+  {
+    "name": "Frankfurt–Hanau–Offenbach Expansion",
+    "country": "DE",
+    "lat": 50.10,
+    "lng": 8.80,
+    "type": "metro_ring",
+    "status": "expanding",
+    "operator": "DE-CIX / NTT",
+    "coverage": "Frankfurt East – Hanau – Offenbach",
+    "description": "Eastern expansion of Frankfurt DC corridor to accommodate hyperscale demand"
+  },
+  {
+    "name": "Berlin Metro Fiber Ring",
+    "country": "DE",
+    "lat": 52.52,
+    "lng": 13.41,
+    "type": "metro_ring",
+    "status": "expanding",
+    "operator": "BCIX / GlobalConnect",
+    "coverage": "Berlin Mitte – Tempelhof – Adlershof – Marzahn",
+    "description": "Growing metro ring connecting Berlin's emerging DC hubs"
+  },
+  {
+    "name": "Hamburg–Hannover Fiber Corridor",
+    "country": "DE",
+    "lat": 53.00,
+    "lng": 10.00,
+    "type": "intercity",
+    "status": "operational",
+    "operator": "GlobalConnect / Telia",
+    "coverage": "Hamburg – Hannover – Brunswick",
+    "description": "Major north-south German fiber trunk connecting to DE-CIX Hamburg"
+  },
+  {
+    "name": "Munich Metro Fiber Ring",
+    "country": "DE",
+    "lat": 48.14,
+    "lng": 11.58,
+    "type": "metro_ring",
+    "status": "operational",
+    "operator": "M-net / Equinix",
+    "coverage": "Munich city center – Riem – Garching – Unterföhring",
+    "description": "Metro fiber serving Munich's DC cluster near Unterföhring media campus"
+  },
+  {
+    "name": "NRW Metro Fiber Network",
+    "country": "DE",
+    "lat": 51.45,
+    "lng": 7.01,
+    "type": "metro_ring",
+    "status": "expanding",
+    "operator": "Colt / Telia",
+    "coverage": "Düsseldorf – Essen – Dortmund – Cologne",
+    "description": "Rhine-Ruhr metro fiber connecting multiple IX locations and DCs"
+  },
+  {
+    "name": "Warsaw Metro Fiber Ring",
+    "country": "PL",
+    "lat": 52.23,
+    "lng": 21.01,
+    "type": "metro_ring",
+    "status": "expanding",
+    "operator": "PLIX / Equinix / Polcom",
+    "coverage": "Warsaw City – Wola – Praga – Ursynów",
+    "description": "Expanding metro ring for Warsaw's growing DC market"
+  },
+  {
+    "name": "Kraków Metro Fiber",
+    "country": "PL",
+    "lat": 50.06,
+    "lng": 19.94,
+    "type": "metro_ring",
+    "status": "planned",
+    "operator": "T-Mobile PL / Orange",
+    "coverage": "Kraków – Nowa Huta – Wieliczka",
+    "description": "Planned metro fiber to support Kraków's tech sector growth"
+  },
+  {
+    "name": "Gdańsk–Gdynia Tri-City Fiber",
+    "country": "PL",
+    "lat": 54.38,
+    "lng": 18.60,
+    "type": "metro_ring",
+    "status": "operational",
+    "operator": "Orange PL",
+    "coverage": "Gdańsk – Sopot – Gdynia",
+    "description": "Tri-City fiber ring supporting Baltic offshore wind data + port operations"
+  },
+  {
+    "name": "Warsaw–Kraków Backbone",
+    "country": "PL",
+    "lat": 51.15,
+    "lng": 20.50,
+    "type": "intercity",
+    "status": "operational",
+    "operator": "EXATEL / Orange PL",
+    "coverage": "Warsaw – Radom – Kielce – Kraków",
+    "description": "Poland's primary south backbone fiber route"
+  },
+  {
+    "name": "Madrid Metro Fiber Ring",
+    "country": "ES",
+    "lat": 40.42,
+    "lng": -3.70,
+    "type": "metro_ring",
+    "status": "expanding",
+    "operator": "ESPANIX / Interxion / Equinix",
+    "coverage": "Madrid Coslada – San Sebastián de los Reyes – Getafe – Alcobendas",
+    "description": "Dense metro fiber connecting Madrid's DC corridor along A-2 motorway"
+  },
+  {
+    "name": "Barcelona Metro Fiber Ring",
+    "country": "ES",
+    "lat": 41.39,
+    "lng": 2.17,
+    "type": "metro_ring",
+    "status": "operational",
+    "operator": "CATNIX / Equinix",
+    "coverage": "Barcelona 22@ – El Prat – Cerdanyola – Sant Cugat",
+    "description": "Mediterranean DC hub fiber ring serving Barcelona's tech district"
+  },
+  {
+    "name": "Madrid–Barcelona Fiber Corridor",
+    "country": "ES",
+    "lat": 41.00,
+    "lng": -1.00,
+    "type": "intercity",
+    "status": "operational",
+    "operator": "Telefónica / Lumen",
+    "coverage": "Madrid – Zaragoza – Barcelona",
+    "description": "Spain's primary east-west fiber trunk with multiple diverse paths"
+  },
+  {
+    "name": "Bilbao Metro Fiber",
+    "country": "ES",
+    "lat": 43.26,
+    "lng": -2.93,
+    "type": "metro_ring",
+    "status": "planned",
+    "operator": "EuskalTel",
+    "coverage": "Bilbao – Barakaldo – Getxo",
+    "description": "Planned metro fiber ring for Bilbao DC development near cable landings"
+  }
+]
