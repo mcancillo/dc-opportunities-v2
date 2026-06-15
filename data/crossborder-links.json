@@ -6,7 +6,8 @@
     "countries": ["DE", "NL"],
     "landing_points": [{"name": "New York", "lat": 40.74, "lng": -74.00}, {"name": "Killala (Ireland)", "lat": 54.21, "lng": -9.22}],
     "relevant_cities": ["Frankfurt", "Amsterdam"],
-    "description": "Transatlantic cable linking US to Europe via Ireland, backhaul to AMS-IX and DE-CIX"
+    "description": "Transatlantic cable linking US to Europe via Ireland, backhaul to AMS-IX and DE-CIX",
+    "source_url": "https://www.submarinecablemap.com/submarine-cable/aeconnect-1"
   },
   {
     "name": "MAREA (Microsoft/Facebook)",
@@ -15,7 +16,8 @@
     "countries": ["ES"],
     "landing_points": [{"name": "Virginia Beach (US)", "lat": 36.85, "lng": -75.98}, {"name": "Bilbao (ES)", "lat": 43.26, "lng": -2.93}],
     "relevant_cities": ["Bilbao", "Madrid"],
-    "description": "6,600km transatlantic cable, 200+ Tbps capacity, connects US to Spain"
+    "description": "6,600km transatlantic cable, 200+ Tbps capacity, connects US to Spain",
+    "source_url": "https://www.submarinecablemap.com/submarine-cable/marea"
   },
   {
     "name": "Grace Hopper (Google)",
@@ -24,7 +26,8 @@
     "countries": ["ES", "NL"],
     "landing_points": [{"name": "New York (US)", "lat": 40.74, "lng": -74.00}, {"name": "Bilbao (ES)", "lat": 43.26, "lng": -2.93}, {"name": "Bude (UK)", "lat": 50.83, "lng": -4.54}],
     "relevant_cities": ["Bilbao", "Amsterdam"],
-    "description": "Google's transatlantic cable connecting US, UK, and Spain"
+    "description": "Google's transatlantic cable connecting US, UK, and Spain",
+    "source_url": "https://www.submarinecablemap.com/submarine-cable/grace-hopper"
   },
   {
     "name": "EllaLink (Europe–South America)",
@@ -33,7 +36,8 @@
     "countries": ["ES"],
     "landing_points": [{"name": "Sines (Portugal)", "lat": 37.95, "lng": -8.87}, {"name": "Fortaleza (Brazil)", "lat": -3.73, "lng": -38.53}],
     "relevant_cities": ["Madrid", "Lisbon"],
-    "description": "First direct Europe–South America cable, 6,000km, low-latency to LATAM"
+    "description": "First direct Europe–South America cable, 6,000km, low-latency to LATAM",
+    "source_url": "https://ella.link/"
   },
   {
     "name": "2Africa (Meta)",
@@ -42,7 +46,8 @@
     "countries": ["ES"],
     "landing_points": [{"name": "Barcelona (ES)", "lat": 41.39, "lng": 2.17}, {"name": "Multiple Africa/ME", "lat": 33.59, "lng": -7.61}],
     "relevant_cities": ["Barcelona", "Madrid"],
-    "description": "37,000km mega-cable encircling Africa, landing in Spain for EU connectivity"
+    "description": "37,000km mega-cable encircling Africa, landing in Spain for EU connectivity",
+    "source_url": "https://www.submarinecablemap.com/submarine-cable/2africa"
   },
   {
     "name": "NordLink (Norway–Germany HVDC)",
@@ -51,7 +56,8 @@
     "countries": ["DE"],
     "landing_points": [{"name": "Tonstad (Norway)", "lat": 58.68, "lng": 6.76}, {"name": "Wilster (DE)", "lat": 53.92, "lng": 9.37}],
     "relevant_cities": ["Hamburg"],
-    "description": "623km HVDC power + fiber cable connecting Norwegian hydro to German grid"
+    "description": "623km HVDC power + fiber cable connecting Norwegian hydro to German grid",
+    "source_url": "https://www.tennet.eu/our-grid/international-connections/nordlink"
   },
   {
     "name": "COBRAcable (Denmark–Netherlands)",
@@ -60,7 +66,8 @@
     "countries": ["NL", "DE"],
     "landing_points": [{"name": "Endrup (Denmark)", "lat": 55.49, "lng": 8.72}, {"name": "Eemshaven (NL)", "lat": 53.44, "lng": 6.83}],
     "relevant_cities": ["Groningen", "Eemshaven"],
-    "description": "325km HVDC interconnector Denmark–NL via German waters, includes fiber"
+    "description": "325km HVDC interconnector Denmark–NL via German waters, includes fiber",
+    "source_url": "https://www.tennet.eu/our-grid/international-connections/cobracable"
   },
   {
     "name": "BritNed (UK–Netherlands)",
@@ -69,7 +76,8 @@
     "countries": ["NL"],
     "landing_points": [{"name": "Isle of Grain (UK)", "lat": 51.45, "lng": 0.72}, {"name": "Maasvlakte (NL)", "lat": 51.96, "lng": 4.02}],
     "relevant_cities": ["Rotterdam"],
-    "description": "260km HVDC cable connecting UK grid to Netherlands via North Sea"
+    "description": "260km HVDC cable connecting UK grid to Netherlands via North Sea",
+    "source_url": "https://www.britned.com/"
   },
   {
     "name": "NorNed (Norway–Netherlands)",
@@ -78,7 +86,8 @@
     "countries": ["NL"],
     "landing_points": [{"name": "Feda (Norway)", "lat": 58.30, "lng": 6.85}, {"name": "Eemshaven (NL)", "lat": 53.44, "lng": 6.83}],
     "relevant_cities": ["Groningen", "Eemshaven"],
-    "description": "580km HVDC connecting Norwegian hydro power to NL, world's longest at time of build"
+    "description": "580km HVDC connecting Norwegian hydro power to NL, world's longest at time of build",
+    "source_url": "https://www.tennet.eu/our-grid/international-connections/norned"
   },
   {
     "name": "Baltic Pipe (Norway–Denmark–Poland)",
@@ -87,7 +96,8 @@
     "countries": ["PL"],
     "landing_points": [{"name": "Nybro (Denmark)", "lat": 55.31, "lng": 10.02}, {"name": "Pogorzelica (PL)", "lat": 54.12, "lng": 15.35}],
     "relevant_cities": ["Szczecin"],
-    "description": "Gas pipeline with fiber duct, connecting Scandinavia to Poland via Baltic Sea"
+    "description": "Gas pipeline with fiber duct, connecting Scandinavia to Poland via Baltic Sea",
+    "source_url": "https://www.baltic-pipe.eu/"
   },
   {
     "name": "Havhingsten (Denmark–Germany Fiber)",
@@ -96,7 +106,8 @@
     "countries": ["DE"],
     "landing_points": [{"name": "Gedser (Denmark)", "lat": 54.57, "lng": 11.93}, {"name": "Rostock (DE)", "lat": 54.09, "lng": 12.10}],
     "relevant_cities": ["Berlin", "Rostock"],
-    "description": "Short cross-Baltic fiber connecting Denmark to northern Germany"
+    "description": "Short cross-Baltic fiber connecting Denmark to northern Germany",
+    "source_url": "https://www.submarinecablemap.com/submarine-cable/havhingsten"
   },
   {
     "name": "Germany–Poland 400kV Interconnector",
@@ -105,7 +116,8 @@
     "countries": ["DE", "PL"],
     "landing_points": [{"name": "Vierraden (DE)", "lat": 53.06, "lng": 14.16}, {"name": "Krajnik (PL)", "lat": 53.06, "lng": 14.38}],
     "relevant_cities": ["Szczecin", "Berlin"],
-    "description": "400kV AC cross-border power + fiber link being upgraded for higher capacity"
+    "description": "400kV AC cross-border power + fiber link being upgraded for higher capacity",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "Midgard Connect (Norway–Germany planned)",
@@ -114,7 +126,8 @@
     "countries": ["DE"],
     "landing_points": [{"name": "Suldal (Norway)", "lat": 59.49, "lng": 6.26}, {"name": "Büsum (DE)", "lat": 54.13, "lng": 8.86}],
     "relevant_cities": ["Hamburg"],
-    "description": "Planned 600km subsea cable bringing Norwegian renewable power to Germany"
+    "description": "Planned 600km subsea cable bringing Norwegian renewable power to Germany",
+    "source_url": "https://www.statnett.no/en/our-projects/interconnectors/midgard-connect/"
   },
   {
     "name": "Celtic Norse (Ireland–Norway–NL planned)",
@@ -123,7 +136,8 @@
     "countries": ["NL"],
     "landing_points": [{"name": "Killala (Ireland)", "lat": 54.21, "lng": -9.22}, {"name": "IJmuiden (NL)", "lat": 52.46, "lng": 4.61}],
     "relevant_cities": ["Amsterdam"],
-    "description": "Planned fiber connecting Ireland's growing DC hub to Amsterdam/NL"
+    "description": "Planned fiber connecting Ireland's growing DC hub to Amsterdam/NL",
+    "source_url": "https://www.submarinecablemap.com/"
   },
   {
     "name": "Spain–France Mediterranean Link",
@@ -132,7 +146,8 @@
     "countries": ["ES"],
     "landing_points": [{"name": "Figueres (ES)", "lat": 42.27, "lng": 2.96}, {"name": "Perpignan (FR)", "lat": 42.70, "lng": 2.90}],
     "relevant_cities": ["Barcelona"],
-    "description": "Cross-Pyrenees power interconnector with fiber, linking ES to FR/EU grid"
+    "description": "Cross-Pyrenees power interconnector with fiber, linking ES to FR/EU grid",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Medusa (France–Spain–Algeria Fiber)",
@@ -141,6 +156,7 @@
     "countries": ["ES"],
     "landing_points": [{"name": "Barcelona (ES)", "lat": 41.39, "lng": 2.17}, {"name": "Marseille (FR)", "lat": 43.30, "lng": 5.37}],
     "relevant_cities": ["Barcelona"],
-    "description": "Planned Mediterranean fiber cable connecting EU to North Africa via Spain"
+    "description": "Planned Mediterranean fiber cable connecting EU to North Africa via Spain",
+    "source_url": "https://www.submarinecablemap.com/submarine-cable/medusa"
   }
 ]

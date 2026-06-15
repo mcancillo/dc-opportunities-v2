@@ -8,7 +8,8 @@
     "voltage_kv": 380,
     "timeline": "2025–2028",
     "operator": "TenneT",
-    "description": "New 380kV substation + HV line in Flevoland"
+    "description": "New 380kV substation + HV line in Flevoland",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "Borssele–Rilland 380kV Offshore Wind Landfall",
@@ -19,7 +20,8 @@
     "voltage_kv": 380,
     "timeline": "2026",
     "operator": "TenneT",
-    "description": "Offshore wind connection landfall in Zeeland"
+    "description": "Offshore wind connection landfall in Zeeland",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "Geertruidenberg 380kV Upgrade",
@@ -30,7 +32,8 @@
     "voltage_kv": 380,
     "timeline": "2025",
     "operator": "TenneT",
-    "description": "380kV transformer addition in Noord-Brabant"
+    "description": "380kV transformer addition in Noord-Brabant",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "Maasvlakte 3 Substation Expansion",
@@ -41,7 +44,8 @@
     "voltage_kv": 380,
     "timeline": "2027",
     "operator": "TenneT",
-    "description": "Industrial/port electrification at Rotterdam port"
+    "description": "Industrial/port electrification at Rotterdam port",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "Diemen 380kV Upgrade",
@@ -52,7 +56,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2030",
     "operator": "TenneT",
-    "description": "Greater Amsterdam metro grid upgrade"
+    "description": "Greater Amsterdam metro grid upgrade",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "Beverwijk 380kV Upgrade",
@@ -63,7 +68,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2030",
     "operator": "TenneT",
-    "description": "Greater Amsterdam metro grid upgrade"
+    "description": "Greater Amsterdam metro grid upgrade",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "NordWestLink HVDC Landing",
@@ -74,7 +80,8 @@
     "voltage_kv": 525,
     "timeline": "2028–2032",
     "operator": "TenneT",
-    "description": "New 2GW+ HVDC interconnector to Germany"
+    "description": "New 2GW+ HVDC interconnector to Germany",
+    "source_url": "https://www.netbeheernederland.nl/investerings-en-capaciteitsplan"
   },
   {
     "name": "SuedOstLink HVDC Wolmirstedt",
@@ -85,7 +92,8 @@
     "voltage_kv": 525,
     "timeline": "2027–2030",
     "operator": "50Hertz/TenneT",
-    "description": "Multi-GW HVDC from Saxony-Anhalt to Bavaria"
+    "description": "Multi-GW HVDC from Saxony-Anhalt to Bavaria",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "SuedOstLink HVDC Isar Terminal",
@@ -96,7 +104,8 @@
     "voltage_kv": 525,
     "timeline": "2027–2030",
     "operator": "50Hertz/TenneT",
-    "description": "HVDC southern terminal near Landshut, Bavaria"
+    "description": "HVDC southern terminal near Landshut, Bavaria",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "NordOstLink HVDC Heide",
@@ -107,7 +116,8 @@
     "voltage_kv": 525,
     "timeline": "2028–2032",
     "operator": "50Hertz",
-    "description": "North Sea coast wind integration HVDC"
+    "description": "North Sea coast wind integration HVDC",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "NordOstLink HVDC Schwerin Terminal",
@@ -118,7 +128,8 @@
     "voltage_kv": 525,
     "timeline": "2028–2032",
     "operator": "50Hertz",
-    "description": "HVDC terminal Schossin near Schwerin"
+    "description": "HVDC terminal Schossin near Schwerin",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "SuedLink HVDC Wilster",
@@ -129,7 +140,8 @@
     "voltage_kv": 525,
     "timeline": "2028–2032",
     "operator": "Amprion/TransnetBW",
-    "description": "2×2GW HVDC northern terminal"
+    "description": "2×2GW HVDC northern terminal",
+    "source_url": "https://www.netzentwicklungsplan.de/en"
   },
   {
     "name": "SuedLink HVDC Grafenrheinfeld",
@@ -140,7 +152,8 @@
     "voltage_kv": 525,
     "timeline": "2028–2032",
     "operator": "Amprion/TransnetBW",
-    "description": "2×2GW HVDC southern terminal (former nuclear site)"
+    "description": "2×2GW HVDC southern terminal (former nuclear site)",
+    "source_url": "https://www.netzentwicklungsplan.de/en"
   },
   {
     "name": "380kV Bertikow–Pasewalk Upgrade",
@@ -151,7 +164,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2029",
     "operator": "50Hertz",
-    "description": "220→380kV upgrade, NE Brandenburg"
+    "description": "220→380kV upgrade, NE Brandenburg",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "380kV Nordring Berlin",
@@ -162,7 +176,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2030",
     "operator": "50Hertz",
-    "description": "220→380kV upgrade Neuenhagen→Wustermark (Berlin)"
+    "description": "220→380kV upgrade Neuenhagen→Wustermark (Berlin)",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "Jessen/Nord New Substation",
@@ -173,7 +188,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2028",
     "operator": "50Hertz",
-    "description": "New RE connection point in Saxony-Anhalt"
+    "description": "New RE connection point in Saxony-Anhalt",
+    "source_url": "https://www.50hertz.com/en/Grid/Griddevelopement/Onshoreprojects"
   },
   {
     "name": "ULTRANET Rhine-Ruhr HVDC",
@@ -184,7 +200,8 @@
     "voltage_kv": 380,
     "timeline": "2028–2032",
     "operator": "Amprion/TransnetBW",
-    "description": "HVDC overlay Rhine-Ruhr to Baden-Württemberg"
+    "description": "HVDC overlay Rhine-Ruhr to Baden-Württemberg",
+    "source_url": "https://www.netzentwicklungsplan.de/en"
   },
   {
     "name": "Frankfurt/Main 380kV Hub Expansion",
@@ -195,7 +212,8 @@
     "voltage_kv": 380,
     "timeline": "2025–2028",
     "operator": "Amprion",
-    "description": "380kV hub expansion for DE-CIX datacenter demand corridor"
+    "description": "380kV hub expansion for DE-CIX datacenter demand corridor",
+    "source_url": "https://www.netzentwicklungsplan.de/en"
   },
   {
     "name": "Urberach 380kV Substation Upgrade",
@@ -206,7 +224,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2029",
     "operator": "Amprion",
-    "description": "Key Hesse grid node upgrade south of Frankfurt"
+    "description": "Key Hesse grid node upgrade south of Frankfurt",
+    "source_url": "https://www.netzentwicklungsplan.de/en"
   },
   {
     "name": "Kriftel–Kelsterbach 380kV Line",
@@ -217,7 +236,8 @@
     "voltage_kv": 380,
     "timeline": "2026–2030",
     "operator": "Amprion",
-    "description": "New 380kV transmission in Rhine-Main metropolitan area"
+    "description": "New 380kV transmission in Rhine-Main metropolitan area",
+    "source_url": "https://www.netzentwicklungsplan.de/en"
   },
   {
     "name": "Warsaw South 400kV Substation",
@@ -228,7 +248,8 @@
     "voltage_kv": 400,
     "timeline": "2026–2029",
     "operator": "PSE",
-    "description": "Capacity expansion for Warsaw metro data center demand"
+    "description": "Capacity expansion for Warsaw metro data center demand",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Kozienice–Siedlce 400kV Line",
@@ -239,7 +260,8 @@
     "voltage_kv": 400,
     "timeline": "2025–2028",
     "operator": "PSE",
-    "description": "New 400kV line connecting Kozienice power plant region"
+    "description": "New 400kV line connecting Kozienice power plant region",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Bydgoszcz Zachód–Jasiniec 400kV Loop",
@@ -250,7 +272,8 @@
     "voltage_kv": 400,
     "timeline": "2026–2028",
     "operator": "PSE",
-    "description": "400kV loop in Kujawy-Pomerania"
+    "description": "400kV loop in Kujawy-Pomerania",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Ostrołęka–Stanisławów 400kV",
@@ -261,7 +284,8 @@
     "voltage_kv": 400,
     "timeline": "2026–2030",
     "operator": "PSE",
-    "description": "New 400kV line in Masovia"
+    "description": "New 400kV line in Masovia",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Gdańsk 400kV Substation Expansion",
@@ -272,7 +296,8 @@
     "voltage_kv": 400,
     "timeline": "2026–2028",
     "operator": "PSE",
-    "description": "Offshore wind prep in Pomerania"
+    "description": "Offshore wind prep in Pomerania",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Żydowo Kierzkowo New 400kV Substation",
@@ -283,7 +308,8 @@
     "voltage_kv": 400,
     "timeline": "2025–2026",
     "operator": "PSE",
-    "description": "Offshore wind connection in West Pomerania"
+    "description": "Offshore wind connection in West Pomerania",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Morzyczyn–Plewiska 400kV Double Circuit",
@@ -294,7 +320,8 @@
     "voltage_kv": 400,
     "timeline": "2025–2029",
     "operator": "PSE",
-    "description": "Greater Poland to West Pomerania 400kV"
+    "description": "Greater Poland to West Pomerania 400kV",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Baltic Offshore Wind Grid Connection",
@@ -305,7 +332,8 @@
     "voltage_kv": 400,
     "timeline": "2028–2032",
     "operator": "PSE",
-    "description": "Offshore wind cable landfall on Pomeranian coast"
+    "description": "Offshore wind cable landfall on Pomeranian coast",
+    "source_url": "https://www.pse.pl/obszary-dzialalnosci"
   },
   {
     "name": "Laciana–La Lomba 400kV",
@@ -316,7 +344,8 @@
     "voltage_kv": 400,
     "timeline": "2024–2026",
     "operator": "REE",
-    "description": "New line + substation in Castilla y León (wind)"
+    "description": "New line + substation in Castilla y León (wind)",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Mar de Aragón 400kV Substations",
@@ -327,7 +356,8 @@
     "voltage_kv": 400,
     "timeline": "2024–2026",
     "operator": "REE",
-    "description": "4 new substations in renewable corridor Zaragoza/Teruel"
+    "description": "4 new substations in renewable corridor Zaragoza/Teruel",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Murcia–Lorca 400kV Reinforcement",
@@ -338,7 +368,8 @@
     "voltage_kv": 400,
     "timeline": "2024–2026",
     "operator": "REE",
-    "description": "Grid upgrade for solar concentration zone"
+    "description": "Grid upgrade for solar concentration zone",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Guadalajara–Madrid 400kV",
@@ -349,7 +380,8 @@
     "voltage_kv": 400,
     "timeline": "2025–2027",
     "operator": "REE",
-    "description": "New transmission for Madrid demand growth"
+    "description": "New transmission for Madrid demand growth",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Extremadura Renewables Corridor",
@@ -360,6 +392,7 @@
     "voltage_kv": 400,
     "timeline": "2024–2028",
     "operator": "REE",
-    "description": "Multiple substations for +5GW solar in Badajoz/Cáceres"
+    "description": "Multiple substations for +5GW solar in Badajoz/Cáceres",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   }
 ]

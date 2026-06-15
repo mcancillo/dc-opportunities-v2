@@ -746,6 +746,9 @@ function renderInfraSection(containerId, items, location, sectionType) {
     const coverLine = item.coverage ? `<br>📍 ${item.coverage}` : '';
     const countriesLine = item.countries ? `<br>🌐 ${item.countries.join(', ')}` : '';
     const cityLine = item.relevant_cities ? ` · ${item.relevant_cities.join(', ')}` : '';
+    const sourceLine = item.source_url
+      ? `<br><a href="${item.source_url}" target="_blank" rel="noopener" class="infra-source">📄 Source ↗</a>`
+      : '';
 
     card.innerHTML = `
       <div class="infra-card-title">
@@ -758,14 +761,15 @@ function renderInfraSection(containerId, items, location, sectionType) {
         ${coverLine}${countriesLine}
         <br>${item.description}
         ${distLine ? '<br>' + distLine : ''}
+        ${sourceLine}
       </div>
     `;
 
-    // Click to fly to location on map
+    // Click to fly to location on map (but not when clicking source link)
     if (item.lat && item.lng) {
-      card.addEventListener('click', () => map.flyTo([item.lat, item.lng], 10));
+      card.addEventListener('click', (e) => { if (!e.target.closest('a')) map.flyTo([item.lat, item.lng], 10); });
     } else if (item.landing_points && item.landing_points.length) {
-      card.addEventListener('click', () => map.flyTo([item.landing_points[0].lat, item.landing_points[0].lng], 8));
+      card.addEventListener('click', (e) => { if (!e.target.closest('a')) map.flyTo([item.landing_points[0].lat, item.landing_points[0].lng], 8); });
     }
 
     container.appendChild(card);

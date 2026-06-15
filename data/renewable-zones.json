@@ -6,7 +6,8 @@
     "lng": 3.40,
     "type": "offshore_wind",
     "capacity_mw": 1400,
-    "description": "Operational offshore wind farm zone in North Sea (Zeeland)"
+    "description": "Operational offshore wind farm zone in North Sea (Zeeland)",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "Hollandse Kust Zuid Offshore Wind",
@@ -15,7 +16,8 @@
     "lng": 4.10,
     "type": "offshore_wind",
     "capacity_mw": 1500,
-    "description": "Vattenfall offshore wind farm off South Holland coast"
+    "description": "Vattenfall offshore wind farm off South Holland coast",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "Hollandse Kust Noord Offshore Wind",
@@ -24,7 +26,8 @@
     "lng": 4.30,
     "type": "offshore_wind",
     "capacity_mw": 759,
-    "description": "CrossWind offshore wind farm off North Holland"
+    "description": "CrossWind offshore wind farm off North Holland",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "IJmuiden Ver Offshore Wind",
@@ -33,7 +36,8 @@
     "lng": 3.60,
     "type": "offshore_wind",
     "capacity_mw": 4000,
-    "description": "Planned 4GW offshore wind zone, largest NL project"
+    "description": "Planned 4GW offshore wind zone, largest NL project",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "Flevoland Wind Cluster",
@@ -42,7 +46,8 @@
     "lng": 5.50,
     "type": "onshore_wind",
     "capacity_mw": 1400,
-    "description": "Major onshore wind repowering in Flevoland"
+    "description": "Major onshore wind repowering in Flevoland",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "Wieringermeer Wind Farm",
@@ -51,7 +56,8 @@
     "lng": 5.00,
     "type": "onshore_wind",
     "capacity_mw": 300,
-    "description": "Vattenfall onshore wind cluster, North Holland"
+    "description": "Vattenfall onshore wind cluster, North Holland",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "Zeeland Solar + Wind Corridor",
@@ -60,7 +66,8 @@
     "lng": 3.60,
     "type": "mixed",
     "capacity_mw": 800,
-    "description": "Combined wind + solar projects in Zeeland province"
+    "description": "Combined wind + solar projects in Zeeland province",
+    "source_url": "https://www.rvo.nl/subsidies-financiering/sde"
   },
   {
     "name": "Energiepark Brandenburg-Lausitz",
@@ -69,7 +76,8 @@
     "lng": 14.33,
     "type": "mixed",
     "capacity_mw": 2000,
-    "description": "Large-scale renewable zone in former coal region Lausitz"
+    "description": "Large-scale renewable zone in former coal region Lausitz",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "Schleswig-Holstein Wind Zone North",
@@ -78,7 +86,8 @@
     "lng": 9.50,
     "type": "onshore_wind",
     "capacity_mw": 8000,
-    "description": "Germany's highest onshore wind density region"
+    "description": "Germany's highest onshore wind density region",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "North Sea German Bight Offshore Wind",
@@ -87,7 +96,8 @@
     "lng": 6.60,
     "type": "offshore_wind",
     "capacity_mw": 8000,
-    "description": "Multiple offshore wind farms (Alpha Ventus, BARD, etc.)"
+    "description": "Multiple offshore wind farms (Alpha Ventus, BARD, etc.)",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "Baltic Sea Offshore Wind Zone",
@@ -96,7 +106,8 @@
     "lng": 12.50,
     "type": "offshore_wind",
     "capacity_mw": 3000,
-    "description": "Offshore wind cluster in Baltic Sea (Mecklenburg-Vorpommern)"
+    "description": "Offshore wind cluster in Baltic Sea (Mecklenburg-Vorpommern)",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "Saxony-Anhalt Solar Belt",
@@ -105,7 +116,8 @@
     "lng": 11.70,
     "type": "solar",
     "capacity_mw": 2500,
-    "description": "Large solar PV concentration on former military/mining lands"
+    "description": "Large solar PV concentration on former military/mining lands",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "Brandenburg Solar Parks",
@@ -114,7 +126,8 @@
     "lng": 13.80,
     "type": "solar",
     "capacity_mw": 3000,
-    "description": "Germany's largest solar PV installed base around Berlin"
+    "description": "Germany's largest solar PV installed base around Berlin",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "NRW Industrial Wind Repowering",
@@ -123,7 +136,8 @@
     "lng": 7.60,
     "type": "onshore_wind",
     "capacity_mw": 1500,
-    "description": "Wind repowering program in North Rhine-Westphalia"
+    "description": "Wind repowering program in North Rhine-Westphalia",
+    "source_url": "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/start.html"
   },
   {
     "name": "Pomerania Offshore Wind Zone",
@@ -132,7 +146,8 @@
     "lng": 17.50,
     "type": "offshore_wind",
     "capacity_mw": 5900,
-    "description": "Poland's largest planned offshore wind zone in Baltic Sea"
+    "description": "Poland's largest planned offshore wind zone in Baltic Sea",
+    "source_url": "https://www.ure.gov.pl/pl/oze/instalacje-oze-wykaz"
   },
   {
     "name": "West Pomerania Onshore Wind Cluster",
@@ -141,7 +156,8 @@
     "lng": 15.50,
     "type": "onshore_wind",
     "capacity_mw": 1200,
-    "description": "High wind resource zone near German border"
+    "description": "High wind resource zone near German border",
+    "source_url": "https://www.ure.gov.pl/pl/oze/instalacje-oze-wykaz"
   },
   {
     "name": "Greater Poland Wind Belt",
@@ -150,7 +166,8 @@
     "lng": 16.90,
     "type": "onshore_wind",
     "capacity_mw": 1800,
-    "description": "Dense onshore wind development in Wielkopolska"
+    "description": "Dense onshore wind development in Wielkopolska",
+    "source_url": "https://www.ure.gov.pl/pl/oze/instalacje-oze-wykaz"
   },
   {
     "name": "Łódź Region Solar Parks",
@@ -159,7 +176,8 @@
     "lng": 19.45,
     "type": "solar",
     "capacity_mw": 600,
-    "description": "Growing solar PV cluster in central Poland"
+    "description": "Growing solar PV cluster in central Poland",
+    "source_url": "https://www.ure.gov.pl/pl/oze/instalacje-oze-wykaz"
   },
   {
     "name": "Extremadura Solar Mega-Zone",
@@ -168,7 +186,8 @@
     "lng": -6.30,
     "type": "solar",
     "capacity_mw": 8000,
-    "description": "Europe's largest solar concentration zone (Badajoz/Cáceres)"
+    "description": "Europe's largest solar concentration zone (Badajoz/Cáceres)",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Castilla-La Mancha Solar Belt",
@@ -177,7 +196,8 @@
     "lng": -2.80,
     "type": "solar",
     "capacity_mw": 5000,
-    "description": "Massive solar PV corridor (Cuenca/Toledo/Ciudad Real)"
+    "description": "Massive solar PV corridor (Cuenca/Toledo/Ciudad Real)",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Aragón Renewable Corridor",
@@ -186,7 +206,8 @@
     "lng": -0.88,
     "type": "mixed",
     "capacity_mw": 6000,
-    "description": "Wind + solar mega-zone in Zaragoza/Teruel provinces"
+    "description": "Wind + solar mega-zone in Zaragoza/Teruel provinces",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Andalucía Solar Zone",
@@ -195,7 +216,8 @@
     "lng": -3.80,
     "type": "solar",
     "capacity_mw": 4000,
-    "description": "CSP and PV concentration in Córdoba/Jaén/Granada"
+    "description": "CSP and PV concentration in Córdoba/Jaén/Granada",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Galicia Wind Zone",
@@ -204,7 +226,8 @@
     "lng": -8.10,
     "type": "onshore_wind",
     "capacity_mw": 3500,
-    "description": "Spain's densest onshore wind region"
+    "description": "Spain's densest onshore wind region",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   },
   {
     "name": "Murcia Solar Concentration Zone",
@@ -213,6 +236,7 @@
     "lng": -1.50,
     "type": "solar",
     "capacity_mw": 2500,
-    "description": "High irradiance solar zone with CSP projects"
+    "description": "High irradiance solar zone with CSP projects",
+    "source_url": "https://www.ree.es/en/operation/system-development/national-planning"
   }
 ]

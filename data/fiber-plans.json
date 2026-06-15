@@ -8,7 +8,8 @@
     "status": "operational",
     "operator": "Eurofiber / KPN",
     "coverage": "Amsterdam – The Hague – Rotterdam – Utrecht",
-    "description": "Dark fiber ring connecting all major NL data center hubs with 100G+ capacity"
+    "description": "Dark fiber ring connecting all major NL data center hubs with 100G+ capacity",
+    "source_url": "https://www.eurofiber.nl/en/network/"
   },
   {
     "name": "Amsterdam Metro Connect",
@@ -19,7 +20,8 @@
     "status": "expanding",
     "operator": "Eurofiber / Iron Mountain",
     "coverage": "Amsterdam Science Park – Schiphol-Rijk – Sloterdijk",
-    "description": "Dense metro fiber connecting Amsterdam's DC clusters with multiple diverse routes"
+    "description": "Dense metro fiber connecting Amsterdam's DC clusters with multiple diverse routes",
+    "source_url": "https://www.eurofiber.nl/en/network/"
   },
   {
     "name": "Rotterdam–Antwerp Fiber Corridor",
@@ -30,7 +32,8 @@
     "status": "planned",
     "operator": "Eurofiber",
     "coverage": "Rotterdam – Breda – Antwerp (BE)",
-    "description": "Cross-border fiber corridor linking Rotterdam port DC zone to Belgium"
+    "description": "Cross-border fiber corridor linking Rotterdam port DC zone to Belgium",
+    "source_url": "https://www.eurofiber.nl/en/network/"
   },
   {
     "name": "Groningen–Eemshaven Fiber Link",
@@ -41,7 +44,8 @@
     "status": "operational",
     "operator": "KPN / Glaspoort",
     "coverage": "Groningen – Eemshaven – Delfzijl",
-    "description": "Fiber to Eemshaven Google DC and QTS campus sites"
+    "description": "Fiber to Eemshaven Google DC and QTS campus sites",
+    "source_url": "https://www.kpn.com/zakelijk/netwerk.htm"
   },
   {
     "name": "Frankfurt Metro Fiber Ring",
@@ -52,7 +56,8 @@
     "status": "operational",
     "operator": "DE-CIX / e-shelter / Interxion",
     "coverage": "Frankfurt Gutleutviertel – Sossenheim – Hattersheim – Hanau",
-    "description": "Europe's densest metro fiber ring, >500 connected DCs in Frankfurt metro"
+    "description": "Europe's densest metro fiber ring, >500 connected DCs in Frankfurt metro",
+    "source_url": "https://www.de-cix.net/en/locations/frankfurt"
   },
   {
     "name": "Frankfurt–Hanau–Offenbach Expansion",
@@ -63,7 +68,8 @@
     "status": "expanding",
     "operator": "DE-CIX / NTT",
     "coverage": "Frankfurt East – Hanau – Offenbach",
-    "description": "Eastern expansion of Frankfurt DC corridor to accommodate hyperscale demand"
+    "description": "Eastern expansion of Frankfurt DC corridor to accommodate hyperscale demand",
+    "source_url": "https://www.de-cix.net/en/locations/frankfurt"
   },
   {
     "name": "Berlin Metro Fiber Ring",
@@ -74,7 +80,8 @@
     "status": "expanding",
     "operator": "BCIX / GlobalConnect",
     "coverage": "Berlin Mitte – Tempelhof – Adlershof – Marzahn",
-    "description": "Growing metro ring connecting Berlin's emerging DC hubs"
+    "description": "Growing metro ring connecting Berlin's emerging DC hubs",
+    "source_url": "https://www.bcix.de/"
   },
   {
     "name": "Hamburg–Hannover Fiber Corridor",
@@ -85,7 +92,8 @@
     "status": "operational",
     "operator": "GlobalConnect / Telia",
     "coverage": "Hamburg – Hannover – Brunswick",
-    "description": "Major north-south German fiber trunk connecting to DE-CIX Hamburg"
+    "description": "Major north-south German fiber trunk connecting to DE-CIX Hamburg",
+    "source_url": "https://www.globalconnect.dk/en/network"
   },
   {
     "name": "Munich Metro Fiber Ring",
@@ -96,7 +104,8 @@
     "status": "operational",
     "operator": "M-net / Equinix",
     "coverage": "Munich city center – Riem – Garching – Unterföhring",
-    "description": "Metro fiber serving Munich's DC cluster near Unterföhring media campus"
+    "description": "Metro fiber serving Munich's DC cluster near Unterföhring media campus",
+    "source_url": "https://www.m-net.de/"
   },
   {
     "name": "NRW Metro Fiber Network",
@@ -107,7 +116,8 @@
     "status": "expanding",
     "operator": "Colt / Telia",
     "coverage": "Düsseldorf – Essen – Dortmund – Cologne",
-    "description": "Rhine-Ruhr metro fiber connecting multiple IX locations and DCs"
+    "description": "Rhine-Ruhr metro fiber connecting multiple IX locations and DCs",
+    "source_url": "https://www.colt.net/product/fibre-network/"
   },
   {
     "name": "Warsaw Metro Fiber Ring",
@@ -118,7 +128,8 @@
     "status": "expanding",
     "operator": "PLIX / Equinix / Polcom",
     "coverage": "Warsaw City – Wola – Praga – Ursynów",
-    "description": "Expanding metro ring for Warsaw's growing DC market"
+    "description": "Expanding metro ring for Warsaw's growing DC market",
+    "source_url": "https://www.plix.pl/en/"
   },
   {
     "name": "Kraków Metro Fiber",
@@ -129,7 +140,8 @@
     "status": "planned",
     "operator": "T-Mobile PL / Orange",
     "coverage": "Kraków – Nowa Huta – Wieliczka",
-    "description": "Planned metro fiber to support Kraków's tech sector growth"
+    "description": "Planned metro fiber to support Kraków's tech sector growth",
+    "source_url": "https://www.t-mobile.pl/c/internet-swiatlowodowy"
   },
   {
     "name": "Gdańsk–Gdynia Tri-City Fiber",
@@ -140,7 +152,8 @@
     "status": "operational",
     "operator": "Orange PL",
     "coverage": "Gdańsk – Sopot – Gdynia",
-    "description": "Tri-City fiber ring supporting Baltic offshore wind data + port operations"
+    "description": "Tri-City fiber ring supporting Baltic offshore wind data + port operations",
+    "source_url": "https://www.orange.pl/view/siec-orange"
   },
   {
     "name": "Warsaw–Kraków Backbone",
@@ -151,7 +164,8 @@
     "status": "operational",
     "operator": "EXATEL / Orange PL",
     "coverage": "Warsaw – Radom – Kielce – Kraków",
-    "description": "Poland's primary south backbone fiber route"
+    "description": "Poland's primary south backbone fiber route",
+    "source_url": "https://exatel.pl/en/network/"
   },
   {
     "name": "Madrid Metro Fiber Ring",
@@ -162,7 +176,8 @@
     "status": "expanding",
     "operator": "ESPANIX / Interxion / Equinix",
     "coverage": "Madrid Coslada – San Sebastián de los Reyes – Getafe – Alcobendas",
-    "description": "Dense metro fiber connecting Madrid's DC corridor along A-2 motorway"
+    "description": "Dense metro fiber connecting Madrid's DC corridor along A-2 motorway",
+    "source_url": "https://www.espanix.net/en"
   },
   {
     "name": "Barcelona Metro Fiber Ring",
@@ -173,7 +188,8 @@
     "status": "operational",
     "operator": "CATNIX / Equinix",
     "coverage": "Barcelona 22@ – El Prat – Cerdanyola – Sant Cugat",
-    "description": "Mediterranean DC hub fiber ring serving Barcelona's tech district"
+    "description": "Mediterranean DC hub fiber ring serving Barcelona's tech district",
+    "source_url": "https://www.catnix.net/en/"
   },
   {
     "name": "Madrid–Barcelona Fiber Corridor",
@@ -184,7 +200,8 @@
     "status": "operational",
     "operator": "Telefónica / Lumen",
     "coverage": "Madrid – Zaragoza – Barcelona",
-    "description": "Spain's primary east-west fiber trunk with multiple diverse paths"
+    "description": "Spain's primary east-west fiber trunk with multiple diverse paths",
+    "source_url": "https://www.telefonica.com/en/communication-room/"
   },
   {
     "name": "Bilbao Metro Fiber",
@@ -195,6 +212,7 @@
     "status": "planned",
     "operator": "EuskalTel",
     "coverage": "Bilbao – Barakaldo – Getxo",
-    "description": "Planned metro fiber ring for Bilbao DC development near cable landings"
+    "description": "Planned metro fiber ring for Bilbao DC development near cable landings",
+    "source_url": "https://www.euskaltel.com/"
   }
 ]

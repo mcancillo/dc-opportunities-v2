@@ -538,6 +538,13 @@ input[type="range"] {
   font-size: 0.8rem;
   color: #e94560;
 }
+.infra-source {
+  color: #4da6ff;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.infra-source:hover { text-decoration: underline; color: #7fc4ff; }
 
 /* ─── Settings Tab ─── */
 .settings-section { margin-bottom: 8px; }
