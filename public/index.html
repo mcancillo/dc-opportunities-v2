@@ -12,8 +12,9 @@
     <!-- Tab navigation -->
     <div class="tab-bar">
       <button class="tab-btn active" data-tab="search-tab">🔍 Search</button>
+      <button class="tab-btn" data-tab="ledger-tab">📒 Ledger</button>
       <button class="tab-btn" data-tab="infra-tab">🏗️ Infrastructure</button>
-      <button class="tab-btn" data-tab="settings-tab">⚙️ Data Feeds</button>
+      <button class="tab-btn" data-tab="admin-tab">🛡️ Admin</button>
     </div>
 
     <!-- SEARCH TAB -->
@@ -121,6 +122,44 @@
     </div><!-- /search-tab -->
 
     <!-- INFRASTRUCTURE TAB -->
+    <!-- LEDGER TAB — persistent record of interesting plots -->
+    <div id="ledger-tab" class="tab-content">
+      <div class="sidebar-header">
+        <h1>📒 Opportunity Ledger</h1>
+        <p class="subtitle">Every interesting plot found — with sources &amp; why</p>
+      </div>
+
+      <div id="ledger-stats" class="ledger-stats"></div>
+
+      <div class="control-group">
+        <label for="ledger-filter-country">Filter</label>
+        <select id="ledger-filter-country">
+          <option value="">All countries</option>
+          <option value="NL">🇳🇱 Netherlands</option>
+          <option value="DE">🇩🇪 Germany</option>
+          <option value="PL">🇵🇱 Poland</option>
+          <option value="ES">🇪🇸 Spain</option>
+        </select>
+        <select id="ledger-filter-tier">
+          <option value="">All tiers</option>
+          <option value="prime">⭐ Prime</option>
+          <option value="high">🟢 High</option>
+          <option value="medium">🟡 Medium</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-weight:400;">
+          <input type="checkbox" id="ledger-filter-forsale"> For sale only
+        </label>
+      </div>
+
+      <div class="ledger-actions">
+        <button id="ledger-refresh" class="btn-secondary">↻ Refresh</button>
+        <a id="ledger-export" class="btn-secondary" href="/api/ledger/export.csv">⬇ Export CSV</a>
+        <button id="ledger-clear" class="btn-secondary danger">🗑 Clear</button>
+      </div>
+
+      <div id="ledger-list" class="ledger-list"></div>
+    </div><!-- /ledger-tab -->
+
     <div id="infra-tab" class="tab-content">
       <div class="sidebar-header">
         <h1>🏗️ Infrastructure Intel</h1>
@@ -164,13 +203,78 @@
       </div>
     </div><!-- /infra-tab -->
 
-    <!-- SETTINGS TAB — Data Feed Credentials -->
-    <div id="settings-tab" class="tab-content">
+    <!-- ADMIN TAB — IAM + Data Feed Credentials -->
+    <div id="admin-tab" class="tab-content">
       <div class="sidebar-header">
-        <h1>⚙️ Data Feed Settings</h1>
-        <p class="subtitle">Configure API credentials for enhanced data sources</p>
+        <h1>🛡️ Admin</h1>
+        <p class="subtitle">Access management &amp; data feed configuration</p>
       </div>
 
+      <div class="admin-subtabs">
+        <button class="admin-subtab-btn active" data-subtab="iam-panel">🔐 IAM</button>
+        <button class="admin-subtab-btn" data-subtab="feeds-panel">⚙️ Data Feeds</button>
+      </div>
+
+      <!-- IAM PANEL -->
+      <div id="iam-panel" class="admin-panel active">
+        <div id="iam-summary" class="iam-summary"></div>
+
+        <!-- Customers -->
+        <div class="settings-section">
+          <h3>🏢 Customers</h3>
+          <p class="cred-desc">External client accounts. Plots are shared per-customer.</p>
+          <div class="iam-form">
+            <input type="text" id="iam-customer-name" placeholder="Customer / company name" autocomplete="off" />
+            <button id="iam-add-customer" class="btn-save">＋ Add</button>
+          </div>
+          <div id="iam-customers-list" class="iam-list"></div>
+        </div>
+
+        <!-- Users & Roles -->
+        <div class="settings-section">
+          <h3>👤 Users &amp; Roles</h3>
+          <p class="cred-desc">Owner/admin are internal. Customer users are MFA-enforced.</p>
+          <div class="iam-form iam-form-grid">
+            <input type="email" id="iam-user-email" placeholder="email@company.com" autocomplete="off" />
+            <input type="text" id="iam-user-name" placeholder="Name (optional)" autocomplete="off" />
+            <select id="iam-user-role">
+              <option value="admin">admin</option>
+              <option value="customer">customer</option>
+              <option value="owner">owner</option>
+            </select>
+            <select id="iam-user-customer" class="hidden"></select>
+            <button id="iam-add-user" class="btn-save">＋ Add user</button>
+          </div>
+          <div id="iam-users-list" class="iam-list"></div>
+        </div>
+
+        <!-- Invites -->
+        <div class="settings-section">
+          <h3>✉️ Invites</h3>
+          <p class="cred-desc">Onboarding is invite-only. Links expire after 14 days.</p>
+          <div class="iam-form iam-form-grid">
+            <input type="email" id="iam-invite-email" placeholder="email@company.com" autocomplete="off" />
+            <select id="iam-invite-role">
+              <option value="admin">admin</option>
+              <option value="customer">customer</option>
+            </select>
+            <select id="iam-invite-customer" class="hidden"></select>
+            <button id="iam-add-invite" class="btn-save">＋ Invite</button>
+          </div>
+          <div id="iam-invites-list" class="iam-list"></div>
+        </div>
+
+        <!-- Property sharing -->
+        <div class="settings-section">
+          <h3>🔗 Property Sharing</h3>
+          <p class="cred-desc">Pick a customer to see and manage the plots they can view.</p>
+          <select id="iam-share-customer"><option value="">Select customer…</option></select>
+          <div id="iam-shares-list" class="iam-list"></div>
+        </div>
+      </div><!-- /iam-panel -->
+
+      <!-- DATA FEEDS PANEL -->
+      <div id="feeds-panel" class="admin-panel">
       <div class="settings-section">
         <h3>🏢 Real Estate Portals</h3>
 
@@ -283,7 +387,8 @@
         <button id="clear-credentials" class="btn-clear">🗑️ Clear All</button>
       </div>
       <div id="cred-status-msg" class="hidden"></div>
-    </div><!-- /settings-tab -->
+      </div><!-- /feeds-panel -->
+    </div><!-- /admin-tab -->
   </div>
 
   <div id="map"></div>

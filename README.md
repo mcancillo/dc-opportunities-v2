@@ -16,6 +16,7 @@ DC Opportunities v2 is an interactive map-based tool that helps identify potenti
 - 🔴 **For Sale** — Red markers for properties on the market
 - 🟠 **Not For Sale** — Orange markers for occupied high-power sites
 - 🔵 **Existing Datacenters** — Live from OpenStreetMap/Overpass API
+- 📒 **Opportunity Ledger** — Every interesting plot is auto-recorded with **sources** and **why it's interesting** (score-driven reasons), deduplicated and exportable to CSV
 - 📏 **Adjustable Radius** — 10–100 km search radius around IX points
 - 📋 **Data Sources** — Documented real estate portals, cadastral data, and grid operators per country
 
@@ -56,11 +57,40 @@ Open [http://localhost:3000](http://localhost:3000)
 │   └── services/
 │       ├── peeringdb.js       PeeringDB IX & facility data (cached)
 │       ├── overpass.js        OSM datacenter queries (cached)
+│       ├── scoring.js         8-factor DC suitability score
+│       ├── ledger.js          Opportunity ledger (interesting plots + sources)
 │       └── properties.js     Sample property provider
 └── data/
     ├── properties.json        Curated sample properties
+    ├── ledger.json            Auto-generated ledger (gitignored)
     └── sources.json           Data sources per country
 ```
+
+## 📒 Opportunity Ledger
+
+Every time you run a search, plots that are **genuinely interesting** are automatically
+appended to a persistent ledger (`data/ledger.json`), deduplicated by site.
+
+A plot qualifies when it is **Prime/High tier**, **currently for sale**, or scores **≥ 60/100**.
+
+Each ledger entry captures:
+
+- **Why it's interesting** — human-readable reasons derived from the score
+  (e.g. *"Excellent connectivity: 18km to AMS-IX", "High power potential: ~400 MW", "For sale — immediately actionable"*).
+- **Sources** — the data provider, listing/registry URL, nearest IX (PeeringDB),
+  grid/renewables evidence, and DC-ecosystem evidence (OSM/Overpass).
+- **Provenance** — `first_seen`, `last_seen`, and `seen_count`.
+
+Browse it in the **📒 Ledger** tab, filter by country/tier/for-sale, and **export to CSV**.
+
+### Ledger API
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/ledger` | List entries + stats. Filters: `country`, `tier`, `for_sale`, `min_score` |
+| GET | `/api/ledger/export.csv` | Download the ledger as CSV (same filters) |
+| DELETE | `/api/ledger/:key` | Remove one entry |
+| DELETE | `/api/ledger` | Clear the ledger |
 
 ## Data Sources
 

@@ -654,7 +654,385 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'infra-tab') loadInfrastructureTab();
+    if (btn.dataset.tab === 'ledger-tab') loadLedgerTab();
+    if (btn.dataset.tab === 'admin-tab') loadIAM();
   });
+});
+
+// ─── Admin: IAM component ───────────────────────────────────────
+// Sub-tab switching (IAM | Data Feeds)
+document.querySelectorAll('.admin-subtab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.admin-subtab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.subtab).classList.add('active');
+  });
+});
+
+let iamCustomers = [];
+
+async function loadIAM() {
+  try {
+    const [summary, customers, users, invites] = await Promise.all([
+      fetchJSON('/api/iam/summary'),
+      fetchJSON('/api/iam/customers'),
+      fetchJSON('/api/iam/users'),
+      fetchJSON('/api/iam/invites')
+    ]);
+    iamCustomers = customers;
+    renderIAMSummary(summary);
+    renderCustomers(customers);
+    renderUsers(users);
+    renderInvites(invites);
+    populateCustomerSelects(customers);
+    const shareSel = document.getElementById('iam-share-customer').value;
+    if (shareSel) loadShares(shareSel);
+  } catch (e) {
+    console.error('Failed to load IAM:', e);
+  }
+}
+
+function renderIAMSummary(s) {
+  document.getElementById('iam-summary').innerHTML = `
+    <div class="iam-stat"><b>${s.customers}</b> customers</div>
+    <div class="iam-stat"><b>${s.users}</b> users</div>
+    <div class="iam-stat"><b>${s.shares}</b> shares</div>
+    <div class="iam-stat ${s.mfa_pending ? 'warn' : ''}"><b>${s.mfa_pending}</b> MFA pending</div>
+    <div class="iam-stat"><b>${s.pending_invites}</b> invites</div>`;
+}
+
+function renderCustomers(customers) {
+  const el = document.getElementById('iam-customers-list');
+  el.innerHTML = customers.length ? '' : '<div class="iam-empty">No customers yet.</div>';
+  customers.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'iam-row';
+    row.innerHTML = `
+      <div><b>${escapeHtml(c.name)}</b>
+        <span class="iam-sub">${c.user_count} users · ${c.share_count} shared plots</span></div>
+      <button class="iam-del" title="Delete">✕</button>`;
+    row.querySelector('.iam-del').addEventListener('click', async () => {
+      if (!confirm(`Delete customer "${c.name}" and all its users/shares?`)) return;
+      await fetch('/api/iam/customers/' + c.id, { method: 'DELETE' });
+      loadIAM();
+    });
+    el.appendChild(row);
+  });
+}
+
+function roleBadge(role) {
+  const colors = { owner: '#00ff88', admin: '#4da6ff', customer: '#ffcc00' };
+  const c = colors[role] || '#888';
+  return `<span class="iam-role" style="color:${c};border-color:${c}">${role}</span>`;
+}
+
+function mfaBadge(u) {
+  if (!u.mfa_required) return '<span class="iam-mfa off">MFA off</span>';
+  return u.mfa_enrolled
+    ? '<span class="iam-mfa ok">MFA ✓</span>'
+    : '<span class="iam-mfa pending">MFA pending</span>';
+}
+
+function renderUsers(users) {
+  const el = document.getElementById('iam-users-list');
+  el.innerHTML = '';
+  users.forEach(u => {
+    const row = document.createElement('div');
+    row.className = 'iam-row';
+    const cust = u.customer_name ? ` · ${escapeHtml(u.customer_name)}` : '';
+    const enrollBtn = (u.mfa_required && !u.mfa_enrolled)
+      ? '<button class="iam-mini" data-act="enroll">Mark MFA enrolled</button>' : '';
+    row.innerHTML = `
+      <div>
+        <div>${roleBadge(u.role)} <b>${escapeHtml(u.email)}</b></div>
+        <span class="iam-sub">${escapeHtml(u.name)}${cust} · ${mfaBadge(u)}</span>
+      </div>
+      <div class="iam-actions">${enrollBtn}<button class="iam-del" title="Delete">✕</button></div>`;
+    row.querySelector('.iam-del').addEventListener('click', async () => {
+      const r = await fetch('/api/iam/users/' + u.id, { method: 'DELETE' });
+      const j = await r.json();
+      if (j.error) alert(j.error); else loadIAM();
+    });
+    const enroll = row.querySelector('[data-act="enroll"]');
+    if (enroll) enroll.addEventListener('click', async () => {
+      await fetch('/api/iam/users/' + u.id, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mfa_enrolled: true })
+      });
+      loadIAM();
+    });
+    el.appendChild(row);
+  });
+}
+
+function renderInvites(invites) {
+  const el = document.getElementById('iam-invites-list');
+  el.innerHTML = invites.length ? '' : '<div class="iam-empty">No pending invites.</div>';
+  invites.forEach(i => {
+    const row = document.createElement('div');
+    row.className = 'iam-row';
+    const cust = i.customer_name ? ` · ${escapeHtml(i.customer_name)}` : '';
+    row.innerHTML = `
+      <div><div>${roleBadge(i.role)} <b>${escapeHtml(i.email)}</b>
+        <span class="iam-status ${i.status}">${i.status}</span></div>
+        <span class="iam-sub">expires ${new Date(i.expires_at).toLocaleDateString()}${cust}</span></div>
+      <button class="iam-del" title="Revoke">✕</button>`;
+    row.querySelector('.iam-del').addEventListener('click', async () => {
+      await fetch('/api/iam/invites/' + i.id, { method: 'DELETE' });
+      loadIAM();
+    });
+    el.appendChild(row);
+  });
+}
+
+function populateCustomerSelects(customers) {
+  const opts = '<option value="">Select customer…</option>' +
+    customers.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  ['iam-user-customer', 'iam-invite-customer'].forEach(id => {
+    const sel = document.getElementById(id);
+    const prev = sel.value;
+    sel.innerHTML = opts;
+    sel.value = prev;
+  });
+  const shareSel = document.getElementById('iam-share-customer');
+  const prevShare = shareSel.value;
+  shareSel.innerHTML = opts;
+  shareSel.value = prevShare;
+}
+
+// Toggle customer selector visibility when role = customer
+function bindRoleToggle(roleId, custId) {
+  const role = document.getElementById(roleId);
+  const cust = document.getElementById(custId);
+  const sync = () => cust.classList.toggle('hidden', role.value !== 'customer');
+  role.addEventListener('change', sync);
+  sync();
+}
+bindRoleToggle('iam-user-role', 'iam-user-customer');
+bindRoleToggle('iam-invite-role', 'iam-invite-customer');
+
+async function iamPost(url, body) {
+  const r = await fetch(url, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const j = await r.json();
+  if (j.error) { alert(j.error); return null; }
+  return j;
+}
+
+document.getElementById('iam-add-customer')?.addEventListener('click', async () => {
+  const name = document.getElementById('iam-customer-name').value.trim();
+  if (!name) return;
+  if (await iamPost('/api/iam/customers', { name })) {
+    document.getElementById('iam-customer-name').value = '';
+    loadIAM();
+  }
+});
+
+document.getElementById('iam-add-user')?.addEventListener('click', async () => {
+  const body = {
+    email: document.getElementById('iam-user-email').value.trim(),
+    name: document.getElementById('iam-user-name').value.trim(),
+    role: document.getElementById('iam-user-role').value,
+    customer_id: document.getElementById('iam-user-customer').value || null
+  };
+  if (await iamPost('/api/iam/users', body)) {
+    document.getElementById('iam-user-email').value = '';
+    document.getElementById('iam-user-name').value = '';
+    loadIAM();
+  }
+});
+
+document.getElementById('iam-add-invite')?.addEventListener('click', async () => {
+  const body = {
+    email: document.getElementById('iam-invite-email').value.trim(),
+    role: document.getElementById('iam-invite-role').value,
+    customer_id: document.getElementById('iam-invite-customer').value || null
+  };
+  if (await iamPost('/api/iam/invites', body)) {
+    document.getElementById('iam-invite-email').value = '';
+    loadIAM();
+  }
+});
+
+// Property sharing
+document.getElementById('iam-share-customer')?.addEventListener('change', e => {
+  loadShares(e.target.value);
+});
+
+async function loadShares(customerId) {
+  const el = document.getElementById('iam-shares-list');
+  if (!customerId) { el.innerHTML = ''; return; }
+  const [shares, ledgerData] = await Promise.all([
+    fetchJSON('/api/iam/shares?customer_id=' + customerId),
+    fetchJSON('/api/ledger')
+  ]);
+  const sharedKeys = new Set(shares.map(s => s.ledger_key));
+  el.innerHTML = '';
+
+  // Currently shared
+  const sharedWrap = document.createElement('div');
+  sharedWrap.innerHTML = `<div class="iam-sub" style="margin:8px 0 4px">Shared with this customer (${shares.length}):</div>`;
+  el.appendChild(sharedWrap);
+  if (!shares.length) {
+    const none = document.createElement('div');
+    none.className = 'iam-empty';
+    none.textContent = 'Nothing shared yet.';
+    el.appendChild(none);
+  }
+  shares.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'iam-row';
+    row.innerHTML = `<div><b>${escapeHtml(s.ledger_name)}</b></div>
+      <button class="iam-mini danger" title="Revoke">Revoke</button>`;
+    row.querySelector('button').addEventListener('click', async () => {
+      await fetch('/api/iam/shares/' + s.id, { method: 'DELETE' });
+      loadShares(customerId);
+      loadIAM();
+    });
+    el.appendChild(row);
+  });
+
+  // Available ledger entries to share
+  const avail = ledgerData.items.filter(i => !sharedKeys.has(i.key));
+  const availWrap = document.createElement('div');
+  availWrap.innerHTML = `<div class="iam-sub" style="margin:12px 0 4px">Add from ledger (${avail.length}):</div>`;
+  el.appendChild(availWrap);
+  if (!avail.length) {
+    const none = document.createElement('div');
+    none.className = 'iam-empty';
+    none.textContent = ledgerData.items.length ? 'All ledger plots already shared.' : 'Ledger is empty — run a search first.';
+    el.appendChild(none);
+  }
+  avail.slice(0, 50).forEach(i => {
+    const row = document.createElement('div');
+    row.className = 'iam-row';
+    const tier = i.score ? `${i.score.tier} · ${i.score.total_score}/100` : '';
+    row.innerHTML = `<div><b>${escapeHtml(i.name)}</b>
+      <span class="iam-sub">${escapeHtml([i.city, i.country].filter(Boolean).join(', '))} · ${tier}</span></div>
+      <button class="iam-mini" title="Share">＋ Share</button>`;
+    row.querySelector('button').addEventListener('click', async () => {
+      await iamPost('/api/iam/shares', { ledger_key: i.key, ledger_name: i.name, customer_id: customerId });
+      loadShares(customerId);
+      loadIAM();
+    });
+    el.appendChild(row);
+  });
+}
+
+// ─── Opportunity Ledger Tab ─────────────────────────────────────
+function ledgerFilters() {
+  const country = document.getElementById('ledger-filter-country').value;
+  const tier = document.getElementById('ledger-filter-tier').value;
+  const forSale = document.getElementById('ledger-filter-forsale').checked;
+  const params = new URLSearchParams();
+  if (country) params.set('country', country);
+  if (tier) params.set('tier', tier);
+  if (forSale) params.set('for_sale', 'true');
+  return params;
+}
+
+async function loadLedgerTab() {
+  const params = ledgerFilters();
+  let data;
+  try {
+    data = await fetchJSON('/api/ledger?' + params.toString());
+  } catch (e) {
+    console.error('Failed to load ledger:', e);
+    return;
+  }
+
+  // Stats
+  const s = data.stats || { total: 0, for_sale: 0, by_tier: {}, by_country: {} };
+  const tierChips = Object.entries(s.by_tier || {})
+    .map(([t, n]) => `<span class="ledger-chip">${t}: ${n}</span>`).join('');
+  document.getElementById('ledger-stats').innerHTML = `
+    <div class="ledger-stat-row">
+      <span class="ledger-stat-big">${s.total}</span> interesting plots ·
+      <span style="color:#ff6666">${s.for_sale} for sale</span>
+    </div>
+    <div class="ledger-chips">${tierChips}</div>`;
+
+  // Update export link to respect filters
+  document.getElementById('ledger-export').href = '/api/ledger/export.csv?' + params.toString();
+
+  // List
+  const list = document.getElementById('ledger-list');
+  list.innerHTML = '';
+  if (!data.items.length) {
+    list.innerHTML = '<div style="color:#666;font-size:0.85rem;padding:12px;">No entries yet. Run a search to populate the ledger with interesting plots.</div>';
+    return;
+  }
+
+  for (const item of data.items) {
+    list.appendChild(ledgerCard(item));
+  }
+}
+
+function ledgerCard(item) {
+  const el = document.createElement('div');
+  el.className = 'ledger-card';
+
+  const badge = item.score ? tierBadge(item.score) : '';
+  const saleTag = item.for_sale
+    ? '<span class="popup-badge sale">FOR SALE</span>'
+    : '';
+  const power = item.estimated_power_mw
+    ? `${item.estimated_power_mw} MW`
+    : (item.estimated_power_kw ? `${item.estimated_power_kw} kW` : '—');
+  const area = item.area_m2 ? `${item.area_m2.toLocaleString()} m²` : '—';
+
+  const reasons = (item.reasons || []).length
+    ? `<ul class="ledger-reasons">${item.reasons.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>`
+    : '';
+
+  const sources = (item.sources || []).length
+    ? `<div class="ledger-sources"><strong>Sources:</strong> ${item.sources.map(src =>
+        src.url
+          ? `<a href="${src.url}" target="_blank" rel="noopener">${escapeHtml(src.label)}</a>`
+          : `<span>${escapeHtml(src.label)}</span>`
+      ).join(' · ')}</div>`
+    : '';
+
+  const seen = item.seen_count > 1 ? ` · seen ${item.seen_count}×` : '';
+
+  el.innerHTML = `
+    <div class="ledger-card-head">
+      <div>
+        <div class="ledger-card-title">${escapeHtml(item.name)} ${saleTag}</div>
+        <div class="ledger-card-sub">${escapeHtml([item.city, item.country].filter(Boolean).join(', '))} · ${area} · ${power}${seen}</div>
+      </div>
+      <button class="ledger-locate" title="Zoom to site" data-lat="${item.lat}" data-lng="${item.lng}">📍</button>
+    </div>
+    <div style="margin:6px 0">${badge}</div>
+    ${reasons}
+    ${sources}`;
+
+  el.querySelector('.ledger-locate').addEventListener('click', () => {
+    map.setView([item.lat, item.lng], 13);
+    document.querySelector('.tab-btn[data-tab="search-tab"]').click();
+  });
+  return el;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Ledger controls
+['ledger-filter-country', 'ledger-filter-tier', 'ledger-filter-forsale'].forEach(id => {
+  const elm = document.getElementById(id);
+  if (elm) elm.addEventListener('change', loadLedgerTab);
+});
+document.getElementById('ledger-refresh')?.addEventListener('click', loadLedgerTab);
+document.getElementById('ledger-clear')?.addEventListener('click', async () => {
+  if (!confirm('Clear the entire opportunity ledger? This cannot be undone.')) return;
+  await fetch('/api/ledger', { method: 'DELETE' });
+  loadLedgerTab();
 });
 
 // ─── Infrastructure Tab ─────────────────────────────────────────

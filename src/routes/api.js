@@ -7,6 +7,8 @@ const commercial = require('../services/commercial');
 const cables = require('../services/cables');
 const { scoreProperty } = require('../services/scoring');
 const liveListings = require('../services/live-listings');
+const ledger = require('../services/ledger');
+const iam = require('../services/iam');
 
 // Load grid expansion and renewable zones data
 const path = require('path');
@@ -109,6 +111,14 @@ router.get('/properties', async (req, res) => {
     // Sort by score
     scored.sort((a, b) => (b.score?.total_score || 0) - (a.score?.total_score || 0));
 
+    // Record interesting plots to the opportunity ledger
+    try {
+      const written = ledger.recordBatch(scored, {
+        origin: { profile: 'hyperscale', near: { lat: pLat, lng: pLng }, radius_km: radiusKm, country: country || null }
+      });
+      if (written) console.log(`[ledger] +${written} interesting plot(s) from properties search`);
+    } catch (e) { console.error('[ledger] record error:', e.message); }
+
     res.json(scored);
   } catch (err) {
     console.error('Properties error:', err.message);
@@ -149,6 +159,14 @@ router.get('/commercial', async (req, res) => {
     }));
 
     scored.sort((a, b) => (b.score?.total_score || 0) - (a.score?.total_score || 0));
+
+    // Record interesting plots to the opportunity ledger
+    try {
+      const written = ledger.recordBatch(scored, {
+        origin: { profile: 'edge', near: { lat: pLat, lng: pLng }, radius_km: radiusKm, country: country || null }
+      });
+      if (written) console.log(`[ledger] +${written} interesting plot(s) from commercial search`);
+    } catch (e) { console.error('[ledger] record error:', e.message); }
 
     res.json(scored);
   } catch (err) {
@@ -259,6 +277,108 @@ router.get('/infrastructure', (req, res) => {
     fiberPlans: fiberPlans.filter(filter),
     crossborderLinks: crossborderLinks.filter(filter)
   });
+});
+
+// ─── Opportunity Ledger ────────────────────────────────────────
+// Persistent record of every interesting plot found (with sources + reasons).
+
+// List ledger entries (optional filters: country, tier, for_sale, min_score)
+router.get('/ledger', (req, res) => {
+  try {
+    const { country, tier, for_sale, min_score } = req.query;
+    const items = ledger.getAll({
+      country: country || undefined,
+      tier: tier || undefined,
+      for_sale: for_sale === 'true' ? true : undefined,
+      min_score: min_score || undefined
+    });
+    res.json({ stats: ledger.stats(), items });
+  } catch (err) {
+    console.error('Ledger error:', err.message);
+    res.status(500).json({ error: 'Failed to read ledger' });
+  }
+});
+
+// Export the ledger as CSV
+router.get('/ledger/export.csv', (req, res) => {
+  try {
+    const { country, tier, for_sale, min_score } = req.query;
+    const csv = ledger.toCSV({
+      country: country || undefined,
+      tier: tier || undefined,
+      for_sale: for_sale === 'true' ? true : undefined,
+      min_score: min_score || undefined
+    });
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="dc-opportunities-ledger.csv"');
+    res.send(csv);
+  } catch (err) {
+    console.error('Ledger export error:', err.message);
+    res.status(500).json({ error: 'Failed to export ledger' });
+  }
+});
+
+// Delete a single ledger entry
+router.delete('/ledger/:key', (req, res) => {
+  const ok = ledger.remove(req.params.key);
+  res.json({ ok });
+});
+
+// Clear the whole ledger
+router.delete('/ledger', (req, res) => {
+  ledger.clear();
+  res.json({ ok: true });
+});
+
+// ─── IAM (Identity & Access Management) ────────────────────────
+// Manages customers, users/roles, invites and owner-curated property shares.
+// See docs/architecture-proposals.md §4–5.
+
+function iamHandler(fn) {
+  return (req, res) => {
+    try {
+      res.json(fn(req));
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+}
+
+// Summary counts
+router.get('/iam/summary', iamHandler(() => iam.summary()));
+
+// Customers
+router.get('/iam/customers', iamHandler(() => iam.listCustomers()));
+router.post('/iam/customers', iamHandler(req => iam.createCustomer(req.body || {})));
+router.delete('/iam/customers/:id', iamHandler(req => ({ ok: iam.deleteCustomer(req.params.id) })));
+
+// Users
+router.get('/iam/users', iamHandler(() => iam.listUsers()));
+router.post('/iam/users', iamHandler(req => iam.createUser(req.body || {})));
+router.patch('/iam/users/:id', iamHandler(req => iam.updateUser(req.params.id, req.body || {})));
+router.delete('/iam/users/:id', iamHandler(req => ({ ok: iam.deleteUser(req.params.id) })));
+
+// Invites
+router.get('/iam/invites', iamHandler(() => iam.listInvites()));
+router.post('/iam/invites', iamHandler(req => iam.createInvite(req.body || {})));
+router.delete('/iam/invites/:id', iamHandler(req => ({ ok: iam.revokeInvite(req.params.id) })));
+
+// Property shares (which plots each customer can see)
+router.get('/iam/shares', iamHandler(req => iam.listShares(req.query.customer_id)));
+router.post('/iam/shares', iamHandler(req => iam.createShare(req.body || {})));
+router.delete('/iam/shares/:id', iamHandler(req => ({ ok: iam.revokeShare(req.params.id) })));
+
+// Customer-facing portfolio: only the ledger plots shared with a customer.
+router.get('/portfolio', (req, res) => {
+  try {
+    const customerId = req.query.customer_id;
+    if (!customerId) return res.status(400).json({ error: 'customer_id is required' });
+    const keys = new Set(iam.keysForCustomer(customerId));
+    const items = ledger.getAll().filter(i => keys.has(i.key));
+    res.json({ customer_id: customerId, count: items.length, items });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to build portfolio' });
+  }
 });
 
 module.exports = router;

@@ -3,3 +3,5 @@ node_modules/
 *.log
 .DS_Store
 cache/
+data/ledger.json
+data/iam.json
