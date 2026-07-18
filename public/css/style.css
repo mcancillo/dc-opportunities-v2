@@ -737,6 +737,9 @@ input[type="range"] {
 }
 .iam-row b { color: #eee; }
 .iam-sub { display: block; font-size: 0.72rem; color: #8899aa; margin-top: 2px; }
+.iam-gh { display: inline-flex; align-items: center; gap: 5px; color: #6cb6ff; text-decoration: none; font-weight: 600; }
+.iam-gh:hover { text-decoration: underline; }
+.iam-avatar { width: 18px; height: 18px; border-radius: 50%; vertical-align: middle; border: 1px solid #33404d; }
 .iam-empty { font-size: 0.78rem; color: #667; padding: 6px 2px; }
 .iam-actions { display: flex; gap: 6px; align-items: center; }
 

@@ -233,9 +233,10 @@
         <!-- Users & Roles -->
         <div class="settings-section">
           <h3>👤 Users &amp; Roles</h3>
-          <p class="cred-desc">Owner/admin are internal. Customer users are MFA-enforced.</p>
+          <p class="cred-desc">Owner/admin are internal. Customer users are MFA-enforced. Provide a GitHub username and/or email.</p>
           <div class="iam-form iam-form-grid">
-            <input type="email" id="iam-user-email" placeholder="email@company.com" autocomplete="off" />
+            <input type="text" id="iam-user-github" placeholder="GitHub username" autocomplete="off" />
+            <input type="email" id="iam-user-email" placeholder="email@company.com (optional)" autocomplete="off" />
             <input type="text" id="iam-user-name" placeholder="Name (optional)" autocomplete="off" />
             <select id="iam-user-role">
               <option value="admin">admin</option>
@@ -251,9 +252,10 @@
         <!-- Invites -->
         <div class="settings-section">
           <h3>✉️ Invites</h3>
-          <p class="cred-desc">Onboarding is invite-only. Links expire after 14 days.</p>
+          <p class="cred-desc">Onboarding is invite-only. Links expire after 14 days. GitHub username and/or email.</p>
           <div class="iam-form iam-form-grid">
-            <input type="email" id="iam-invite-email" placeholder="email@company.com" autocomplete="off" />
+            <input type="text" id="iam-invite-github" placeholder="GitHub username" autocomplete="off" />
+            <input type="email" id="iam-invite-email" placeholder="email@company.com (optional)" autocomplete="off" />
             <select id="iam-invite-role">
               <option value="admin">admin</option>
               <option value="customer">customer</option>

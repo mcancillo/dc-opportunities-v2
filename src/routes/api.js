@@ -344,8 +344,22 @@ function iamHandler(fn) {
   };
 }
 
+// Async variant for handlers that hit external services (GitHub lookup).
+function iamAsyncHandler(fn) {
+  return async (req, res) => {
+    try {
+      res.json(await fn(req));
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+}
+
 // Summary counts
 router.get('/iam/summary', iamHandler(() => iam.summary()));
+
+// Validate / resolve a GitHub account
+router.get('/iam/github/:login', iamAsyncHandler(req => iam.resolveGithub(req.params.login)));
 
 // Customers
 router.get('/iam/customers', iamHandler(() => iam.listCustomers()));
@@ -354,13 +368,13 @@ router.delete('/iam/customers/:id', iamHandler(req => ({ ok: iam.deleteCustomer(
 
 // Users
 router.get('/iam/users', iamHandler(() => iam.listUsers()));
-router.post('/iam/users', iamHandler(req => iam.createUser(req.body || {})));
+router.post('/iam/users', iamAsyncHandler(req => iam.createUser(req.body || {})));
 router.patch('/iam/users/:id', iamHandler(req => iam.updateUser(req.params.id, req.body || {})));
 router.delete('/iam/users/:id', iamHandler(req => ({ ok: iam.deleteUser(req.params.id) })));
 
 // Invites
 router.get('/iam/invites', iamHandler(() => iam.listInvites()));
-router.post('/iam/invites', iamHandler(req => iam.createInvite(req.body || {})));
+router.post('/iam/invites', iamAsyncHandler(req => iam.createInvite(req.body || {})));
 router.delete('/iam/invites/:id', iamHandler(req => ({ ok: iam.revokeInvite(req.params.id) })));
 
 // Property shares (which plots each customer can see)

@@ -13,10 +13,45 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const fetch = require('node-fetch');
 
 const IAM_PATH = path.join(__dirname, '..', '..', 'data', 'iam.json');
 
 const ROLES = ['owner', 'admin', 'customer'];
+
+// ─── GitHub account resolution ─────────────────────────────────
+// Validates a GitHub username against the public API and returns a
+// normalized identity. A token (GITHUB_TOKEN / GH_TOKEN) is used when
+// available to raise the rate limit, but is not required.
+async function resolveGithub(login) {
+  const clean = String(login || '').trim().replace(/^@/, '');
+  if (!clean || !/^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/.test(clean)) {
+    throw new Error('Invalid GitHub username');
+  }
+  const headers = { 'User-Agent': 'dc-opportunities-iam', 'Accept': 'application/vnd.github+json' };
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let res;
+  try {
+    res = await fetch(`https://api.github.com/users/${encodeURIComponent(clean)}`, { headers, timeout: 10000 });
+  } catch (e) {
+    throw new Error(`Could not reach GitHub: ${e.message}`);
+  }
+  if (res.status === 404) throw new Error(`GitHub account "${clean}" not found`);
+  if (res.status === 403) throw new Error('GitHub API rate limit reached — set GITHUB_TOKEN and retry');
+  if (!res.ok) throw new Error(`GitHub lookup failed (HTTP ${res.status})`);
+
+  const j = await res.json();
+  return {
+    login: j.login,
+    id: j.id,
+    name: j.name || null,
+    avatar_url: j.avatar_url || null,
+    html_url: j.html_url || `https://github.com/${j.login}`,
+    type: j.type || 'User'
+  };
+}
 
 let store = null;
 
@@ -116,11 +151,23 @@ function listUsers() {
   }));
 }
 
-function createUser({ email, name, role, customer_id }) {
+async function createUser({ email, name, role, customer_id, github_login }) {
   load();
-  if (!email || !/.+@.+\..+/.test(email)) throw new Error('A valid email is required');
   if (!ROLES.includes(role)) throw new Error(`Role must be one of ${ROLES.join(', ')}`);
-  if (store.users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+
+  // A user is identified by a GitHub account and/or an email — at least one.
+  let github = null;
+  if (github_login) {
+    github = await resolveGithub(github_login);
+    if (store.users.some(u => u.github && u.github.id === github.id)) {
+      throw new Error(`GitHub account "${github.login}" is already a user`);
+    }
+  }
+  if (!github && (!email || !/.+@.+\..+/.test(email))) {
+    throw new Error('Provide a GitHub username or a valid email');
+  }
+  if (email && /.+@.+\..+/.test(email) &&
+      store.users.some(u => u.email && u.email.toLowerCase() === email.toLowerCase())) {
     throw new Error('A user with that email already exists');
   }
   if (role === 'customer' && !customer_id) {
@@ -129,15 +176,19 @@ function createUser({ email, name, role, customer_id }) {
   if (customer_id && !store.customers.some(c => c.id === customer_id)) {
     throw new Error('Unknown customer');
   }
-  // Customers must always use MFA (see architecture §5).
-  const mfaRequired = role === 'customer' ? true : true;
+
+  const displayName = (name || '').trim()
+    || (github && github.name)
+    || (github && github.login)
+    || (email ? email.split('@')[0] : 'user');
   const user = {
     id: id('usr'),
-    email: email.trim(),
-    name: (name || '').trim() || email.split('@')[0],
+    email: (email || '').trim() || null,
+    name: displayName,
     role,
     customer_id: role === 'customer' ? customer_id : null,
-    mfa_required: mfaRequired,
+    github,                         // {login,id,name,avatar_url,html_url,type} or null
+    mfa_required: true,             // customers are always MFA-enforced (§5)
     mfa_enrolled: false,
     created_at: now()
   };
@@ -193,14 +244,19 @@ function listInvites() {
   }));
 }
 
-function createInvite({ email, role, customer_id, ttl_days = 14 }) {
+async function createInvite({ email, role, customer_id, github_login, ttl_days = 14 }) {
   load();
-  if (!email || !/.+@.+\..+/.test(email)) throw new Error('A valid email is required');
   if (!ROLES.includes(role)) throw new Error('Invalid role');
+  let github = null;
+  if (github_login) github = await resolveGithub(github_login);
+  if (!github && (!email || !/.+@.+\..+/.test(email))) {
+    throw new Error('Provide a GitHub username or a valid email');
+  }
   if (role === 'customer' && !customer_id) throw new Error('Customer invites need a customer');
   const invite = {
     id: id('inv'),
-    email: email.trim(),
+    email: (email || '').trim() || null,
+    github,
     role,
     customer_id: role === 'customer' ? customer_id : null,
     token: crypto.randomBytes(24).toString('hex'),
@@ -287,6 +343,7 @@ function summary() {
 
 module.exports = {
   ROLES,
+  resolveGithub,
   listCustomers, createCustomer, deleteCustomer,
   listUsers, createUser, updateUser, deleteUser,
   listInvites, createInvite, revokeInvite,

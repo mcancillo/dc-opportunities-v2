@@ -743,10 +743,16 @@ function renderUsers(users) {
     const cust = u.customer_name ? ` · ${escapeHtml(u.customer_name)}` : '';
     const enrollBtn = (u.mfa_required && !u.mfa_enrolled)
       ? '<button class="iam-mini" data-act="enroll">Mark MFA enrolled</button>' : '';
+    const gh = u.github
+      ? `<a class="iam-gh" href="${escapeHtml(u.github.html_url)}" target="_blank" rel="noopener">
+           <img class="iam-avatar" src="${escapeHtml(u.github.avatar_url)}" alt="" />@${escapeHtml(u.github.login)}</a>`
+      : '';
+    const primary = u.github ? `@${escapeHtml(u.github.login)}` : escapeHtml(u.email || '—');
+    const contact = u.email ? ` · ${escapeHtml(u.email)}` : '';
     row.innerHTML = `
       <div>
-        <div>${roleBadge(u.role)} <b>${escapeHtml(u.email)}</b></div>
-        <span class="iam-sub">${escapeHtml(u.name)}${cust} · ${mfaBadge(u)}</span>
+        <div>${roleBadge(u.role)} ${gh || `<b>${primary}</b>`}</div>
+        <span class="iam-sub">${escapeHtml(u.name || '')}${contact}${cust} · ${mfaBadge(u)}</span>
       </div>
       <div class="iam-actions">${enrollBtn}<button class="iam-del" title="Delete">✕</button></div>`;
     row.querySelector('.iam-del').addEventListener('click', async () => {
@@ -773,8 +779,12 @@ function renderInvites(invites) {
     const row = document.createElement('div');
     row.className = 'iam-row';
     const cust = i.customer_name ? ` · ${escapeHtml(i.customer_name)}` : '';
+    const gh = i.github
+      ? `<a class="iam-gh" href="${escapeHtml(i.github.html_url)}" target="_blank" rel="noopener">
+           <img class="iam-avatar" src="${escapeHtml(i.github.avatar_url)}" alt="" />@${escapeHtml(i.github.login)}</a>`
+      : `<b>${escapeHtml(i.email || '—')}</b>`;
     row.innerHTML = `
-      <div><div>${roleBadge(i.role)} <b>${escapeHtml(i.email)}</b>
+      <div><div>${roleBadge(i.role)} ${gh}
         <span class="iam-status ${i.status}">${i.status}</span></div>
         <span class="iam-sub">expires ${new Date(i.expires_at).toLocaleDateString()}${cust}</span></div>
       <button class="iam-del" title="Revoke">✕</button>`;
@@ -833,12 +843,14 @@ document.getElementById('iam-add-customer')?.addEventListener('click', async () 
 
 document.getElementById('iam-add-user')?.addEventListener('click', async () => {
   const body = {
+    github_login: document.getElementById('iam-user-github').value.trim() || null,
     email: document.getElementById('iam-user-email').value.trim(),
     name: document.getElementById('iam-user-name').value.trim(),
     role: document.getElementById('iam-user-role').value,
     customer_id: document.getElementById('iam-user-customer').value || null
   };
   if (await iamPost('/api/iam/users', body)) {
+    document.getElementById('iam-user-github').value = '';
     document.getElementById('iam-user-email').value = '';
     document.getElementById('iam-user-name').value = '';
     loadIAM();
@@ -847,11 +859,13 @@ document.getElementById('iam-add-user')?.addEventListener('click', async () => {
 
 document.getElementById('iam-add-invite')?.addEventListener('click', async () => {
   const body = {
+    github_login: document.getElementById('iam-invite-github').value.trim() || null,
     email: document.getElementById('iam-invite-email').value.trim(),
     role: document.getElementById('iam-invite-role').value,
     customer_id: document.getElementById('iam-invite-customer').value || null
   };
   if (await iamPost('/api/iam/invites', body)) {
+    document.getElementById('iam-invite-github').value = '';
     document.getElementById('iam-invite-email').value = '';
     loadIAM();
   }
