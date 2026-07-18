@@ -84,6 +84,10 @@ function buildReasons(entry) {
   const s = entry.score || {};
   const b = s.breakdown || {};
 
+  if (entry.manual) {
+    reasons.push('📍 Manually added by admin — curated opportunity of interest.');
+  }
+
   if (s.tier === 'prime') reasons.push('⭐ Prime-tier site — top-scoring DC candidate.');
   else if (s.tier === 'high') reasons.push('🟢 High-tier site — strong DC candidate.');
 
@@ -157,7 +161,7 @@ function buildSources(entry) {
 // Records a single scored entry if it qualifies. Returns true if written.
 function record(entry, meta = {}) {
   if (!entry || entry.lat == null || entry.lng == null) return false;
-  if (!qualifies(entry)) return false;
+  if (!meta.force && !qualifies(entry)) return false;
 
   load();
   const key = makeKey(entry);
@@ -181,6 +185,9 @@ function record(entry, meta = {}) {
     price_eur: entry.price_eur || null,
     listing_url: entry.listing_url || null,
     notes: entry.notes || null,
+    manual: entry.manual === true,
+    data_source: entry.data_source || null,
+    added_by: meta.added_by || entry.added_by || null,
     score: entry.score || null,
     reasons: buildReasons(entry),
     sources: buildSources(entry),
@@ -228,6 +235,7 @@ function getAll(filters = {}) {
   if (filters.country) items = items.filter(i => i.country === filters.country);
   if (filters.tier) items = items.filter(i => i.score?.tier === filters.tier);
   if (filters.for_sale === true) items = items.filter(i => i.for_sale === true);
+  if (filters.manual === true) items = items.filter(i => i.manual === true);
   if (filters.min_score) items = items.filter(i => (i.score?.total_score || 0) >= Number(filters.min_score));
   items.sort((a, b) => (b.score?.total_score || 0) - (a.score?.total_score || 0));
   return items;

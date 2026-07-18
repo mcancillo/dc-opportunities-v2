@@ -318,6 +318,79 @@ router.get('/ledger/export.csv', (req, res) => {
   }
 });
 
+// ─── Manual entries (Admin scope) ──────────────────────────────
+// Admins can drop a plot on the globe by hand. It is scored like any other
+// site and force-recorded into the ledger (bypasses the auto-qualify filter),
+// then rendered as a marker and shareable per-customer.
+
+// List only manually-added plots (used to render markers on load)
+router.get('/ledger/manual', (req, res) => {
+  try {
+    res.json({ items: ledger.getAll({ manual: true }) });
+  } catch (err) {
+    console.error('Manual ledger error:', err.message);
+    res.status(500).json({ error: 'Failed to read manual entries' });
+  }
+});
+
+// Create a manual plot
+router.post('/ledger/manual', async (req, res) => {
+  try {
+    const b = req.body || {};
+    const lat = parseFloat(b.lat);
+    const lng = parseFloat(b.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return res.status(400).json({ error: 'Valid lat/lng are required' });
+    }
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      return res.status(400).json({ error: 'Coordinates out of range' });
+    }
+    if (!b.name || !String(b.name).trim()) {
+      return res.status(400).json({ error: 'A name is required' });
+    }
+
+    const areaM2 = b.area_m2 != null && b.area_m2 !== '' ? Number(b.area_m2) : null;
+    const powerMw = b.estimated_power_mw != null && b.estimated_power_mw !== ''
+      ? Number(b.estimated_power_mw) : null;
+
+    const entry = {
+      id: 'manual-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6),
+      name: String(b.name).trim(),
+      country: b.country ? String(b.country).trim() : null,
+      city: b.city ? String(b.city).trim() : null,
+      address: b.address ? String(b.address).trim() : null,
+      lat, lng,
+      area_m2: Number.isFinite(areaM2) ? areaM2 : null,
+      estimated_power_mw: Number.isFinite(powerMw) ? powerMw : null,
+      sector: b.sector ? String(b.sector).trim() : 'Manual entry',
+      for_sale: b.for_sale === true || b.for_sale === 'true',
+      price_eur: b.price_eur != null && b.price_eur !== '' ? Number(b.price_eur) : null,
+      listing_url: b.listing_url ? String(b.listing_url).trim() : null,
+      notes: b.notes ? String(b.notes).trim() : null,
+      manual: true,
+      data_source: 'Manual entry (admin)'
+    };
+
+    // Score it against the same context as automated searches.
+    const ctx = await getScoringContext();
+    let datacenters = [];
+    try { datacenters = await overpass.getDatacenters(lat, lng, 50000); } catch (e) { /* ok */ }
+    entry.score = scoreProperty(entry, { ...ctx, datacenters }, 'hyperscale');
+
+    ledger.record(entry, {
+      force: true,
+      added_by: b.added_by || 'admin',
+      origin: { source: 'manual', added_by: b.added_by || 'admin' }
+    });
+
+    const saved = ledger.getAll({ manual: true }).find(i => i.id === entry.id) || entry;
+    res.json({ ok: true, entry: saved });
+  } catch (err) {
+    console.error('Manual entry error:', err.message);
+    res.status(500).json({ error: 'Failed to add manual entry' });
+  }
+});
+
 // Delete a single ledger entry
 router.delete('/ledger/:key', (req, res) => {
   const ok = ledger.remove(req.params.key);

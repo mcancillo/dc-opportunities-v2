@@ -667,6 +667,7 @@ document.querySelectorAll('.admin-subtab-btn').forEach(btn => {
     document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.subtab).classList.add('active');
+    if (btn.dataset.subtab === 'manual-panel') loadManualEntries();
   });
 });
 
@@ -1306,3 +1307,170 @@ Promise.all([
   document.getElementById('property-list').innerHTML =
     '<div style="color:#ff4444;padding:10px;">Failed to load data. Please refresh.</div>';
 });
+
+// ─── Admin: Manual Entries (drop plots on the globe) ────────────
+let manualLayer = null;
+let manualPickMode = false;
+let manualTempMarker = null;
+
+function manualIcon() {
+  // Distinctive pin so hand-placed plots stand out from automated sites.
+  return L.divIcon({
+    className: '',
+    html: `<svg width="26" height="34" viewBox="0 0 26 34">
+      <path d="M13 0C6 0 0.5 5.4 0.5 12.2 0.5 21 13 34 13 34s12.5-13 12.5-21.8C25.5 5.4 20 0 13 0z"
+        fill="#ffd23f" stroke="#1b1b1b" stroke-width="1.5"/>
+      <circle cx="13" cy="12" r="5" fill="#1b1b1b"/></svg>`,
+    iconSize: [26, 34],
+    iconAnchor: [13, 34],
+    popupAnchor: [0, -30]
+  });
+}
+
+function manualPopup(item) {
+  const scoreLine = item.score
+    ? `<div style="margin-top:6px">${tierBadge(item.score)}</div>` : '';
+  const price = item.for_sale && item.price_eur
+    ? `<br>💰 €${(item.price_eur / 1e6).toFixed(1)}M` : '';
+  const listing = item.listing_url
+    ? `<div style="margin-top:6px"><a href="${escapeHtml(item.listing_url)}" target="_blank" rel="noopener" style="color:#ffd23f;font-weight:600;text-decoration:none;">🔗 Source →</a></div>` : '';
+  const notes = item.notes ? `<br>📝 ${escapeHtml(item.notes)}` : '';
+  return `
+    <div class="popup-title">📍 ${escapeHtml(item.name)}</div>
+    <div class="popup-meta">
+      ${escapeHtml([item.city, item.country].filter(Boolean).join(', '))}${price}${notes}<br>
+      <span style="color:#ffd23f">Manual entry (admin)</span>
+    </div>
+    ${scoreLine}${listing}`;
+}
+
+async function loadManualEntries() {
+  let items = [];
+  try {
+    const data = await fetchJSON('/api/ledger/manual');
+    items = data.items || [];
+  } catch (e) {
+    console.error('Failed to load manual entries:', e);
+  }
+
+  // Render markers
+  if (manualLayer) map.removeLayer(manualLayer);
+  manualLayer = L.layerGroup();
+  items.forEach(item => {
+    L.marker([item.lat, item.lng], { icon: manualIcon() })
+      .bindPopup(manualPopup(item))
+      .addTo(manualLayer);
+  });
+  manualLayer.addTo(map);
+
+  // Render admin list (only when the panel exists in the DOM)
+  const list = document.getElementById('manual-list');
+  if (!list) return;
+  if (!items.length) {
+    list.innerHTML = '<div class="iam-empty">No manual plots yet. Pick a location on the map above.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'iam-row';
+    const tier = item.score?.tier_label ? ` · ${escapeHtml(item.score.tier_label)} (${item.score.total_score}/100)` : '';
+    const sale = item.for_sale ? ' · 💰 for sale' : '';
+    row.innerHTML = `
+      <div>
+        <div><b>${escapeHtml(item.name)}</b></div>
+        <span class="iam-sub">${escapeHtml([item.city, item.country].filter(Boolean).join(', ') || '—')}${tier}${sale}</span>
+      </div>
+      <div class="iam-actions">
+        <button class="iam-mini" data-act="locate">📍 View</button>
+        <button class="iam-del" title="Delete">✕</button>
+      </div>`;
+    row.querySelector('[data-act="locate"]').addEventListener('click', () => {
+      map.setView([item.lat, item.lng], 13);
+      document.querySelector('.tab-btn[data-tab="search-tab"]').click();
+    });
+    row.querySelector('.iam-del').addEventListener('click', async () => {
+      if (!confirm(`Delete manual plot "${item.name}"?`)) return;
+      await fetch('/api/ledger/' + encodeURIComponent(item.key), { method: 'DELETE' });
+      loadManualEntries();
+    });
+    list.appendChild(row);
+  });
+}
+
+// Place-mode: click the map to capture coordinates.
+document.getElementById('manual-pick')?.addEventListener('click', () => {
+  manualPickMode = !manualPickMode;
+  const hint = document.getElementById('manual-pick-hint');
+  const btn = document.getElementById('manual-pick');
+  hint.classList.toggle('hidden', !manualPickMode);
+  btn.textContent = manualPickMode ? '✖ Cancel picking' : '🎯 Pick location on map';
+  document.getElementById('map').style.cursor = manualPickMode ? 'crosshair' : '';
+  if (manualPickMode) document.querySelector('.tab-btn[data-tab="search-tab"]').click();
+});
+
+function setManualLatLng(lat, lng) {
+  document.getElementById('manual-lat').value = lat.toFixed(6);
+  document.getElementById('manual-lng').value = lng.toFixed(6);
+  if (manualTempMarker) map.removeLayer(manualTempMarker);
+  manualTempMarker = L.marker([lat, lng], { icon: manualIcon(), opacity: 0.7 }).addTo(map);
+}
+
+// Wire the map click and load existing manual markers.
+function initManualEntries() {
+  if (!map) return;
+  map.on('click', (e) => {
+    if (!manualPickMode) return;
+    setManualLatLng(e.latlng.lat, e.latlng.lng);
+    manualPickMode = false;
+    document.getElementById('manual-pick-hint').classList.add('hidden');
+    document.getElementById('manual-pick').textContent = '🎯 Pick location on map';
+    document.getElementById('map').style.cursor = '';
+    document.querySelector('.tab-btn[data-tab="admin-tab"]').click();
+    document.querySelector('.admin-subtab-btn[data-subtab="manual-panel"]')?.click();
+  });
+  loadManualEntries();
+}
+
+document.getElementById('manual-add')?.addEventListener('click', async () => {
+  const num = fid => {
+    const v = document.getElementById(fid).value.trim();
+    return v === '' ? null : Number(v);
+  };
+  const body = {
+    lat: num('manual-lat'),
+    lng: num('manual-lng'),
+    name: document.getElementById('manual-name').value.trim(),
+    country: document.getElementById('manual-country').value || null,
+    city: document.getElementById('manual-city').value.trim() || null,
+    address: document.getElementById('manual-address').value.trim() || null,
+    area_m2: num('manual-area'),
+    estimated_power_mw: num('manual-power'),
+    sector: document.getElementById('manual-sector').value.trim() || null,
+    listing_url: document.getElementById('manual-listing').value.trim() || null,
+    price_eur: num('manual-price'),
+    for_sale: document.getElementById('manual-forsale').checked,
+    notes: document.getElementById('manual-notes').value.trim() || null
+  };
+  if (body.lat == null || body.lng == null) { alert('Set a location first (pick on map or enter lat/lng).'); return; }
+  if (!body.name) { alert('A site name is required.'); return; }
+
+  const r = await fetch('/api/ledger/manual', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const j = await r.json();
+  if (!r.ok || j.error) { alert(j.error || 'Failed to add manual entry.'); return; }
+
+  ['manual-lat', 'manual-lng', 'manual-name', 'manual-city', 'manual-address',
+   'manual-area', 'manual-power', 'manual-sector', 'manual-listing', 'manual-price', 'manual-notes']
+    .forEach(fid => { document.getElementById(fid).value = ''; });
+  document.getElementById('manual-forsale').checked = false;
+  if (manualTempMarker) { map.removeLayer(manualTempMarker); manualTempMarker = null; }
+
+  loadManualEntries();
+  const t = j.entry?.score?.tier_label ? ` (${j.entry.score.tier_label} — ${j.entry.score.total_score}/100)` : '';
+  alert(`Added "${j.entry?.name || body.name}" to the globe${t}.`);
+});
+
+initManualEntries();

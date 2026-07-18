@@ -740,6 +740,9 @@ input[type="range"] {
 .iam-gh { display: inline-flex; align-items: center; gap: 5px; color: #6cb6ff; text-decoration: none; font-weight: 600; }
 .iam-gh:hover { text-decoration: underline; }
 .iam-avatar { width: 18px; height: 18px; border-radius: 50%; vertical-align: middle; border: 1px solid #33404d; }
+.manual-hint { background: #2a2f14; border: 1px solid #ffd23f; color: #ffd23f; font-size: 0.78rem; padding: 8px 10px; border-radius: 6px; margin-bottom: 10px; }
+.manual-checkbox { display: flex; align-items: center; gap: 6px; color: #ccc; font-size: 0.82rem; }
+.manual-checkbox input { width: auto; }
 .iam-empty { font-size: 0.78rem; color: #667; padding: 6px 2px; }
 .iam-actions { display: flex; gap: 6px; align-items: center; }
 

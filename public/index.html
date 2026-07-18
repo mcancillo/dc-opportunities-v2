@@ -212,6 +212,7 @@
 
       <div class="admin-subtabs">
         <button class="admin-subtab-btn active" data-subtab="iam-panel">🔐 IAM</button>
+        <button class="admin-subtab-btn" data-subtab="manual-panel">📍 Manual Entries</button>
         <button class="admin-subtab-btn" data-subtab="feeds-panel">⚙️ Data Feeds</button>
       </div>
 
@@ -274,6 +275,53 @@
           <div id="iam-shares-list" class="iam-list"></div>
         </div>
       </div><!-- /iam-panel -->
+
+      <!-- MANUAL ENTRIES PANEL -->
+      <div id="manual-panel" class="admin-panel">
+        <div class="settings-section">
+          <h3>📍 Add a plot to the globe</h3>
+          <p class="cred-desc">Drop a curated opportunity on the map by hand. It is scored like any
+            automated site, force-recorded to the ledger, and can be shared per-customer.</p>
+
+          <button id="manual-pick" class="btn-save" style="width:100%;margin-bottom:10px;">
+            🎯 Pick location on map
+          </button>
+          <div id="manual-pick-hint" class="manual-hint hidden">
+            Click anywhere on the map to set the coordinates…
+          </div>
+
+          <div class="iam-form iam-form-grid">
+            <input type="number" step="any" id="manual-lat" placeholder="Latitude" autocomplete="off" />
+            <input type="number" step="any" id="manual-lng" placeholder="Longitude" autocomplete="off" />
+            <input type="text" id="manual-name" placeholder="Site name *" autocomplete="off" />
+            <select id="manual-country">
+              <option value="">Country…</option>
+              <option value="NL">🇳🇱 Netherlands</option>
+              <option value="DE">🇩🇪 Germany</option>
+              <option value="PL">🇵🇱 Poland</option>
+              <option value="ES">🇪🇸 Spain</option>
+            </select>
+            <input type="text" id="manual-city" placeholder="City" autocomplete="off" />
+            <input type="text" id="manual-address" placeholder="Address" autocomplete="off" />
+            <input type="number" step="any" id="manual-area" placeholder="Area (m²)" autocomplete="off" />
+            <input type="number" step="any" id="manual-power" placeholder="Est. power (MW)" autocomplete="off" />
+            <input type="text" id="manual-sector" placeholder="Sector" autocomplete="off" />
+            <input type="url" id="manual-listing" placeholder="Listing / source URL" autocomplete="off" />
+            <input type="number" step="any" id="manual-price" placeholder="Price (€)" autocomplete="off" />
+            <label class="manual-checkbox">
+              <input type="checkbox" id="manual-forsale" /> For sale
+            </label>
+          </div>
+          <textarea id="manual-notes" placeholder="Why is this interesting? (notes)" rows="2"
+            style="width:100%;margin-top:8px;"></textarea>
+          <button id="manual-add" class="btn-save" style="width:100%;margin-top:8px;">＋ Add to globe</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>🗂️ Manual plots</h3>
+          <div id="manual-list" class="iam-list"></div>
+        </div>
+      </div><!-- /manual-panel -->
 
       <!-- DATA FEEDS PANEL -->
       <div id="feeds-panel" class="admin-panel">
