@@ -89,11 +89,15 @@ to the `admin` and `customer` sites.
 - `httpsOnly`, TLS 1.2+, FTPS disabled, SCM inherits main restrictions.
 - Easy Auth (post-deploy `AUTH_CLIENT_ID`) requires authentication; MFA via Conditional Access + External ID user flow (Microsoft Authenticator).
 
-### Post-Deploy (manual, tenant/identity-plane)
-1. Create/confirm **Entra External ID (C2B)** tenant; federate `mcancillo@hotmail.com` (Microsoft social IdP); assign Admin role.
-2. Create Entra app registration(s) for Easy Auth; set `AUTH_CLIENT_ID`; enable `assignment required`.
-3. Conditional Access requiring Microsoft Authenticator MFA (workforce) + External ID MFA user flow.
-4. Grant each app's managed identity DB access: `CREATE USER [app-...] FROM EXTERNAL PROVIDER;` + roles; enable Row-Level Security.
+### Post-Deploy (identity-plane) — Progress 2026-07-22
+
+**Approach chosen:** Option A — B2B guest invitation into the existing workforce tenant `fdpo.onmicrosoft.com` (single Entra app registration, both admins under one tenant). Full External ID / CIAM (C2B) for the customer side deferred to a later phase.
+
+1. ✅ **B2B guest invite** — `mcancillo@hotmail.com` invited as guest (object ID `75aa9cc7-d02d-4de8-9783-b0ba3b6ed579`, UPN `mcancillo_hotmail.com#EXT#@fdpo.onmicrosoft.com`). **Status: PendingAcceptance — user must redeem the invitation email.** `macancil@microsoft.com` already a guest (object ID `152ac45e-...`).
+2. ✅ **Entra app registration + Easy Auth** — App reg `DC Opportunities v2 (Easy Auth)`, **appId `0934e54f-36e2-4e8d-8aec-574895e062ef`**, SP `e464d1c7-...`. Redirect URIs registered for both Front Door hostnames. `AUTH_CLIENT_ID` set; Easy Auth enabled on both apps (`requireAuthentication`, `/health` excluded). **`appRoleAssignmentRequired = true`; both admins assigned.** Verified: unauthenticated root → 302 login; redirect_uri correctly uses the Front Door host (via `httpSettings.forwardProxy.convention: Standard`).
+3. ⛔ **Conditional Access / Microsoft Authenticator MFA** — **BLOCKED: requires a tenant admin** (Global / Security / Conditional Access Administrator) in `fdpo.onmicrosoft.com`. The deployment account is a guest with no directory role. Manual step: create a CA policy targeting the app (or all apps) → Grant → Require MFA / Require authentication strength = "Passwordless MFA" (Microsoft Authenticator).
+4. ⏸️ **SQL `CREATE USER FROM EXTERNAL PROVIDER` + RLS** — **DEFERRED.** The app currently uses local JSON files, not Azure SQL (SQL data migration is a future phase). SQL has `publicNetworkAccess: Disabled` (private endpoint only), so grants must be run from inside the VNet (or via a temporary firewall rule) as the Entra SQL admin once the app targets SQL.
+5. ◻️ **Customer-side C2B / External ID** — deferred; customer app is currently locked to the same assigned admins (interim hardening) until a CIAM tenant + user flow is stood up.
 
 ---
 

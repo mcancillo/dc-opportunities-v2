@@ -221,6 +221,11 @@ resource adminAuth 'Microsoft.Web/sites/config@2024-04-01' = if (configureAuth) 
         enabled: true
       }
     }
+    httpSettings: {
+      forwardProxy: {
+        convention: 'Standard'
+      }
+    }
   }
 }
 
@@ -256,6 +261,11 @@ resource customerAuth 'Microsoft.Web/sites/config@2024-04-01' = if (configureAut
     login: {
       tokenStore: {
         enabled: true
+      }
+    }
+    httpSettings: {
+      forwardProxy: {
+        convention: 'Standard'
       }
     }
   }
