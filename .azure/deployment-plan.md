@@ -1,0 +1,171 @@
+# Azure Deployment Plan — DC Opportunities v2 (Azure-Native)
+
+> **Status:** Ready for Validation
+
+Generated: 2026-07-22
+
+Implements [`docs/azure-native-architecture-proposal.md`](../docs/azure-native-architecture-proposal.md).
+
+---
+
+## 1. Project Overview
+
+**Goal:** Deploy DC Opportunities v2 as an internet-facing, Azure-native solution using
+**Azure App Service (Web App)** and **Azure SQL Database**, with Zero Trust, dual identity
+(Entra + C2B), Microsoft Authenticator MFA, and a **$300/month** cost cap.
+
+**Path:** Modernize Existing (file-backed single app → App Service + Azure SQL)
+
+---
+
+## 2. Requirements
+
+| Attribute | Value |
+|-----------|-------|
+| Classification | Production-lite / internal + external |
+| Scale | Small |
+| Budget | Cost-Optimized (hard cap $300/month) |
+| **Subscription** | 6cbb5372-2516-4048-b672-a3e0a36fac8b (MCAPS-Hybrid-REQ-105009-2024-macancil) ✅ |
+| **Location** | West Europe (westeurope) ✅ |
+
+**Admin identities:** `macancil@microsoft.com` (workforce Entra, SQL Entra admin) and
+`mcancillo@hotmail.com` (MSA federated via Entra External ID) — both mapped to Admin role.
+Workforce admin object ID: `152ac45e-e0f3-4c02-96bc-4fe700f205cd`, tenant `16b3c013-d300-468d-ac64-7eda0820b6d3`.
+
+---
+
+## 3. Components Detected
+
+| Component | Type | Technology | Path |
+|-----------|------|------------|------|
+| dc-opportunities | API + static + IAM | Node.js 20 / Express 4 | `.` (server.js, src/, public/) |
+| Data (ledger, iam, sources) | File store → SQL | JSON files | `data/*.json` |
+
+---
+
+## 4. Recipe Selection
+
+**Selected:** AZD (Bicep, modular)
+
+**Rationale:** Existing simple Node app, no prior IaC. azd provisions the full topology
+(App Service ×2, SQL, Front Door, Key Vault, Storage, budget) and deploys the same codebase
+to the `admin` and `customer` sites.
+
+---
+
+## 5. Architecture
+
+**Stack:** App Service (Linux) + Azure SQL + Azure Front Door
+
+### Service Mapping
+
+| Component | Azure Service | SKU |
+|-----------|---------------|-----|
+| admin web app | App Service (Linux, Node 20) | Plan B2 |
+| customer web app | App Service (Linux, Node 20) | shares plan B2 |
+| Internet ingress | Azure Front Door Standard + WAF | Standard |
+| Data store | Azure SQL Database (serverless, spatial, RLS) | GP_S_Gen5_2, auto-pause |
+| Secrets | Azure Key Vault (RBAC, private endpoint) | Standard |
+| Cache/exports | Azure Blob Storage (private endpoint) | Standard LRS |
+| Monitoring | Log Analytics + Application Insights | PAYG, 30-day |
+| Cost cap | Consumption Budget | $300/mo + alerts |
+
+### Zero-Trust Controls
+- Front Door + WAF only public ingress; App Services restricted to `AzureFrontDoor.Backend` service tag.
+- SQL/Key Vault/Storage: `publicNetworkAccess: Disabled`, Private Endpoints + private DNS, VNet integration.
+- SQL **Entra-only auth** (`azureADOnlyAuthentication: true`), no SQL login/password.
+- System-assigned managed identity per app; no secrets in app settings.
+- `httpsOnly`, TLS 1.2+, FTPS disabled, SCM inherits main restrictions.
+- Easy Auth (post-deploy `AUTH_CLIENT_ID`) requires authentication; MFA via Conditional Access + External ID user flow (Microsoft Authenticator).
+
+### Post-Deploy (manual, tenant/identity-plane)
+1. Create/confirm **Entra External ID (C2B)** tenant; federate `mcancillo@hotmail.com` (Microsoft social IdP); assign Admin role.
+2. Create Entra app registration(s) for Easy Auth; set `AUTH_CLIENT_ID`; enable `assignment required`.
+3. Conditional Access requiring Microsoft Authenticator MFA (workforce) + External ID MFA user flow.
+4. Grant each app's managed identity DB access: `CREATE USER [app-...] FROM EXTERNAL PROVIDER;` + roles; enable Row-Level Security.
+
+---
+
+## 6. Provisioning Limit Checklist
+
+### Phase 1 & 2: Inventory + Capacity (West Europe)
+
+| Resource Type | Deploy | Total After | Limit/Quota | Notes |
+|---------------|:------:|:-----------:|-------------|-------|
+| Microsoft.Web/serverfarms | 1 | 2 | 100 per RG/region | Resource Graph: 1 existing |
+| Microsoft.Web/sites | 2 | 3 | bound by plan | Resource Graph: 1 existing |
+| Microsoft.Sql/servers | 1 | +1 | 250 per sub/region | Official docs |
+| Microsoft.Sql/servers/databases | 1 | +1 | per server | Serverless GP |
+| Microsoft.Cdn/profiles (Front Door Std) | 1 | +1 | 500 per sub | Official docs |
+| Microsoft.KeyVault/vaults | 1 | +1 | soft | — |
+| Microsoft.Storage/storageAccounts | 1 | +1 | 250 per region | — |
+| Microsoft.Network/virtualNetworks | 1 | +1 | 1000 per sub | — |
+| Microsoft.Network/privateEndpoints | 3 | +3 | soft | KV, SQL, Storage |
+| Microsoft.OperationalInsights/workspaces | 1 | +1 | soft | — |
+| Microsoft.Insights/components | 1 | +1 | soft | — |
+| Microsoft.Consumption/budgets | 1 | 1 | soft | $300/mo |
+
+**Status:** ✅ All resources within limits (App Service confirmed via Resource Graph; others below documented service limits).
+
+---
+
+## 7. Execution Checklist
+
+### Phase 1: Planning
+- [x] Analyze workspace
+- [x] Gather requirements
+- [x] Confirm subscription and location
+- [x] Prepare resource inventory
+- [x] Validate capacity
+- [x] Scan codebase
+- [x] Select recipe
+- [x] Plan architecture
+- [ ] **User approved this plan**
+
+### Phase 2: Execution
+- [x] Generate infrastructure files (main.bicep + 7 modules)
+- [x] azure.yaml (admin + customer services)
+- [x] main.parameters.json
+- [x] Bicep compiles (`bicep build` OK)
+- [ ] Configure Easy Auth client ID (post-deploy)
+- [x] Update plan status to "Ready for Validation"
+
+### Phase 3: Validation
+- [ ] Invoke azure-validate skill
+- [ ] All checks pass
+- [ ] Update status to "Validated"
+
+### Phase 4: Deployment
+- [ ] Invoke azure-deploy skill
+- [ ] Report endpoint URLs
+- [ ] Update status to "Deployed"
+
+---
+
+## 8. Files Generated
+
+| File | Purpose | Status |
+|------|---------|--------|
+| `.azure/deployment-plan.md` | This plan | ✅ |
+| `azure.yaml` | AZD config (admin + customer) | ✅ |
+| `infra/main.bicep` | Subscription-scope entrypoint | ✅ |
+| `infra/main.parameters.json` | AZD parameters | ✅ |
+| `infra/modules/monitoring.bicep` | Log Analytics + App Insights | ✅ |
+| `infra/modules/network.bicep` | VNet + subnets | ✅ |
+| `infra/modules/keyvault.bicep` | Key Vault + private endpoint | ✅ |
+| `infra/modules/storage.bicep` | Blob storage + private endpoint | ✅ |
+| `infra/modules/sql.bicep` | Azure SQL serverless + private endpoint | ✅ |
+| `infra/modules/appservice.bicep` | Plan + admin/customer apps + Easy Auth | ✅ |
+| `infra/modules/frontdoor.bicep` | Front Door Standard + WAF | ✅ |
+| `infra/modules/budget.bicep` | $300 budget + alerts | ✅ |
+
+---
+
+## 9. Next Steps
+
+> Current: Ready for Validation
+
+1. User approval
+2. Invoke azure-validate
+3. Invoke azure-deploy
+4. Complete post-deploy identity steps (§5)

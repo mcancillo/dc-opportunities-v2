@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: dc-opportunities-v2
+metadata:
+  template: dc-opportunities-v2@1.0.0
+
+services:
+  admin:
+    project: .
+    language: js
+    host: appservice
+  customer:
+    project: .
+    language: js
+    host: appservice

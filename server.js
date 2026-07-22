@@ -10,6 +10,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', apiRoutes);
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', service: 'dc-opportunities-v2' });
+});
+
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
