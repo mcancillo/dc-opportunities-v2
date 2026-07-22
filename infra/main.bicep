@@ -113,6 +113,19 @@ module app 'modules/appservice.bicep' = {
   }
 }
 
+module rbac 'modules/rbac.bicep' = {
+  name: 'rbac'
+  scope: rg
+  params: {
+    keyVaultName: keyvault.outputs.keyVaultName
+    storageAccountName: storage.outputs.storageAccountName
+    principalIds: [
+      app.outputs.adminPrincipalId
+      app.outputs.customerPrincipalId
+    ]
+  }
+}
+
 module frontdoor 'modules/frontdoor.bicep' = {
   name: 'frontdoor'
   scope: rg

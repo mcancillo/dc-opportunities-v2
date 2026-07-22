@@ -1,6 +1,6 @@
 # Azure Deployment Plan — DC Opportunities v2 (Azure-Native)
 
-> **Status:** Ready for Validation
+> **Status:** Validated
 
 Generated: 2026-07-22
 
@@ -160,6 +160,21 @@ to the `admin` and `customer` sites.
 | `infra/modules/budget.bicep` | $300 budget + alerts | ✅ |
 
 ---
+
+## 9. Validation Proof
+
+| Check | Command | Result | Timestamp |
+|-------|---------|--------|-----------|
+| Bicep compile | `bicep build infra/main.bicep` | ✅ Pass (benign warnings only) | 2026-07-22 13:35 |
+| Auth | `azd auth login` / az CLI credential | ✅ macancil@microsoft.com | 2026-07-22 13:39 |
+| Env | `azd env new dcopps-prod` (sub + westeurope) | ✅ Set | 2026-07-22 13:37 |
+| Provision preview | `azd provision --preview --no-prompt` | ✅ 14 resources planned, ARM accepted | 2026-07-22 13:39 |
+| Build | `npm install` + `node --check` | ✅ up to date, syntax OK | 2026-07-22 13:40 |
+| Package | `azd package --no-prompt` | ✅ admin + customer packaged | 2026-07-22 13:41 |
+
+**Role Assignment Verification:** ✅ Verified — added `infra/modules/rbac.bicep` granting each app's system-assigned identity **Key Vault Secrets User** (on the vault) and **Storage Blob Data Contributor** (on the storage account), least-privilege scoped. SQL data-plane access (`CREATE USER FROM EXTERNAL PROVIDER`) remains a post-deploy step (§5).
+
+**Validated by:** azure-validate skill · **Timestamp:** 2026-07-22 13:41
 
 ## 9. Next Steps
 
