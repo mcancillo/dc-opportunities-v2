@@ -1,8 +1,19 @@
 # Azure Deployment Plan — DC Opportunities v2 (Azure-Native)
 
-> **Status:** Validated
+> **Status:** Deployed
 
-Generated: 2026-07-22
+Generated: 2026-07-22 · Deployed: 2026-07-22 (Sweden Central)
+
+> **Deployment Result (2026-07-22):** ✅ Live. All 14 resources provisioned to `rg-dcopps-prod` in **Sweden Central** (moved from West Europe due to a subscription SQL provisioning restriction there). Both App Services deployed and returning HTTP 200 via Front Door.
+>
+> | Endpoint | URL | Health |
+> |----------|-----|--------|
+> | Admin | https://admin-m4b2vdcrzbbii-bpcvbueqhfbjbeef.b01.azurefd.net | ✅ 200 |
+> | Customer | https://customer-m4b2vdcrzbbii-hhhtb7dfc0ecf5e9.b01.azurefd.net | ✅ 200 |
+>
+> SQL: `sql-m4b2vdcrzbbii.database.windows.net` / db `dcopportunities` (Entra-only auth, private endpoint). Both app managed identities verified with **Key Vault Secrets User** + **Storage Blob Data Contributor**.
+>
+> **SCM note:** `scmIpSecurityRestrictionsUseMain` set to `false` so the Kudu deploy endpoint (Entra/publishing-auth protected) is reachable for `azd deploy`; the runtime app site remains locked to Front Door only. Basic publishing auth is disabled on Kudu.
 
 Implements [`docs/azure-native-architecture-proposal.md`](../docs/azure-native-architecture-proposal.md).
 
@@ -178,9 +189,8 @@ to the `admin` and `customer` sites.
 
 ## 9. Next Steps
 
-> Current: Ready for Validation
+> Current: Deployed — live in Sweden Central
 
-1. User approval
-2. Invoke azure-validate
-3. Invoke azure-deploy
-4. Complete post-deploy identity steps (§5)
+1. ✅ Validated (azure-validate)
+2. ✅ Deployed (azure-deploy) — Sweden Central
+3. Complete post-deploy identity/MFA/SQL steps (§5): Entra External ID (C2B) tenant, federate `mcancillo@hotmail.com`, app registration + `AUTH_CLIENT_ID` app setting to enable Easy Auth, Conditional Access + MS Authenticator MFA, and `CREATE USER FROM EXTERNAL PROVIDER` grants for both app identities in SQL.

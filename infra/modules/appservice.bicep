@@ -125,7 +125,7 @@ resource adminApp 'Microsoft.Web/sites@2024-04-01' = {
       vnetRouteAllEnabled: true
       healthCheckPath: '/health'
       ipSecurityRestrictions: frontDoorOnlyRestrictions
-      scmIpSecurityRestrictionsUseMain: true
+      scmIpSecurityRestrictionsUseMain: false
       appSettings: union(commonAppSettings, [
         {
           name: 'APP_ROLE'
@@ -160,7 +160,7 @@ resource customerApp 'Microsoft.Web/sites@2024-04-01' = {
       vnetRouteAllEnabled: true
       healthCheckPath: '/health'
       ipSecurityRestrictions: frontDoorOnlyRestrictions
-      scmIpSecurityRestrictionsUseMain: true
+      scmIpSecurityRestrictionsUseMain: false
       appSettings: union(commonAppSettings, [
         {
           name: 'APP_ROLE'
