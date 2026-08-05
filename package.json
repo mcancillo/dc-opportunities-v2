@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "optimize": "node scripts/agent/optimize.mjs"
+    "optimize": "node scripts/agent/optimize.mjs",
+    "update-isp-allowlist": "node scripts/update-isp-allowlist.mjs"
   },
   "keywords": ["datacenter", "real-estate", "internet-exchange", "gis", "leaflet"],
   "author": "mcancillo",

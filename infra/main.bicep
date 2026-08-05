@@ -32,6 +32,10 @@ var tags = {
   'azd-env-name': environmentName
 }
 
+// GitOps access-control config (edit these files in the repo + redeploy to change access).
+var ispAllowlist = loadJsonContent('../config/isp-allowlist.json')
+var accessControl = loadJsonContent('../config/access-control.json')
+
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: 'rg-${environmentName}'
   location: location
@@ -135,6 +139,9 @@ module frontdoor 'modules/frontdoor.bicep' = {
     adminHostName: app.outputs.adminHostName
     customerHostName: app.outputs.customerHostName
     logAnalyticsId: monitoring.outputs.logAnalyticsId
+    kpnCidrs: ispAllowlist.kpn
+    ziggoCidrs: ispAllowlist.ziggo
+    adminAllowedIps: accessControl.admin.allowedIps
   }
 }
 

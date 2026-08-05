@@ -229,44 +229,18 @@ resource adminAuth 'Microsoft.Web/sites/config@2024-04-01' = if (configureAuth) 
   }
 }
 
-resource customerAuth 'Microsoft.Web/sites/config@2024-04-01' = if (configureAuth) {
+// Customer app is PUBLIC: Easy Auth explicitly disabled so the public side is
+// reachable without login. Access is restricted at the Front Door WAF (ISP allowlist).
+resource customerAuth 'Microsoft.Web/sites/config@2024-04-01' = {
   parent: customerApp
   name: 'authsettingsV2'
   properties: {
     platform: {
-      enabled: true
+      enabled: false
     }
     globalValidation: {
-      requireAuthentication: true
-      unauthenticatedClientAction: 'RedirectToLoginPage'
-      redirectToProvider: 'azureactivedirectory'
-      excludedPaths: [
-        '/health'
-      ]
-    }
-    identityProviders: {
-      azureActiveDirectory: {
-        enabled: true
-        registration: {
-          openIdIssuer: 'https://login.microsoftonline.com/${tenant().tenantId}/v2.0'
-          clientId: authClientId
-        }
-        validation: {
-          defaultAuthorizationPolicy: {
-            allowedApplications: []
-          }
-        }
-      }
-    }
-    login: {
-      tokenStore: {
-        enabled: true
-      }
-    }
-    httpSettings: {
-      forwardProxy: {
-        convention: 'Standard'
-      }
+      requireAuthentication: false
+      unauthenticatedClientAction: 'AllowAnonymous'
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "_comment": "GitOps access-control config for dc-opportunities-v2. Edit this file and redeploy (infra) to change access. Consumed at deploy time by infra/main.bicep (loadJsonContent) and enforced at the Azure Front Door WAF.",
+  "customerPublic": true,
+  "admin": {
+    "_comment": "Admin endpoint is reachable only from the ISP allowlist PLUS any explicit CIDRs listed here. Add your office/VPN egress IP (e.g. 203.0.113.10/32) to lock admin down to just your locations. Leave empty to allow admin from the full Ziggo/KPN ranges.",
+    "allowedIps": []
+  },
+  "website": {
+    "_comment": "Both public and admin endpoints are limited to these consumer ISPs. IP ranges live in config/isp-allowlist.json (regenerate with `npm run update-isp-allowlist`).",
+    "allowedIsps": [
+      { "name": "KPN", "asns": [1136, 286] },
+      { "name": "Ziggo", "asns": [33915, 9143] }
+    ]
+  }
+}

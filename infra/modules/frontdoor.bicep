@@ -13,7 +13,122 @@ param customerHostName string
 @description('Log Analytics workspace ID for diagnostics.')
 param logAnalyticsId string
 
+@description('KPN IP CIDR ranges permitted to reach the website (from config/isp-allowlist.json).')
+param kpnCidrs array
+
+@description('Ziggo IP CIDR ranges permitted to reach the website (from config/isp-allowlist.json).')
+param ziggoCidrs array
+
+@description('Explicit CIDRs allowed to reach the ADMIN endpoint. When set, admin is locked to these only; when empty, admin falls back to the ISP allowlist.')
+param adminAllowedIps array = []
+
 var profileName = 'afd-${resourceToken}'
+
+// --- Reusable WAF custom-rule building blocks (allowlist model) ---
+// Requests matching an Allow rule skip the remaining custom rules; anything that
+// falls through is caught by the final catch-all Block rule.
+var rateLimitRule = {
+  name: 'RateLimitPerIp'
+  priority: 100
+  enabledState: 'Enabled'
+  ruleType: 'RateLimitRule'
+  rateLimitDurationInMinutes: 1
+  rateLimitThreshold: 200
+  matchConditions: [
+    {
+      matchVariable: 'RequestUri'
+      operator: 'Any'
+      negateCondition: false
+      matchValue: []
+    }
+  ]
+  action: 'Block'
+}
+
+var allowKpnRule = {
+  name: 'AllowKPN'
+  priority: 200
+  enabledState: 'Enabled'
+  ruleType: 'MatchRule'
+  matchConditions: [
+    {
+      matchVariable: 'RemoteAddr'
+      operator: 'IPMatch'
+      negateCondition: false
+      matchValue: kpnCidrs
+    }
+  ]
+  action: 'Allow'
+}
+
+var allowZiggoRule = {
+  name: 'AllowZiggo'
+  priority: 210
+  enabledState: 'Enabled'
+  ruleType: 'MatchRule'
+  matchConditions: [
+    {
+      matchVariable: 'RemoteAddr'
+      operator: 'IPMatch'
+      negateCondition: false
+      matchValue: ziggoCidrs
+    }
+  ]
+  action: 'Allow'
+}
+
+var allowAdminRule = {
+  name: 'AllowAdminIps'
+  priority: 150
+  enabledState: 'Enabled'
+  ruleType: 'MatchRule'
+  matchConditions: [
+    {
+      matchVariable: 'RemoteAddr'
+      operator: 'IPMatch'
+      negateCondition: false
+      matchValue: adminAllowedIps
+    }
+  ]
+  action: 'Allow'
+}
+
+var blockAllRule = {
+  name: 'BlockNonAllowed'
+  priority: 65000
+  enabledState: 'Enabled'
+  ruleType: 'MatchRule'
+  matchConditions: [
+    {
+      matchVariable: 'RequestUri'
+      operator: 'Any'
+      negateCondition: false
+      matchValue: []
+    }
+  ]
+  action: 'Block'
+}
+
+// Public/customer endpoint: reachable from the Ziggo + KPN consumer ISP ranges only.
+var customerWafRules = [
+  rateLimitRule
+  allowKpnRule
+  allowZiggoRule
+  blockAllRule
+]
+
+// Admin endpoint: if explicit admin CIDRs are configured, lock to those only;
+// otherwise fall back to the same ISP allowlist as the public site.
+var adminWafRules = empty(adminAllowedIps) ? [
+  rateLimitRule
+  allowKpnRule
+  allowZiggoRule
+  blockAllRule
+] : [
+  rateLimitRule
+  allowAdminRule
+  blockAllRule
+]
 
 resource profile 'Microsoft.Cdn/profiles@2024-02-01' = {
   name: profileName
@@ -24,9 +139,9 @@ resource profile 'Microsoft.Cdn/profiles@2024-02-01' = {
   }
 }
 
-// Web Application Firewall policy (Standard supports custom rules).
-resource wafPolicy 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2024-02-01' = {
-  name: 'waf${resourceToken}'
+// WAF policy for the public/customer endpoint (ISP allowlist).
+resource customerWafPolicy 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2024-02-01' = {
+  name: 'wafcust${resourceToken}'
   location: 'global'
   tags: tags
   sku: {
@@ -38,25 +153,26 @@ resource wafPolicy 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@20
       mode: 'Prevention'
     }
     customRules: {
-      rules: [
-        {
-          name: 'RateLimitPerIp'
-          priority: 100
-          enabledState: 'Enabled'
-          ruleType: 'RateLimitRule'
-          rateLimitDurationInMinutes: 1
-          rateLimitThreshold: 200
-          matchConditions: [
-            {
-              matchVariable: 'RequestUri'
-              operator: 'Any'
-              negateCondition: false
-              matchValue: []
-            }
-          ]
-          action: 'Block'
-        }
-      ]
+      rules: customerWafRules
+    }
+  }
+}
+
+// WAF policy for the admin endpoint (admin allowlist, or ISP fallback).
+resource adminWafPolicy 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2024-02-01' = {
+  name: 'wafadmin${resourceToken}'
+  location: 'global'
+  tags: tags
+  sku: {
+    name: 'Standard_AzureFrontDoor'
+  }
+  properties: {
+    policySettings: {
+      enabledState: 'Enabled'
+      mode: 'Prevention'
+    }
+    customRules: {
+      rules: adminWafRules
     }
   }
 }
@@ -191,24 +307,46 @@ resource customerRoute 'Microsoft.Cdn/profiles/afdEndpoints/routes@2024-02-01' =
   }
 }
 
-// Associate the WAF policy with both endpoints.
-resource securityPolicy 'Microsoft.Cdn/profiles/securityPolicies@2024-02-01' = {
+// Associate each WAF policy with its endpoint.
+resource customerSecurityPolicy 'Microsoft.Cdn/profiles/securityPolicies@2024-02-01' = {
   parent: profile
-  name: 'waf-association'
+  name: 'waf-customer-association'
   properties: {
     parameters: {
       type: 'WebApplicationFirewall'
       wafPolicy: {
-        id: wafPolicy.id
+        id: customerWafPolicy.id
+      }
+      associations: [
+        {
+          domains: [
+            {
+              id: customerEndpoint.id
+            }
+          ]
+          patternsToMatch: [
+            '/*'
+          ]
+        }
+      ]
+    }
+  }
+}
+
+resource adminSecurityPolicy 'Microsoft.Cdn/profiles/securityPolicies@2024-02-01' = {
+  parent: profile
+  name: 'waf-admin-association'
+  properties: {
+    parameters: {
+      type: 'WebApplicationFirewall'
+      wafPolicy: {
+        id: adminWafPolicy.id
       }
       associations: [
         {
           domains: [
             {
               id: adminEndpoint.id
-            }
-            {
-              id: customerEndpoint.id
             }
           ]
           patternsToMatch: [
