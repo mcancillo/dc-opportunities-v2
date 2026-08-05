@@ -4,7 +4,7 @@ const path = require('path');
 
 const CACHE_DIR = path.join(__dirname, '..', '..', 'cache');
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-const SUPPORTED_COUNTRIES = ['NL', 'PL', 'DE', 'ES'];
+const SUPPORTED_COUNTRIES = ['NL', 'BE', 'PL', 'DE', 'ES'];
 
 function ensureCacheDir() {
   if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });

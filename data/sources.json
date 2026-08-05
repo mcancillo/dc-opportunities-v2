@@ -3,15 +3,34 @@
     "country": "Netherlands",
     "internet_exchanges": {
       "primary": "AMS-IX (Amsterdam Internet Exchange)",
-      "others": ["NL-ix", "Speed-IX"],
+      "others": [
+        "NL-ix",
+        "Speed-IX"
+      ],
       "source": "https://www.peeringdb.com"
     },
     "commercial_real_estate": {
       "portals": [
-        {"name": "Funda in Business", "url": "https://www.fundainbusiness.nl", "type": "Commercial listings"},
-        {"name": "NVM Business", "url": "https://www.nvm.nl/business", "type": "Broker network"},
-        {"name": "Cushman & Wakefield NL", "url": "https://www.cushmanwakefield.com/nl-nl", "type": "Industrial & logistics"},
-        {"name": "CBRE NL", "url": "https://www.cbre.nl", "type": "Commercial & industrial"}
+        {
+          "name": "Funda in Business",
+          "url": "https://www.fundainbusiness.nl",
+          "type": "Commercial listings"
+        },
+        {
+          "name": "NVM Business",
+          "url": "https://www.nvm.nl/business",
+          "type": "Broker network"
+        },
+        {
+          "name": "Cushman & Wakefield NL",
+          "url": "https://www.cushmanwakefield.com/nl-nl",
+          "type": "Industrial & logistics"
+        },
+        {
+          "name": "CBRE NL",
+          "url": "https://www.cbre.nl",
+          "type": "Commercial & industrial"
+        }
       ],
       "cadastral_data": {
         "name": "Kadaster / PDOK",
@@ -20,27 +39,138 @@
       }
     },
     "energy_grid": {
-      "tso": {"name": "TenneT", "url": "https://www.tennet.eu", "notes": "Transmission system operator for NL and parts of DE"},
+      "tso": {
+        "name": "TenneT",
+        "url": "https://www.tennet.eu",
+        "notes": "Transmission system operator for NL and parts of DE"
+      },
       "capacity_map": "https://capaciteitskaart.netbeheernederland.nl",
       "notes": "The Dutch grid capacity map shows available capacity per substation"
     },
     "datacenter_associations": [
-      {"name": "Dutch Data Center Association", "url": "https://www.dutchdatacenters.nl"}
+      {
+        "name": "Dutch Data Center Association",
+        "url": "https://www.dutchdatacenters.nl"
+      }
+    ],
+    "emerging_data_sources": [
+      {
+        "name": "RVO Bedrijventerreinen / IBIS industrial estates",
+        "url": "https://www.rvo.nl",
+        "category": "industrial-land",
+        "angle": "National register of business/industrial parks with zoning already suited to heavy power use.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      },
+      {
+        "name": "Groningen Seaports / Eemshaven land",
+        "url": "https://www.groningen-seaports.com",
+        "category": "port-land",
+        "angle": "Port authority land with green power + subsea/backhaul, a known hyperscaler cluster.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      }
+    ]
+  },
+  "BE": {
+    "country": "Belgium",
+    "internet_exchanges": {
+      "primary": "BNIX (Brussels)",
+      "others": [
+        "AMS-IX Belgium",
+        "DE-CIX Brussels",
+        "LIX (Luxembourg-adjacent)"
+      ],
+      "source": "https://www.peeringdb.com"
+    },
+    "commercial_real_estate": {
+      "portals": [
+        {
+          "name": "Immoweb Business",
+          "url": "https://www.immoweb.be",
+          "type": "Commercial & industrial listings"
+        },
+        {
+          "name": "Logic-immo.be",
+          "url": "https://www.logic-immo.be",
+          "type": "Commercial listings"
+        },
+        {
+          "name": "JLL Belgium",
+          "url": "https://www.jll.be",
+          "type": "Industrial & logistics"
+        },
+        {
+          "name": "Cushman & Wakefield Belgium",
+          "url": "https://www.cushmanwakefield.com/en/belgium",
+          "type": "Commercial & industrial"
+        }
+      ],
+      "cadastral_data": {
+        "name": "Geopunt (Flanders) / WalOnMap (Wallonia) / CadGIS (Federal)",
+        "url": "https://www.geopunt.be",
+        "notes": "Regional geoportals; federal CadGIS viewer at eservices.minfin.fgov.be for cadastral parcels"
+      }
+    },
+    "energy_grid": {
+      "tso": {
+        "name": "Elia",
+        "url": "https://www.elia.be",
+        "notes": "Belgian transmission system operator"
+      },
+      "capacity_map": "https://www.elia.be/en/grid-data",
+      "notes": "Elia publishes grid capacity and connection data; Fluvius/ORES are the regional DSOs"
+    },
+    "datacenter_associations": [
+      {
+        "name": "Data Center Belgium ecosystem (via AGORIA)",
+        "url": "https://www.agoria.be"
+      }
+    ],
+    "emerging_data_sources": [
+      {
+        "name": "Port of Antwerp-Bruges land",
+        "url": "https://www.portofantwerpbruges.com",
+        "category": "port-land",
+        "angle": "Large port-authority parcels with fiber + power + water cooling access.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      }
     ]
   },
   "DE": {
     "country": "Germany",
     "internet_exchanges": {
       "primary": "DE-CIX (Frankfurt)",
-      "others": ["ECIX (Berlin, Düsseldorf, Hamburg)", "BCIX (Berlin)", "KleyReX (Frankfurt)"],
+      "others": [
+        "ECIX (Berlin, Düsseldorf, Hamburg)",
+        "BCIX (Berlin)",
+        "KleyReX (Frankfurt)"
+      ],
       "source": "https://www.peeringdb.com"
     },
     "commercial_real_estate": {
       "portals": [
-        {"name": "ImmobilienScout24", "url": "https://www.immobilienscout24.de", "type": "Commercial & industrial listings"},
-        {"name": "Immowelt", "url": "https://www.immowelt.de", "type": "Commercial listings"},
-        {"name": "JLL Germany", "url": "https://www.jll.de", "type": "Industrial & logistics"},
-        {"name": "Colliers Germany", "url": "https://www.colliers.de", "type": "Commercial & industrial"}
+        {
+          "name": "ImmobilienScout24",
+          "url": "https://www.immobilienscout24.de",
+          "type": "Commercial & industrial listings"
+        },
+        {
+          "name": "Immowelt",
+          "url": "https://www.immowelt.de",
+          "type": "Commercial listings"
+        },
+        {
+          "name": "JLL Germany",
+          "url": "https://www.jll.de",
+          "type": "Industrial & logistics"
+        },
+        {
+          "name": "Colliers Germany",
+          "url": "https://www.colliers.de",
+          "type": "Commercial & industrial"
+        }
       ],
       "cadastral_data": {
         "name": "Geoportal.de / AdV",
@@ -50,31 +180,86 @@
     },
     "energy_grid": {
       "tso": [
-        {"name": "TenneT", "url": "https://www.tennet.eu"},
-        {"name": "50Hertz", "url": "https://www.50hertz.com"},
-        {"name": "Amprion", "url": "https://www.amprion.net"},
-        {"name": "TransnetBW", "url": "https://www.transnetbw.de"}
+        {
+          "name": "TenneT",
+          "url": "https://www.tennet.eu"
+        },
+        {
+          "name": "50Hertz",
+          "url": "https://www.50hertz.com"
+        },
+        {
+          "name": "Amprion",
+          "url": "https://www.amprion.net"
+        },
+        {
+          "name": "TransnetBW",
+          "url": "https://www.transnetbw.de"
+        }
       ],
       "notes": "Germany has four TSO zones. Grid capacity data available via Netzentwicklungsplan (NEP)."
     },
     "datacenter_associations": [
-      {"name": "German Datacenter Association (GDA)", "url": "https://www.germandatacenters.com"},
-      {"name": "eco — Association of the Internet Industry", "url": "https://www.eco.de"}
+      {
+        "name": "German Datacenter Association (GDA)",
+        "url": "https://www.germandatacenters.com"
+      },
+      {
+        "name": "eco — Association of the Internet Industry",
+        "url": "https://www.eco.de"
+      }
+    ],
+    "emerging_data_sources": [
+      {
+        "name": "Bundesnetzagentur — grid & connection data",
+        "url": "https://www.bundesnetzagentur.de",
+        "category": "grid-capacity",
+        "angle": "Federal grid-connection and Netzentwicklungsplan data to target upgrade corridors.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      },
+      {
+        "name": "Braunfeld/brownfield & Konversionsflächen registers",
+        "url": "https://www.bbsr.bund.de",
+        "category": "brownfield",
+        "angle": "Former industrial/military conversion land — fast-track power + planning.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      }
     ]
   },
   "PL": {
     "country": "Poland",
     "internet_exchanges": {
       "primary": "PLIX (Warsaw)",
-      "others": ["TPIX (Warsaw)", "EPIX (Katowice/Warsaw)"],
+      "others": [
+        "TPIX (Warsaw)",
+        "EPIX (Katowice/Warsaw)"
+      ],
       "source": "https://www.peeringdb.com"
     },
     "commercial_real_estate": {
       "portals": [
-        {"name": "Otodom", "url": "https://www.otodom.pl", "type": "Commercial & industrial listings"},
-        {"name": "Gratka", "url": "https://gratka.pl", "type": "Commercial listings"},
-        {"name": "JLL Poland", "url": "https://www.jll.pl", "type": "Industrial & logistics"},
-        {"name": "Savills Poland", "url": "https://www.savills.pl", "type": "Commercial & industrial"}
+        {
+          "name": "Otodom",
+          "url": "https://www.otodom.pl",
+          "type": "Commercial & industrial listings"
+        },
+        {
+          "name": "Gratka",
+          "url": "https://gratka.pl",
+          "type": "Commercial listings"
+        },
+        {
+          "name": "JLL Poland",
+          "url": "https://www.jll.pl",
+          "type": "Industrial & logistics"
+        },
+        {
+          "name": "Savills Poland",
+          "url": "https://www.savills.pl",
+          "type": "Commercial & industrial"
+        }
       ],
       "cadastral_data": {
         "name": "Geoportal.gov.pl",
@@ -83,24 +268,56 @@
       }
     },
     "energy_grid": {
-      "tso": {"name": "PSE (Polskie Sieci Elektroenergetyczne)", "url": "https://www.pse.pl"},
+      "tso": {
+        "name": "PSE (Polskie Sieci Elektroenergetyczne)",
+        "url": "https://www.pse.pl"
+      },
       "notes": "PSE publishes grid connection capacity data"
     },
-    "datacenter_associations": []
+    "datacenter_associations": [],
+    "emerging_data_sources": [
+      {
+        "name": "PAIH / Special Economic Zones (SEZ) land",
+        "url": "https://www.paih.gov.pl",
+        "category": "industrial-land",
+        "angle": "Investment-agency + SEZ parcels with incentives and prepared infrastructure.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      }
+    ]
   },
   "ES": {
     "country": "Spain",
     "internet_exchanges": {
       "primary": "ESPANIX (Madrid)",
-      "others": ["CATNIX (Barcelona)", "DE-CIX Madrid"],
+      "others": [
+        "CATNIX (Barcelona)",
+        "DE-CIX Madrid"
+      ],
       "source": "https://www.peeringdb.com"
     },
     "commercial_real_estate": {
       "portals": [
-        {"name": "Idealista", "url": "https://www.idealista.com", "type": "Commercial & industrial listings"},
-        {"name": "Fotocasa", "url": "https://www.fotocasa.es", "type": "Commercial listings"},
-        {"name": "CBRE Spain", "url": "https://www.cbre.es", "type": "Industrial & logistics"},
-        {"name": "Savills Spain", "url": "https://www.savills.es", "type": "Commercial & industrial"}
+        {
+          "name": "Idealista",
+          "url": "https://www.idealista.com",
+          "type": "Commercial & industrial listings"
+        },
+        {
+          "name": "Fotocasa",
+          "url": "https://www.fotocasa.es",
+          "type": "Commercial listings"
+        },
+        {
+          "name": "CBRE Spain",
+          "url": "https://www.cbre.es",
+          "type": "Industrial & logistics"
+        },
+        {
+          "name": "Savills Spain",
+          "url": "https://www.savills.es",
+          "type": "Commercial & industrial"
+        }
       ],
       "cadastral_data": {
         "name": "Sede Electrónica del Catastro",
@@ -109,11 +326,43 @@
       }
     },
     "energy_grid": {
-      "tso": {"name": "Red Eléctrica de España (REE)", "url": "https://www.ree.es"},
+      "tso": {
+        "name": "Red Eléctrica de España (REE)",
+        "url": "https://www.ree.es"
+      },
       "notes": "REE publishes grid infrastructure maps and capacity data"
     },
     "datacenter_associations": [
-      {"name": "Spain DC", "url": "https://spaindc.es"}
+      {
+        "name": "Spain DC",
+        "url": "https://spaindc.es"
+      }
+    ],
+    "emerging_data_sources": [
+      {
+        "name": "Red Eléctrica (REE) — ESIOS grid data",
+        "url": "https://www.esios.ree.es",
+        "category": "grid-capacity",
+        "angle": "Grid nodes/capacity + renewable generation to find green-power-rich regions (e.g. Aragón).",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      },
+      {
+        "name": "SEPES / regional suelo industrial registries",
+        "url": "https://www.sepes.es",
+        "category": "industrial-land",
+        "angle": "State industrial-land developer inventory of ready-to-build plots.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      },
+      {
+        "name": "Aragón / Zaragoza logistics & DC land (PLAZA)",
+        "url": "https://www.plazalogistica.com",
+        "category": "industrial-land",
+        "angle": "Emerging low-cost, green-power hyperscaler cluster outside Madrid.",
+        "added_by": "optimizer-agent",
+        "added_at": "2026-08-05"
+      }
     ]
   }
 }

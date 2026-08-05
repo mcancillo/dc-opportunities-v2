@@ -194,7 +194,7 @@ function scoreGridFuture(lat, lng, country, context) {
   }
 
   // Country-level grid capacity bonus (base infrastructure quality)
-  const gridQuality = { NL: 2, DE: 2, ES: 1, PL: 0 };
+  const gridQuality = { NL: 2, BE: 2, DE: 2, ES: 1, PL: 0 };
   if (!gridExpansion.length && !renewableZones.length) {
     score = gridQuality[country] || 0;
     details.push(score > 0 ? 'Country base grid quality' : 'Limited grid data');
@@ -235,6 +235,7 @@ function estimateCoastalProximity(lat, lng, country) {
   // Key coastal reference points per country
   const coastPoints = {
     NL: [[52.95, 4.75], [52.50, 4.55], [51.92, 4.48], [53.32, 5.25], [53.45, 6.85]],
+    BE: [[51.35, 3.20], [51.23, 2.92], [51.34, 3.28], [51.31, 3.19]],
     DE: [[54.30, 10.10], [54.00, 8.80], [53.55, 8.55], [54.32, 13.10], [54.18, 12.10]],
     PL: [[54.35, 18.65], [54.45, 16.87], [54.18, 15.60], [54.50, 17.05]],
     ES: [[43.37, -8.40], [43.26, -2.93], [41.38, 2.16], [39.47, -0.37], [36.72, -4.42], [37.37, -5.97]]

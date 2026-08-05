@@ -1,0 +1,80 @@
+name: DC Data-Source Optimizer (daily)
+
+# Autonomous agent that assesses datacenter-plot data sources once per day,
+# ingests the Cowork "DC Audio Briefing", proposes new sources/angles for the
+# 5 in-scope countries (NL, BE, DE, PL, ES) and opens/updates a PR with the
+# enhancements. Hard-capped to 1 hour of runtime per day.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 03:00 UTC daily
+  workflow_dispatch: {}    # allow manual runs
+
+# Never let two daily runs overlap.
+concurrency:
+  group: dc-optimizer
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60     # <<< the 1-hour/day cap (agent self-stops at 55 min)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run optimizer agent
+        id: run
+        env:
+          # DC Audio Briefing (managed by Cowork) — set ONE of these repo secrets.
+          DC_AUDIO_BRIEFING_URL: ${{ secrets.DC_AUDIO_BRIEFING_URL }}
+          DC_AUDIO_BRIEFING_FILE: ${{ secrets.DC_AUDIO_BRIEFING_FILE }}
+          # Optional LLM expansion (leave unset for zero-cost heuristic mode).
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_ENDPOINT: ${{ secrets.LLM_ENDPOINT }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+        run: node scripts/agent/optimize.mjs
+
+      - name: Open or update pull request
+        if: steps.run.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BRANCH="optimizer/auto-updates"
+          DATE="$(date -u +%F)"
+          git config user.name "dc-optimizer-agent[bot]"
+          git config user.email "223556219+Copilot@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add data/sources.json data/optimizer
+          git commit -m "chore(optimizer): daily data-source enhancements ($DATE)" \
+                     -m "Automated by the DC Data-Source Optimizer agent. See data/optimizer/last-run.json." \
+                     -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+          git push -f origin "$BRANCH"
+          PROMOTED="${{ steps.run.outputs.promoted }}"
+          BODY="Automated daily data-source assessment for **NL, BE, DE, PL, ES**.
+
+          - Promoted **${PROMOTED}** new source(s) into \`data/sources.json\` (\`emerging_data_sources\`).
+          - Full run report: \`data/optimizer/last-run.json\`
+          - Review backlog (lower-confidence): \`data/optimizer/candidate-sources.json\`
+          - Changelog: \`data/optimizer/CHANGELOG.md\`
+
+          Algorithm-tuning recommendations (if any) are listed in the run report for human review — the agent never edits the scoring algorithm automatically."
+          if gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
+            gh pr edit "$BRANCH" --body "$BODY"
+            echo "Updated existing PR."
+          else
+            gh pr create --base "${{ github.event.repository.default_branch }}" --head "$BRANCH" \
+              --title "Optimizer: daily datacenter data-source enhancements" --body "$BODY"
+          fi

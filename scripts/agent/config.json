@@ -1,0 +1,37 @@
+{
+  "$comment": "Config for the daily DC data-source optimizer agent. Scope = 5 countries. Capped to runBudgetMinutes (< the 60-min GitHub Actions job timeout).",
+  "runBudgetMinutes": 55,
+  "countries": [
+    { "code": "NL", "name": "Netherlands" },
+    { "code": "BE", "name": "Belgium" },
+    { "code": "DE", "name": "Germany" },
+    { "code": "PL", "name": "Poland" },
+    { "code": "ES", "name": "Spain" }
+  ],
+  "briefing": {
+    "$comment": "DC Audio Briefing is produced/managed by Cowork. Provide its export as a URL or local file via env. Supports .json, .txt/.md transcript, or .vtt captions.",
+    "urlEnv": "DC_AUDIO_BRIEFING_URL",
+    "fileEnv": "DC_AUDIO_BRIEFING_FILE",
+    "cacheFile": "data/optimizer/briefing-latest.json"
+  },
+  "llm": {
+    "$comment": "Optional. If LLM_API_KEY is set the agent uses an OpenAI-compatible / Azure OpenAI chat endpoint to expand candidates and briefing signals. Without it, the agent runs in heuristic (seed-only) mode at zero token cost.",
+    "apiKeyEnv": "LLM_API_KEY",
+    "endpointEnv": "LLM_ENDPOINT",
+    "modelEnv": "LLM_MODEL",
+    "maxCandidatesPerCountry": 6,
+    "maxOutputTokens": 4000,
+    "temperature": 0.4
+  },
+  "acceptance": {
+    "$comment": "Candidates at or above minConfidence are promoted into data/sources.json under emerging_data_sources. Everything else stays in the candidate backlog for human review.",
+    "minConfidence": 0.7,
+    "requireHttps": true
+  },
+  "output": {
+    "sourcesFile": "data/sources.json",
+    "candidatesFile": "data/optimizer/candidate-sources.json",
+    "reportFile": "data/optimizer/last-run.json",
+    "changelogFile": "data/optimizer/CHANGELOG.md"
+  }
+}
