@@ -187,10 +187,14 @@ resource customerFtp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@202
   }
 }
 
-resource adminAuth 'Microsoft.Web/sites/config@2024-04-01' = if (configureAuth) {
+// Admin auth: when authClientId is set, enforce Easy Auth; otherwise actively
+// DISABLE it (turning off any previously-deployed Easy Auth). With auth disabled,
+// admin access is governed purely by the Front Door admin IP allowlist (GitOps:
+// config/access-control.json).
+resource adminAuth 'Microsoft.Web/sites/config@2024-04-01' = {
   parent: adminApp
   name: 'authsettingsV2'
-  properties: {
+  properties: configureAuth ? {
     platform: {
       enabled: true
     }
@@ -225,6 +229,14 @@ resource adminAuth 'Microsoft.Web/sites/config@2024-04-01' = if (configureAuth) 
       forwardProxy: {
         convention: 'Standard'
       }
+    }
+  } : {
+    platform: {
+      enabled: false
+    }
+    globalValidation: {
+      requireAuthentication: false
+      unauthenticatedClientAction: 'AllowAnonymous'
     }
   }
 }
