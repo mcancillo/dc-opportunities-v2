@@ -134,6 +134,16 @@ Browse it in the **📒 Ledger** tab, filter by country/tier/for-sale, and **exp
 - **Power estimates** are approximations based on sector and building size, not measured consumption.
 - **IX data** from PeeringDB is live but cached for 24 hours.
 
+## 📱 Mobile App (iOS + Android)
+
+An invite-only **Expo (React Native)** app provides a mobile front end with the
+same map layers and **offline caching** of maps and data (data centers, subsea
+cables, landing points, fiber, real estate). It reuses the existing Microsoft
+Entra ID security framework (OAuth2 PKCE, invite-only, MFA).
+
+- Source & dev guide: [`mobile/README.md`](mobile/README.md)
+- Full documentation, build/submit steps & manual checklist: [`docs/mobile-app.md`](docs/mobile-app.md)
+
 ## License
 
 MIT
