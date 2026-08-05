@@ -39,9 +39,12 @@ const SEEDS = {
   ]
 };
 
-function seedCandidates(countries) {
+function seedCandidates(countries, params) {
+  const emphasis = params?.countryEmphasis || {};
   const out = [];
-  for (const { code } of countries) {
+  // Emphasise under-covered countries first so limited runs cover them.
+  const ordered = [...countries].sort((a, b) => (emphasis[b.code] ?? 1) - (emphasis[a.code] ?? 1));
+  for (const { code } of ordered) {
     for (const s of SEEDS[code] || []) {
       out.push({ ...s, country: code, source: 'seed', confidence: 0.75, rationale: 'Curated new-angle seed source for datacenter plot discovery.' });
     }
@@ -49,9 +52,10 @@ function seedCandidates(countries) {
   return out;
 }
 
-async function llmCandidates(cfg, countries, briefing) {
+async function llmCandidates(cfg, countries, briefing, params) {
   if (!llmEnabled(cfg)) return { candidates: [], usage: null, recommendations: [] };
 
+  const maxPer = params?.maxCandidatesPerCountry ?? cfg.llm.maxCandidatesPerCountry;
   const system = [
     'You are a datacenter site-selection research agent.',
     'Goal: propose NEW public data sources and NEW analytical angles that help identify land plots suitable for building datacenters.',
@@ -64,10 +68,12 @@ async function llmCandidates(cfg, countries, briefing) {
 
   const user = JSON.stringify({
     countries: countries.map(c => c.code),
-    max_candidates_per_country: cfg.llm.maxCandidatesPerCountry,
+    max_candidates_per_country: maxPer,
+    country_emphasis: params?.countryEmphasis || {},
+    category_emphasis: params?.categoryEmphasis || {},
     briefing_signals: briefing.signals,
     briefing_highlights: briefing.signals.highlights?.slice(0, 25) || [],
-    instruction: 'Prioritise angles the briefing emphasises. Weight countries the briefing mentions more.'
+    instruction: 'Prioritise angles the briefing emphasises and countries/categories with higher emphasis weights (learned from past-run evaluation). Weight countries the briefing mentions more.'
   });
 
   const res = await llmJson(cfg, system, user);
@@ -78,8 +84,8 @@ async function llmCandidates(cfg, countries, briefing) {
   return { candidates, usage: res.usage, recommendations: data.algorithm_recommendations || [] };
 }
 
-export async function discover(cfg, countries, briefing) {
-  const seeds = seedCandidates(countries);
-  const { candidates: llm, usage, recommendations } = await llmCandidates(cfg, countries, briefing);
+export async function discover(cfg, countries, briefing, params) {
+  const seeds = seedCandidates(countries, params);
+  const { candidates: llm, usage, recommendations } = await llmCandidates(cfg, countries, briefing, params);
   return { candidates: [...seeds, ...llm], usage, recommendations };
 }

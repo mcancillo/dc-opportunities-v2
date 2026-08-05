@@ -4,6 +4,7 @@ An autonomous agent that runs **once every 24 hours** to continuously improve ho
 the tool finds land suitable for datacenters. It ingests the Cowork **DC Audio
 Briefing**, discovers new data sources and analytical angles for the in-scope
 countries, and **pushes the enhancements into the repo as a pull request**.
+Each run is capped at **2 hours**.
 
 - Agent code: [`scripts/agent/`](../scripts/agent)
 - Schedule / runner: [`.github/workflows/data-source-optimizer.yml`](../.github/workflows/data-source-optimizer.yml)
@@ -46,13 +47,57 @@ To change scope, edit `config.json` `countries` (and the app constants).
 6. **Open/update a pull request** with the changes (branch
    `optimizer/auto-updates`). If a run finds nothing new, no PR is created.
 
-## The 1-hour/day cap
+## Evaluation & self-optimization (feedback loop)
+
+Every run ends with an **evaluation** step that scores its own output, followed
+by an **optimization** step that tunes the agent's parameters for the next run.
+This closes the loop so the agent improves over time instead of repeating the
+same behaviour.
+
+### Evaluation — `lib/evaluate.mjs`
+Computes a set of metrics and a composite **quality score (0–100)**:
+
+| Metric | What it measures | Weight |
+|--------|------------------|:------:|
+| Reachability | Sample of promoted/emerging source URLs that actually respond (gated 401/403/429 count as alive; only DNS/TLS errors, timeouts, 404/410, 5xx are "dead") | 40% |
+| Country coverage | Share of in-scope countries with ≥1 emerging source | 20% |
+| Category diversity | Normalized Shannon entropy across source categories (avoid over-indexing one angle) | 15% |
+| Briefing utilization | Whether a Cowork briefing was actually ingested | 15% |
+| Promotion flow | Rewards a healthy (not runaway) promotion rate | 10% |
+
+Metrics are appended to `data/optimizer/metrics-history.json` (kept ~6 months)
+and embedded in `last-run.json`. The reachability probe is bounded (≤15 URLs,
+8 s each) and respects the run budget.
+
+### Optimization — `lib/tune.mjs`
+Adjusts **learned parameters** in `data/optimizer/agent-params.json`, applied on
+the next run. All moves are bounded and logged (see `tuning.changes` in the
+report / the changelog):
+
+| Signal | Action |
+|--------|--------|
+| Reachability < 60% | Raise `minConfidence` (be pickier) |
+| Reachability ≥ 90% | Slightly lower `minConfidence` (allow more flow) |
+| 3 consecutive runs with 0 promotions | Raise `maxCandidatesPerCountry` and lower `minConfidence` (explore more) |
+| A country has 0 emerging sources | Boost that country's discovery emphasis |
+| A country is over-represented | Decay its emphasis toward neutral |
+| A target category is under-represented | Boost that category's emphasis |
+
+Bounds: `minConfidence` ∈ [0.55, 0.90], `maxCandidatesPerCountry` ∈ [3, 12],
+emphasis ∈ [0.5, 2.0]. The learned emphasis weights feed back into discovery
+(seed ordering + the LLM prompt), and the learned `minConfidence` feeds the
+acceptance gate — so the evaluation genuinely steers subsequent runs.
+
+The agent **never** auto-edits the scoring algorithm; algorithm-tuning ideas are
+recorded as recommendations for human review.
+
+## The 2-hour/day cap
 
 Two independent limits enforce it:
 
-- **CI job timeout** `timeout-minutes: 60` in the workflow — a hard ceiling; the
-  job is killed at 60 minutes.
-- **Agent self-budget** `runBudgetMinutes: 55` in `config.json` — the agent
+- **CI job timeout** `timeout-minutes: 120` in the workflow — a hard ceiling; the
+  job is killed at 120 minutes.
+- **Agent self-budget** `runBudgetMinutes: 115` in `config.json` — the agent
   checks a wall-clock deadline and stops early, well before the CI ceiling.
 
 `concurrency` also prevents two daily runs from overlapping.
@@ -112,7 +157,7 @@ Pro/Team = 3,000 min/month).
 |---------|------------------|--------|
 | Seed-only (~1 min) | ~$0.008 | ~$0.24 |
 | With LLM (~3 min) | ~$0.024 | ~$0.72 |
-| Worst case: hits the 60-min cap daily | ~$0.48 | ~$14.40 (1,800 min — still inside the 2,000-min free tier) |
+| Worst case: hits the 120-min cap daily | ~$0.96 | ~$28.80 (3,600 min — exceeds the 2,000/3,000-min free tiers, so overage applies) |
 
 On a public repo, or within your plan's included minutes, real compute cost is
 effectively **$0**.
@@ -133,7 +178,7 @@ One request/day: ~6k input tokens (briefing + prompt) and up to 4k output tokens
 | Seed-only (no LLM) | **< $0.01** | ~$0.24 (or $0 within free minutes) |
 | + `gpt-4o-mini` | **~$0.01** | ~$0.35 |
 | + `gpt-4o` | **~$0.08** | ~$2.40 |
-| Absolute worst case (cap hit + `gpt-4o`) | **~$0.54** | ~$16 |
+| Absolute worst case (cap hit + `gpt-4o`) | **~$1.02** | ~$30 |
 
 This sits far below the solution's monthly budget cap, and the run is bounded to
-one hour of compute per day regardless of configuration.
+two hours of compute per day regardless of configuration.

@@ -17,9 +17,10 @@ export function knownDomains(sources) {
   return domains;
 }
 
-export function validateCandidates(candidates, { sources, backlog, cfg }) {
+export function validateCandidates(candidates, { sources, backlog, cfg, minConfidence }) {
   const scope = new Set(cfg.countries.map(c => c.code));
   const known = knownDomains(sources);
+  const threshold = typeof minConfidence === 'number' ? minConfidence : cfg.acceptance.minConfidence;
   const backlogDomains = new Set((backlog?.candidates || []).map(c => `${c.country}:${domainOf(c.url)}`));
   const seenThisRun = new Set();
 
@@ -53,7 +54,7 @@ export function validateCandidates(candidates, { sources, backlog, cfg }) {
       source: c.source || 'unknown',
       discovered_at: new Date().toISOString().slice(0, 10)
     };
-    if (entry.confidence >= cfg.acceptance.minConfidence) accepted.push(entry);
+    if (entry.confidence >= threshold) accepted.push(entry);
     else newBacklog.push(entry);
   }
 

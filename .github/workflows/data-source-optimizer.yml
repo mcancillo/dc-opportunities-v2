@@ -3,7 +3,7 @@ name: DC Data-Source Optimizer (daily)
 # Autonomous agent that assesses datacenter-plot data sources once per day,
 # ingests the Cowork "DC Audio Briefing", proposes new sources/angles for the
 # 5 in-scope countries (NL, BE, DE, PL, ES) and opens/updates a PR with the
-# enhancements. Hard-capped to 1 hour of runtime per day.
+# enhancements. Hard-capped to 2 hours of runtime per day.
 
 on:
   schedule:
@@ -22,7 +22,7 @@ permissions:
 jobs:
   optimize:
     runs-on: ubuntu-latest
-    timeout-minutes: 60     # <<< the 1-hour/day cap (agent self-stops at 55 min)
+    timeout-minutes: 120    # <<< the 2-hour/day cap (agent self-stops at 115 min)
     steps:
       - name: Checkout
         uses: actions/checkout@v4

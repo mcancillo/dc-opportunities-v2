@@ -1,13 +1,16 @@
+# Optimizer agent changelog
+
 ## 2026-08-05
 - Briefing: none; themes: none
-- Promoted 9 new source(s) into sources.json; 0 added to review backlog; 6 rejected/duplicate.
-  - **[NL]** RVO Bedrijventerreinen / IBIS industrial estates — _industrial-land_ (https://www.rvo.nl)
-  - **[NL]** Groningen Seaports / Eemshaven land — _port-land_ (https://www.groningen-seaports.com)
-  - **[BE]** Port of Antwerp-Bruges land — _port-land_ (https://www.portofantwerpbruges.com)
-  - **[DE]** Bundesnetzagentur — grid & connection data — _grid-capacity_ (https://www.bundesnetzagentur.de)
-  - **[DE]** Braunfeld/brownfield & Konversionsflächen registers — _brownfield_ (https://www.bbsr.bund.de)
-  - **[PL]** PAIH / Special Economic Zones (SEZ) land — _industrial-land_ (https://www.paih.gov.pl)
-  - **[ES]** Red Eléctrica (REE) — ESIOS grid data — _grid-capacity_ (https://www.esios.ree.es)
-  - **[ES]** SEPES / regional suelo industrial registries — _industrial-land_ (https://www.sepes.es)
-  - **[ES]** Aragón / Zaragoza logistics & DC land (PLAZA) — _industrial-land_ (https://www.plazalogistica.com)
+- Quality score: **65/100** (reachability 78%, coverage 100%, diversity 0.92).
+- Promoted 0 new source(s) into sources.json; 0 added to review backlog; 15 rejected/duplicate.
+- Self-tuning:
+  - countryEmphasis.NL 1 -> 0.9 (coverage 2/1.8)
+  - countryEmphasis.DE 1 -> 0.9 (coverage 2/1.8)
+  - countryEmphasis.ES 1 -> 0.9 (coverage 3/1.8)
+  - categoryEmphasis.brownfield 1 -> 1.3 (count 1 vs mean 1.1)
+  - categoryEmphasis.permitting 1 -> 1.3 (count 0 vs mean 1.1)
+  - categoryEmphasis.renewable 1 -> 1.3 (count 0 vs mean 1.1)
+  - categoryEmphasis.cadastral 1 -> 1.3 (count 0 vs mean 1.1)
+  - categoryEmphasis.connectivity 1 -> 1.3 (count 0 vs mean 1.1)
 

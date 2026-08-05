@@ -1,6 +1,6 @@
 {
-  "$comment": "Config for the daily DC data-source optimizer agent. Scope = 5 countries. Capped to runBudgetMinutes (< the 60-min GitHub Actions job timeout).",
-  "runBudgetMinutes": 55,
+  "$comment": "Config for the daily DC data-source optimizer agent. Scope = 5 countries. Capped to runBudgetMinutes (< the 120-min GitHub Actions job timeout).",
+  "runBudgetMinutes": 115,
   "countries": [
     { "code": "NL", "name": "Netherlands" },
     { "code": "BE", "name": "Belgium" },

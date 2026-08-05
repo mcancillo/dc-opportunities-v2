@@ -147,7 +147,7 @@ Entra ID security framework (OAuth2 PKCE, invite-only, MFA).
 ## 🤖 Daily Optimizer Agent
 
 A scheduled agent ([`.github/workflows/data-source-optimizer.yml`](.github/workflows/data-source-optimizer.yml))
-runs **once every 24 hours** (capped at 1 hour/day) to keep the tool improving:
+runs **once every 24 hours** (capped at 2 hours/day) to keep the tool improving:
 it ingests the Cowork **DC Audio Briefing**, discovers new data sources & angles
 for datacenter plots across **NL, BE, DE, PL, ES**, and opens a PR with the
 enhancements. Run locally with `npm run optimize`.
