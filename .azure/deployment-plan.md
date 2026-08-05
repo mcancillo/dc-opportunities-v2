@@ -99,6 +99,26 @@ to the `admin` and `customer` sites.
 4. ⏸️ **SQL `CREATE USER FROM EXTERNAL PROVIDER` + RLS** — **DEFERRED.** The app currently uses local JSON files, not Azure SQL (SQL data migration is a future phase). SQL has `publicNetworkAccess: Disabled` (private endpoint only), so grants must be run from inside the VNet (or via a temporary firewall rule) as the Entra SQL admin once the app targets SQL.
 5. ◻️ **Customer-side C2B / External ID** — deferred; customer app is currently locked to the same assigned admins (interim hardening) until a CIAM tenant + user flow is stood up.
 
+### Mobile client (iOS + Android) — added 2026-08-05
+
+Invite-only cross-platform app (`mobile/`, Expo + MapLibre) that reuses this same identity plane. Caches map layers + base-map tiles for offline field use.
+
+| Item | Value |
+|------|-------|
+| App registration | `DC Opportunities Mobile` — appId **`3004922c-9d02-4d3e-8b22-8dd90c4bf78d`**, SP `2f9d36ed-75eb-455d-8acc-5a47e6a2cc93` (public/native client, PKCE) |
+| Bundle ID / package | `com.dcopportunities.app` |
+| Redirect URIs | `msauth.com.dcopportunities.app://auth`, `com.dcopportunities.app://auth`, `https://auth.expo.io/@mcancillo/dc-opportunities-mobile` |
+| API scope | `api://0934e54f-36e2-4e8d-8aec-574895e062ef/access_as_user` (scope id `505ef247-8911-425e-b81d-798dd4b927d7`), mobile client **pre-authorized** on the Easy Auth app → no consent prompt |
+| Token flow | OAuth2 auth-code + PKCE → access token audience = Easy Auth app → **App Service Easy Auth validates mobile tokens natively** (no separate API gateway) |
+
+**Invite-only enforcement (two layers):**
+1. ✅ Mobile SP `appRoleAssignmentRequired = true` — sign-in itself requires assignment. Both admins assigned (`Marco Cancillo` 152ac45e-…, `mcancillo` 75aa9cc7-…). Unassigned users get `AADSTS50105`, which the app renders as the *"Access is invite-only"* screen.
+2. ✅ Easy Auth resource app `0934e54f` also has `appRoleAssignmentRequired = true` with the same two users assigned — the API rejects tokens from unassigned users even if sign-in were bypassed.
+
+**MFA:** inherited from the tenant Conditional Access + Microsoft Authenticator auth strength (runbook in [`.azure/ca-mfa/`](ca-mfa/README.md)); the mobile client is covered by the same CA policy targeting these users. Add the mobile appId to the CA policy's target apps when the policy is enforced by a tenant admin.
+
+**Store submission:** documented runbooks in [`mobile/store/`](../mobile/README.md) (Apple App Store + Google Play). Requires Apple Developer + Google Play Console accounts and a **reviewer demo Entra account** (invite-only apps are rejected without one). Cannot be published from this environment (no dev-account credentials).
+
 ---
 
 ## 6. Provisioning Limit Checklist
