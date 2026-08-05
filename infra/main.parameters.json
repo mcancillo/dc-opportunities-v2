@@ -18,7 +18,7 @@
       "value": "${AUTH_CLIENT_ID=}"
     },
     "monthlyBudgetAmount": {
-      "value": "${MONTHLY_BUDGET_AMOUNT=300}"
+      "value": "${MONTHLY_BUDGET_AMOUNT=150}"
     }
   }
 }

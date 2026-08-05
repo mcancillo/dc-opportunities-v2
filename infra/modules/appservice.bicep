@@ -92,7 +92,7 @@ resource plan 'Microsoft.Web/serverfarms@2024-04-01' = {
   tags: tags
   kind: 'linux'
   sku: {
-    name: 'B2'
+    name: 'B1'
     tier: 'Basic'
     capacity: 1
   }

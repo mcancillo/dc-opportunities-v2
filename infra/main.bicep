@@ -25,7 +25,7 @@ param alertEmails array = [
 ]
 
 @description('Monthly cost cap in USD.')
-param monthlyBudgetAmount int = 300
+param monthlyBudgetAmount int = 150
 
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = {
