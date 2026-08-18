@@ -153,7 +153,9 @@ async function getFiberBackbone() {
 
   const allFibers = [];
 
-  for (const region of regions) {
+  // Run all region + submarine queries in parallel so a slow/one-timeout
+  // upstream doesn't serialize into a 40s+ cold start (was causing 504s).
+  const regionTasks = regions.map(async (region) => {
     try {
       const query = [
         '[out:json][timeout:30];',
@@ -174,25 +176,29 @@ async function getFiberBackbone() {
     } catch (e) {
       console.warn(`Fiber backbone query failed for ${region.name}:`, e.message);
     }
-  }
+  });
 
-  // Also get submarine cables from OSM
-  try {
-    const query = '[out:json][timeout:30];way["man_made"="submarine_cable"](35,-10,55,22);out geom;';
-    const json = await queryOverpass(query);
+  // Also get submarine cables from OSM (in parallel with the region queries).
+  const submarineTask = (async () => {
+    try {
+      const query = '[out:json][timeout:30];way["man_made"="submarine_cable"](35,-10,55,22);out geom;';
+      const json = await queryOverpass(query);
 
-    json.elements.forEach(el => {
-      if (!el.geometry || el.geometry.length < 2) return;
-      allFibers.push({
-        name: (el.tags && el.tags.name) || 'Submarine cable',
-        operator: el.tags && el.tags.operator,
-        coords: el.geometry.map(g => [g.lat, g.lon]),
-        submarine: true
+      json.elements.forEach(el => {
+        if (!el.geometry || el.geometry.length < 2) return;
+        allFibers.push({
+          name: (el.tags && el.tags.name) || 'Submarine cable',
+          operator: el.tags && el.tags.operator,
+          coords: el.geometry.map(g => [g.lat, g.lon]),
+          submarine: true
+        });
       });
-    });
-  } catch (e) {
-    console.warn('Submarine cable query failed:', e.message);
-  }
+    } catch (e) {
+      console.warn('Submarine cable query failed:', e.message);
+    }
+  })();
+
+  await Promise.all([...regionTasks, submarineTask]);
 
   writeCache('fiber-backbone', allFibers);
   return allFibers;
