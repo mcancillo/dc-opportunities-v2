@@ -42,8 +42,9 @@ router.get('/ix-locations', async (req, res) => {
     const data = await peeringdb.getIXLocations();
     res.json(data);
   } catch (err) {
+    // Map layer — degrade to empty rather than 500ing the portal.
     console.error('IX locations error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch IX locations' });
+    res.json([]);
   }
 });
 
@@ -67,8 +68,9 @@ router.get('/datacenters', async (req, res) => {
     );
     res.json(data);
   } catch (err) {
+    // Map layer — degrade to empty rather than 500ing the portal.
     console.error('Datacenters error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch datacenters' });
+    res.json([]);
   }
 });
 
@@ -220,8 +222,9 @@ router.get('/fiber-backbone', async (req, res) => {
     const data = await cables.getFiberBackbone();
     res.json(data);
   } catch (err) {
+    // Map layer — degrade to empty rather than 500ing the portal.
     console.error('Fiber backbone error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch fiber backbone' });
+    res.json([]);
   }
 });
 

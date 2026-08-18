@@ -9,12 +9,12 @@ function ensureCacheDir() {
   if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
 
-function readCache(key) {
+function readCache(key, ignoreTtl = false) {
   ensureCacheDir();
   const file = path.join(CACHE_DIR, `${key}.json`);
   if (!fs.existsSync(file)) return null;
   const stat = fs.statSync(file);
-  if (Date.now() - stat.mtimeMs > CACHE_TTL) return null;
+  if (!ignoreTtl && Date.now() - stat.mtimeMs > CACHE_TTL) return null;
   return JSON.parse(fs.readFileSync(file, 'utf-8'));
 }
 
@@ -64,7 +64,16 @@ async function getDatacenters(lat, lng, radiusMeters) {
     'out body center;'
   ].join('');
 
-  const json = await queryOverpass(query);
+  let json;
+  try {
+    json = await queryOverpass(query);
+  } catch (e) {
+    // Upstream (public Overpass) unavailable — degrade gracefully instead of
+    // 500ing the customer portal. Prefer stale cache, else return empty.
+    const stale = readCache(cacheKey, true);
+    console.warn(`Datacenters: Overpass unavailable (${e.message}); serving ${stale ? 'stale cache' : 'empty'}`);
+    return stale || [];
+  }
 
   const seen = new Set();
   const datacenters = json.elements

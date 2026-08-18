@@ -10,12 +10,12 @@ function ensureCacheDir() {
   if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
 
-function readCache(key) {
+function readCache(key, ignoreTtl = false) {
   ensureCacheDir();
   const file = path.join(CACHE_DIR, `${key}.json`);
   if (!fs.existsSync(file)) return null;
   const stat = fs.statSync(file);
-  if (Date.now() - stat.mtimeMs > CACHE_TTL) return null;
+  if (!ignoreTtl && Date.now() - stat.mtimeMs > CACHE_TTL) return null;
   return JSON.parse(fs.readFileSync(file, 'utf-8'));
 }
 
@@ -35,19 +35,34 @@ async function getIXLocations() {
 
   // Use depth=2 so fac_set includes facility coordinates
   const url = 'https://www.peeringdb.com/api/ix?depth=2';
-  const resp = await fetch(url, {
-    headers: {
-      'Accept': 'application/json',
-      'User-Agent': 'DC-Opportunities-v2/1.0 (datacenter-site-analysis)'
-    },
-    timeout: 10000
-  });
-  if (resp.status === 429) {
-    console.warn('PeeringDB rate-limited (429) — returning empty IX list');
-    ixMemoryCache = [];
-    return [];
+  let resp;
+  try {
+    resp = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'DC-Opportunities-v2/1.0 (datacenter-site-analysis)'
+      },
+      timeout: 10000
+    });
+  } catch (e) {
+    // PeeringDB unreachable/timeout — degrade to stale cache or empty.
+    const stale = readCache('ix-locations', true);
+    console.warn(`PeeringDB unavailable (${e.message}); serving ${stale ? 'stale cache' : 'empty'}`);
+    ixMemoryCache = stale || [];
+    return ixMemoryCache;
   }
-  if (!resp.ok) throw new Error(`PeeringDB returned ${resp.status}`);
+  if (resp.status === 429) {
+    console.warn('PeeringDB rate-limited (429) — returning stale/empty IX list');
+    const stale = readCache('ix-locations', true);
+    ixMemoryCache = stale || [];
+    return ixMemoryCache;
+  }
+  if (!resp.ok) {
+    const stale = readCache('ix-locations', true);
+    console.warn(`PeeringDB returned ${resp.status} — serving ${stale ? 'stale cache' : 'empty'}`);
+    ixMemoryCache = stale || [];
+    return ixMemoryCache;
+  }
   const json = await resp.json();
 
   const filtered = json.data

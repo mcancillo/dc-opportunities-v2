@@ -19,12 +19,12 @@ function ensureCacheDir() {
   if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
 
-function readCache(key) {
+function readCache(key, ignoreTtl = false) {
   ensureCacheDir();
   const file = path.join(CACHE_DIR, `${key}.json`);
   if (!fs.existsSync(file)) return null;
   const stat = fs.statSync(file);
-  if (Date.now() - stat.mtimeMs > CACHE_TTL) return null;
+  if (!ignoreTtl && Date.now() - stat.mtimeMs > CACHE_TTL) return null;
   return JSON.parse(fs.readFileSync(file, 'utf-8'));
 }
 
@@ -199,6 +199,13 @@ async function getFiberBackbone() {
   })();
 
   await Promise.all([...regionTasks, submarineTask]);
+
+  // If every upstream query failed, don't cache/return empty — fall back to
+  // whatever stale data we have so the map still renders.
+  if (allFibers.length === 0) {
+    const stale = readCache('fiber-backbone', true);
+    if (stale) return stale;
+  }
 
   writeCache('fiber-backbone', allFibers);
   return allFibers;
