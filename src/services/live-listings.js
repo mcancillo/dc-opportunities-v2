@@ -46,7 +46,7 @@ async function queryOverpass(query) {
     try {
       const resp = await fetch(`${ep}?data=${encoded}`, {
         headers: { 'Accept': 'application/json' },
-        timeout: 90000
+        timeout: 12000
       });
       if (resp.ok) return await resp.json();
     } catch (e) { /* next */ }

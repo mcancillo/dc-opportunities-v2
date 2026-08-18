@@ -34,7 +34,8 @@ async function queryOverpass(query) {
   for (const endpoint of OVERPASS_ENDPOINTS) {
     try {
       const resp = await fetch(`${endpoint}?data=${encoded}`, {
-        headers: { 'Accept': 'application/json' }
+        headers: { 'Accept': 'application/json' },
+        timeout: 12000
       });
       if (resp.ok) return await resp.json();
     } catch (e) { /* try next endpoint */ }

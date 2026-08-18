@@ -39,7 +39,8 @@ async function getIXLocations() {
     headers: {
       'Accept': 'application/json',
       'User-Agent': 'DC-Opportunities-v2/1.0 (datacenter-site-analysis)'
-    }
+    },
+    timeout: 10000
   });
   if (resp.status === 429) {
     console.warn('PeeringDB rate-limited (429) — returning empty IX list');
@@ -87,7 +88,8 @@ async function getIXFacilities(ixId) {
   // Get facilities linked to this IX via ixfac endpoint
   const url = `https://www.peeringdb.com/api/ixfac?ix_id=${ixId}&depth=2`;
   const resp = await fetch(url, {
-    headers: { 'Accept': 'application/json' }
+    headers: { 'Accept': 'application/json' },
+    timeout: 10000
   });
   if (resp.status === 429) {
     console.warn('PeeringDB rate-limited (429) on facilities — returning empty');
@@ -101,7 +103,7 @@ async function getIXFacilities(ixId) {
     if (ixfac.fac_id) {
       const facResp = await fetch(
         `https://www.peeringdb.com/api/fac/${ixfac.fac_id}`,
-        { headers: { 'Accept': 'application/json' } }
+        { headers: { 'Accept': 'application/json' }, timeout: 10000 }
       );
       if (facResp.ok) {
         const facJson = await facResp.json();
