@@ -19,6 +19,9 @@ param kpnCidrs array
 @description('Ziggo IP CIDR ranges permitted to reach the website (from config/isp-allowlist.json).')
 param ziggoCidrs array
 
+@description('Odido IP CIDR ranges permitted to reach the website (from config/isp-allowlist.json).')
+param odidoCidrs array
+
 @description('Explicit CIDRs allowed to reach the ADMIN endpoint. When set, admin is locked to these only; when empty, admin falls back to the ISP allowlist.')
 param adminAllowedIps array = []
 
@@ -77,6 +80,22 @@ var allowZiggoRule = {
   action: 'Allow'
 }
 
+var allowOdidoRule = {
+  name: 'AllowOdido'
+  priority: 220
+  enabledState: 'Enabled'
+  ruleType: 'MatchRule'
+  matchConditions: [
+    {
+      matchVariable: 'RemoteAddr'
+      operator: 'IPMatch'
+      negateCondition: false
+      matchValue: odidoCidrs
+    }
+  ]
+  action: 'Allow'
+}
+
 var allowAdminRule = {
   name: 'AllowAdminIps'
   priority: 150
@@ -114,6 +133,7 @@ var customerWafRules = [
   rateLimitRule
   allowKpnRule
   allowZiggoRule
+  allowOdidoRule
   blockAllRule
 ]
 
@@ -123,6 +143,7 @@ var adminWafRules = empty(adminAllowedIps) ? [
   rateLimitRule
   allowKpnRule
   allowZiggoRule
+  allowOdidoRule
   blockAllRule
 ] : [
   rateLimitRule

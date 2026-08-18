@@ -141,6 +141,7 @@ module frontdoor 'modules/frontdoor.bicep' = {
     logAnalyticsId: monitoring.outputs.logAnalyticsId
     kpnCidrs: ispAllowlist.kpn
     ziggoCidrs: ispAllowlist.ziggo
+    odidoCidrs: ispAllowlist.odido
     adminAllowedIps: accessControl.admin.allowedIps
   }
 }

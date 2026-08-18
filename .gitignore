@@ -5,3 +5,5 @@ node_modules/
 cache/
 data/ledger.json
 data/iam.json
+
+infra/main.json

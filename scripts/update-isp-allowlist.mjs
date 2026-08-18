@@ -5,7 +5,7 @@
 // deploy time via loadJsonContent(), so refreshing the allowlist is a pure GitOps
 // operation: run `npm run update-isp-allowlist`, commit, and redeploy.
 //
-// Scope: Dutch consumer ISPs Ziggo and KPN. Add/adjust ASNs in ISP_ASNS below.
+// Scope: Dutch consumer ISPs Ziggo, KPN and Odido. Add/adjust ASNs in ISP_ASNS below.
 
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +18,7 @@ const OUT = resolve(__dirname, '..', 'config', 'isp-allowlist.json');
 const ISP_ASNS = {
   kpn: [1136, 286],
   ziggo: [33915, 9143],
+  odido: [50266, 13127, 20507],
 };
 
 // Cap per provider to stay well under the Front Door WAF limit of 600 match
@@ -111,6 +112,7 @@ async function main() {
     counts: Object.fromEntries(Object.entries(providers).map(([k, v]) => [k, v.length])),
     kpn: providers.kpn,
     ziggo: providers.ziggo,
+    odido: providers.odido,
   };
 
   await writeFile(OUT, `${JSON.stringify(doc, null, 2)}\n`, 'utf8');
