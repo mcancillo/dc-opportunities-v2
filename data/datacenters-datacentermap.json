@@ -1,0 +1,42 @@
+{
+  "_comment": "Datacenter locations (current + upcoming) for the tool's scope countries. Attributed to DataCenterMap (https://www.datacentermap.com/). DataCenterMap does not offer a public API, so this is a curated, periodically-refreshed extract of major operational and announced (under construction / planned) facilities. status: operational | under_construction | planned. Coordinates are campus-level approximations. The daily optimizer agent may extend this list.",
+  "source": "DataCenterMap",
+  "source_url": "https://www.datacentermap.com/",
+  "updated": "2026-08-18",
+  "datacenters": [
+    { "name": "Equinix AM (Amsterdam Southeast)", "operator": "Equinix", "city": "Amsterdam", "country": "NL", "lat": 52.3160, "lng": 4.9430, "status": "operational" },
+    { "name": "Digital Realty Amsterdam Schiphol-Rijk", "operator": "Digital Realty", "city": "Schiphol-Rijk", "country": "NL", "lat": 52.2880, "lng": 4.7800, "status": "operational" },
+    { "name": "Switch Datacenters AMS", "operator": "Switch Datacenters", "city": "Amsterdam", "country": "NL", "lat": 52.4010, "lng": 4.8320, "status": "operational" },
+    { "name": "Google Eemshaven", "operator": "Google", "city": "Eemshaven", "country": "NL", "lat": 53.4430, "lng": 6.8360, "status": "operational" },
+    { "name": "Microsoft Middenmeer (Wieringermeer)", "operator": "Microsoft", "city": "Middenmeer", "country": "NL", "lat": 52.8080, "lng": 5.0100, "status": "operational" },
+    { "name": "NorthC Groningen", "operator": "NorthC", "city": "Groningen", "country": "NL", "lat": 53.2010, "lng": 6.5800, "status": "operational" },
+    { "name": "Microsoft Wieringermeer Expansion", "operator": "Microsoft", "city": "Wieringermeer", "country": "NL", "lat": 52.8300, "lng": 5.0300, "status": "under_construction" },
+    { "name": "Google Eemshaven Expansion", "operator": "Google", "city": "Eemshaven", "country": "NL", "lat": 53.4500, "lng": 6.8600, "status": "planned" },
+
+    { "name": "Google St. Ghislain", "operator": "Google", "city": "Saint-Ghislain", "country": "BE", "lat": 50.4710, "lng": 3.8650, "status": "operational" },
+    { "name": "Digital Realty Brussels", "operator": "Digital Realty", "city": "Brussels", "country": "BE", "lat": 50.8600, "lng": 4.4200, "status": "operational" },
+    { "name": "LCL Brussels-North (Diegem)", "operator": "LCL", "city": "Diegem", "country": "BE", "lat": 50.8930, "lng": 4.4460, "status": "operational" },
+    { "name": "Google St. Ghislain Expansion", "operator": "Google", "city": "Saint-Ghislain", "country": "BE", "lat": 50.4780, "lng": 3.8800, "status": "under_construction" },
+    { "name": "Microsoft Belgium Region", "operator": "Microsoft", "city": "Zaventem", "country": "BE", "lat": 50.8850, "lng": 4.4800, "status": "planned" },
+
+    { "name": "Equinix FR (Frankfurt)", "operator": "Equinix", "city": "Frankfurt", "country": "DE", "lat": 50.1220, "lng": 8.6300, "status": "operational" },
+    { "name": "Digital Realty / Interxion Frankfurt", "operator": "Digital Realty", "city": "Frankfurt", "country": "DE", "lat": 50.1000, "lng": 8.6600, "status": "operational" },
+    { "name": "NTT Frankfurt 1", "operator": "NTT", "city": "Frankfurt", "country": "DE", "lat": 50.0500, "lng": 8.6200, "status": "operational" },
+    { "name": "CloudHQ Frankfurt", "operator": "CloudHQ", "city": "Frankfurt", "country": "DE", "lat": 50.0870, "lng": 8.6900, "status": "under_construction" },
+    { "name": "Vantage Data Centers Berlin", "operator": "Vantage", "city": "Berlin", "country": "DE", "lat": 52.5100, "lng": 13.4900, "status": "under_construction" },
+    { "name": "Microsoft Germany (Frankfurt) Expansion", "operator": "Microsoft", "city": "Frankfurt", "country": "DE", "lat": 50.1500, "lng": 8.7000, "status": "planned" },
+
+    { "name": "Equinix WA (Warsaw)", "operator": "Equinix", "city": "Warsaw", "country": "PL", "lat": 52.1900, "lng": 21.0300, "status": "operational" },
+    { "name": "Atman Warsaw-1", "operator": "Atman", "city": "Warsaw", "country": "PL", "lat": 52.2600, "lng": 21.0200, "status": "operational" },
+    { "name": "Google Cloud Warsaw Region", "operator": "Google", "city": "Warsaw", "country": "PL", "lat": 52.1600, "lng": 20.9600, "status": "operational" },
+    { "name": "Vantage Data Centers Warsaw (WAW1)", "operator": "Vantage", "city": "Warsaw", "country": "PL", "lat": 52.1300, "lng": 20.9000, "status": "under_construction" },
+    { "name": "Microsoft Poland Central Region", "operator": "Microsoft", "city": "Warsaw", "country": "PL", "lat": 52.2300, "lng": 21.0100, "status": "planned" },
+
+    { "name": "Equinix MD (Madrid)", "operator": "Equinix", "city": "Madrid", "country": "ES", "lat": 40.4200, "lng": -3.6200, "status": "operational" },
+    { "name": "Digital Realty / Interxion Madrid", "operator": "Digital Realty", "city": "Madrid", "country": "ES", "lat": 40.4900, "lng": -3.6000, "status": "operational" },
+    { "name": "Data4 Madrid (Alcobendas)", "operator": "Data4", "city": "Alcobendas", "country": "ES", "lat": 40.5400, "lng": -3.6400, "status": "operational" },
+    { "name": "AWS Aragón (Zaragoza) Region", "operator": "AWS", "city": "Zaragoza", "country": "ES", "lat": 41.6500, "lng": -0.8800, "status": "operational" },
+    { "name": "Microsoft Spain Central (Madrid) Region", "operator": "Microsoft", "city": "Madrid", "country": "ES", "lat": 40.3300, "lng": -3.7700, "status": "under_construction" },
+    { "name": "Meta Talavera de la Reina", "operator": "Meta", "city": "Talavera de la Reina", "country": "ES", "lat": 39.9600, "lng": -4.8300, "status": "planned" }
+  ]
+}

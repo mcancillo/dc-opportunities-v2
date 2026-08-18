@@ -27,6 +27,7 @@ const ICONS = {
   commForSale:    () => makeCircleIcon('#aa44ff', 10),
   commNotForSale: () => makeCircleIcon('#ff69b4', 10),
   datacenter: () => makeCircleIcon('#4da6ff', 8),
+  datacenterUpcoming: () => makeCircleIcon('#ffb84d', 8),
   ix:         () => makeCircleIcon('#33cc66', 13),
   landing:    () => makeCircleIcon('#4488ff', 13)
 };
@@ -108,13 +109,21 @@ function commercialPopup(p) {
 }
 
 function datacenterPopup(dc) {
+  const statusLabel = dc.status === 'under_construction' ? 'Under construction'
+    : dc.status === 'planned' ? 'Planned'
+    : 'Operational';
+  const badge = dc.upcoming
+    ? '<span class="popup-badge dc" style="background:#ffb84d;color:#1a1a1a">UPCOMING DATACENTER</span>'
+    : '<span class="popup-badge dc">EXISTING DATACENTER</span>';
   return `
     <div class="popup-title">${dc.name}</div>
     <div class="popup-meta">
       ${dc.operator ? '🏢 ' + dc.operator + '<br>' : ''}
+      ${dc.city ? '📍 ' + dc.city + (dc.country ? ', ' + dc.country : '') + '<br>' : ''}
+      🏗️ Status: ${statusLabel}<br>
       📡 Source: ${dc.source}
     </div>
-    <span class="popup-badge dc">EXISTING DATACENTER</span>
+    ${badge}
   `;
 }
 
@@ -305,7 +314,7 @@ async function runSearch() {
     // Datacenters
     layers.datacenters = L.layerGroup();
     datacentersResp.forEach(dc => {
-      L.marker([dc.lat, dc.lng], { icon: ICONS.datacenter() })
+      L.marker([dc.lat, dc.lng], { icon: dc.upcoming ? ICONS.datacenterUpcoming() : ICONS.datacenter() })
         .bindPopup(datacenterPopup(dc))
         .addTo(layers.datacenters);
     });

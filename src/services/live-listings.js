@@ -12,12 +12,12 @@ const CACHE_TTL = 24 * 60 * 60 * 1000; // 24h
 function ensureCacheDir() {
   if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 }
-function readCache(key) {
+function readCache(key, ignoreTtl = false) {
   ensureCacheDir();
   const file = path.join(CACHE_DIR, `${key}.json`);
   if (!fs.existsSync(file)) return null;
   const stat = fs.statSync(file);
-  if (Date.now() - stat.mtimeMs > CACHE_TTL) return null;
+  if (!ignoreTtl && Date.now() - stat.mtimeMs > CACHE_TTL) return null;
   try { return JSON.parse(fs.readFileSync(file, 'utf-8')); } catch { return null; }
 }
 function writeCache(key, data) {
@@ -138,12 +138,24 @@ function getListingUrl(country, lat, lng, area) {
   }
 }
 
+// ─── Accumulating per-area cache ───────────────────────────────
+// Keep a growing superset of sites per area so expanding the search radius never
+// drops previously-found results, and a timed-out larger query falls back to
+// what we already have. Stored shape: { maxRadiusKm, sites: [...] }.
+function mergeSites(existing, incoming) {
+  const byId = new Map(existing.map(s => [s.id, s]));
+  for (const s of incoming) byId.set(s.id, s);
+  return [...byId.values()];
+}
+
 // ─── Industrial sites from Overpass (≥5000 m², high power) ─────
 // Uses bbox around search center instead of country-wide query for performance
 async function fetchIndustrialSites(country, lat, lng, radiusKm) {
-  const cacheKey = `live-industrial-${country}-${lat ? lat.toFixed(1) : 'all'}-${lng ? lng.toFixed(1) : 'all'}-${radiusKm || 300}`;
-  const cached = readCache(cacheKey);
-  if (cached) return cached;
+  const areaKey = `live-industrial-${country}-${lat ? lat.toFixed(1) : 'all'}-${lng ? lng.toFixed(1) : 'all'}`;
+  const fresh = readCache(areaKey);
+  const store = fresh || readCache(areaKey, true) || { maxRadiusKm: 0, sites: [] };
+  // Serve from cache only when fresh AND it already covers this radius.
+  if (fresh && (fresh.maxRadiusKm || 0) >= (radiusKm || 0)) return fresh.sites;
 
   console.log(`[live] Fetching industrial sites for ${country} near ${lat},${lng} (${radiusKm}km)...`);
 
@@ -225,19 +237,21 @@ out body bb;`;
     }
 
     console.log(`[live] ${country}: ${results.length} industrial sites found`);
-    writeCache(cacheKey, results);
-    return results;
+    const merged = mergeSites(store.sites, results);
+    writeCache(areaKey, { maxRadiusKm: Math.max(store.maxRadiusKm || 0, radiusKm || 0), sites: merged });
+    return merged;
   } catch (err) {
     console.error(`[live] Industrial fetch error for ${country}:`, err.message);
-    return [];
+    return store.sites; // fall back to accumulated superset — never disappears
   }
 }
 
 // ─── Commercial sites from Overpass (≥3000 m²) ─────────────────
 async function fetchCommercialSites(country, lat, lng, radiusKm) {
-  const cacheKey = `live-commercial-${country}-${lat ? lat.toFixed(1) : 'all'}-${lng ? lng.toFixed(1) : 'all'}-${radiusKm || 300}`;
-  const cached = readCache(cacheKey);
-  if (cached) return cached;
+  const areaKey = `live-commercial-${country}-${lat ? lat.toFixed(1) : 'all'}-${lng ? lng.toFixed(1) : 'all'}`;
+  const fresh = readCache(areaKey);
+  const store = fresh || readCache(areaKey, true) || { maxRadiusKm: 0, sites: [] };
+  if (fresh && (fresh.maxRadiusKm || 0) >= (radiusKm || 0)) return fresh.sites;
 
   console.log(`[live] Fetching commercial sites for ${country} near ${lat},${lng} (${radiusKm}km)...`);
 
@@ -308,11 +322,12 @@ out body bb;`;
     }
 
     console.log(`[live] ${country}: ${results.length} commercial sites found`);
-    writeCache(cacheKey, results);
-    return results;
+    const merged = mergeSites(store.sites, results);
+    writeCache(areaKey, { maxRadiusKm: Math.max(store.maxRadiusKm || 0, radiusKm || 0), sites: merged });
+    return merged;
   } catch (err) {
     console.error(`[live] Commercial fetch error for ${country}:`, err.message);
-    return [];
+    return store.sites;
   }
 }
 
