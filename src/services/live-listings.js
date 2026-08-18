@@ -114,18 +114,26 @@ function determineSector(tags) {
   return 'Commercial — General';
 }
 
-// Generate search URL for RE portal based on location
+// Universal, always-working map link for a coordinate. Opens the exact plot in
+// Google Maps (satellite/terrain + nearby infrastructure) — the most reliable
+// way to inspect a candidate site and never 404s.
+function getMapUrl(lat, lng) {
+  return `https://www.google.com/maps/search/?api=1&query=${Number(lat).toFixed(5)},${Number(lng).toFixed(5)}`;
+}
+
+// Portal deep-link to a geo-anchored listing search. Only returns a URL for
+// portals that genuinely support a coordinate/radius search (verified working);
+// otherwise null, so the UI never renders a broken link. Country-level portal
+// browsing is offered separately via getPortalSearchLinks().
 function getListingUrl(country, lat, lng, area) {
+  const la = Number(lat).toFixed(5), ln = Number(lng).toFixed(5);
   switch (country) {
-    case 'NL':
-      return `https://www.fundainbusiness.nl/bedrijfsruimte/heel-nederland/?selected_area=["${lat},${lng},30"]&floor_area="${Math.max(3000, area)}-"`;
     case 'DE':
-      return `https://www.immobilienscout24.de/Suche/de/gewerbe-kaufen?geocoordinates=${lat};${lng};30.0&livingspace=${Math.max(3000, area)}-`;
-    case 'PL':
-      return `https://www.otodom.pl/pl/wyniki/sprzedaz/komercyjne/cala-polska?distanceRadius=30&by=DEFAULT&direction=DESC&viewType=listing&limit=36&page=1`;
-    case 'ES':
-      return `https://www.idealista.com/en/areas/venta-naves/?shape=%28%28${lat}%2C${lng}%29%29&minSize=${Math.max(3000, area)}`;
+      // ImmobilienScout24 supports a real radius search around coordinates.
+      return `https://www.immobilienscout24.de/Suche/radius/gewerbeflaeche-kaufen?geocoordinates=${la};${ln};10.0`;
     default:
+      // NL/PL/ES portals do not support reliable coordinate deep-links; use the
+      // universal map link instead of emitting a broken portal URL.
       return null;
   }
 }
@@ -209,6 +217,7 @@ out body bb;`;
         for_sale: false, // OSM doesn't track sales status
         price_eur: null,
         listing_url: getListingUrl(country, lat, lng, area),
+        map_url: getMapUrl(lat, lng),
         data_source: `OpenStreetMap — ${el.tags.operator || 'industrial site'}`,
         notes: `OSM ID: ${el.id}. Tags: ${Object.entries(el.tags).slice(0, 5).map(([k,v]) => `${k}=${v}`).join(', ')}`,
         source_type: 'osm_industrial'
@@ -291,6 +300,7 @@ out body bb;`;
         sector: determineSector(el.tags),
         for_sale: false,
         listing_url: getListingUrl(country, lat, lng, area),
+        map_url: getMapUrl(lat, lng),
         data_source: `OpenStreetMap — ${el.tags.operator || el.tags.building || 'commercial'}`,
         notes: `OSM ID: ${el.id}`,
         source_type: 'osm_commercial'
@@ -474,9 +484,9 @@ function getPortalSearchLinks(country, lat, lng, radiusKm) {
     case 'DE':
       links.push({
         name: 'ImmobilienScout24',
-        url: `https://www.immobilienscout24.de/Suche/de/gewerbe-kaufen?geocoordinates=${lat};${lng};${r}.0`,
+        url: `https://www.immobilienscout24.de/Suche/radius/gewerbeflaeche-kaufen?geocoordinates=${Number(lat).toFixed(5)};${Number(lng).toFixed(5)};${Math.round(r)}.0`,
         type: 'Commercial & Industrial',
-        note: 'Largest German RE portal — filter by Gewerbefläche ≥5000m²'
+        note: 'Largest German RE portal — radius search around this location'
       });
       links.push({
         name: 'Immowelt',
@@ -499,10 +509,10 @@ function getPortalSearchLinks(country, lat, lng, radiusKm) {
         note: 'Largest Polish RE portal'
       });
       links.push({
-        name: 'Savills Poland',
-        url: 'https://www.savills.pl/find-commercial-property/',
+        name: 'Savills / WarehouseMarket PL',
+        url: 'https://warehousemarket.pl/en/all-warehouses',
         type: 'Industrial & Logistics',
-        note: 'Enterprise broker'
+        note: 'Savills-backed warehouse & industrial portal'
       });
       break;
     case 'ES':

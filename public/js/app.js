@@ -48,6 +48,14 @@ function scoreBreakdown(score) {
 }
 
 // ─── Popup Builders ─────────────────────────────────────────────
+// Universal, always-working link to inspect the exact plot on a map.
+// Works for every property (curated, live, manual) — never 404s.
+function mapUrl(p) {
+  return p.map_url || `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`;
+}
+function mapLink(p, cls) {
+  return `<a href="${mapUrl(p)}" target="_blank" rel="noopener" class="listing-link${cls ? ' ' + cls : ''}" onclick="event.stopPropagation()">📍 View on Map →</a>`;
+}
 function propertyPopup(p) {
   const badge = p.for_sale
     ? '<span class="popup-badge sale">FOR SALE</span>'
@@ -68,7 +76,9 @@ function propertyPopup(p) {
       🏭 ${p.sector}<br>
       📏 ${p.distance_km} km from IX
     </div>
-    ${badge}${listing}${scoreLine}
+    ${badge}${listing}
+    <div style="margin-top:6px"><a href="${mapUrl(p)}" target="_blank" rel="noopener" style="color:#4da6ff;font-weight:600;font-size:0.85rem;text-decoration:none;">📍 View on Map →</a></div>
+    ${scoreLine}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
 }
@@ -90,7 +100,9 @@ function commercialPopup(p) {
       🏢 ${p.sector}<br>
       📏 ${p.distance_km} km from IX
     </div>
-    ${badge}${listing}${scoreLine}
+    ${badge}${listing}
+    <div style="margin-top:6px"><a href="${mapUrl(p)}" target="_blank" rel="noopener" style="color:#aa44ff;font-weight:600;font-size:0.85rem;text-decoration:none;">📍 View on Map →</a></div>
+    ${scoreLine}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
 }
@@ -326,6 +338,7 @@ async function runSearch() {
             ${p.for_sale && p.price_eur ? `<span>💰 €${(p.price_eur/1e6).toFixed(1)}M</span>` : ''}
           </div>
           ${p.for_sale && p.listing_url ? `<a href="${p.listing_url}" target="_blank" rel="noopener" class="listing-link" onclick="event.stopPropagation()">🔗 View Listing →</a>` : ''}
+          ${mapLink(p)}
         `;
         card.addEventListener('click', () => {
           map.setView([p.lat, p.lng], 13);
@@ -354,6 +367,7 @@ async function runSearch() {
               <span>📏 ${p.distance_km} km</span>
             </div>
             ${p.for_sale && p.listing_url ? `<a href="${p.listing_url}" target="_blank" rel="noopener" class="listing-link comm" onclick="event.stopPropagation()">🔗 View Listing →</a>` : ''}
+            ${mapLink(p, 'comm')}
           `;
           card.addEventListener('click', () => {
             map.setView([p.lat, p.lng], 13);
