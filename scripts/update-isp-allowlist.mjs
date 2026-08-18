@@ -36,6 +36,45 @@ function dedupeSorted(list) {
   return [...new Set(list)].sort((a, b) => a.localeCompare(b));
 }
 
+// Convert an IPv4/IPv6 CIDR to a [start, end] BigInt range.
+function cidrToRange(cidr) {
+  const [addr, prefixStr] = cidr.split('/');
+  const prefix = Number(prefixStr);
+  const v6 = addr.includes(':');
+  const bits = v6 ? 128n : 32n;
+  let value;
+  if (v6) {
+    // Expand :: and parse hextets.
+    const [head, tail] = addr.split('::');
+    const headParts = head ? head.split(':') : [];
+    const tailParts = tail ? tail.split(':') : [];
+    const missing = 8 - headParts.length - tailParts.length;
+    const parts = [...headParts, ...Array(Math.max(missing, 0)).fill('0'), ...tailParts];
+    value = parts.reduce((acc, h) => (acc << 16n) + BigInt(parseInt(h || '0', 16)), 0n);
+  } else {
+    value = addr.split('.').reduce((acc, o) => (acc << 8n) + BigInt(Number(o)), 0n);
+  }
+  const hostBits = bits - BigInt(prefix);
+  const start = (value >> hostBits) << hostBits;
+  const end = start + (1n << hostBits) - 1n;
+  return { start, end };
+}
+
+// Front Door WAF rejects overlapping IPMatch values. With aligned CIDRs, any two
+// prefixes are either disjoint or one fully contains the other, so we drop every
+// CIDR that is contained within a broader one from the same family.
+function removeOverlaps(list) {
+  const ranges = list.map((cidr) => ({ cidr, ...cidrToRange(cidr) }));
+  return ranges
+    .filter(
+      (c) =>
+        !ranges.some(
+          (o) => o.cidr !== c.cidr && o.start <= c.start && o.end >= c.end && (o.end - o.start) > (c.end - c.start),
+        ),
+    )
+    .map((c) => c.cidr);
+}
+
 async function collect(provider) {
   const asns = ISP_ASNS[provider];
   const all = [];
@@ -45,7 +84,7 @@ async function collect(provider) {
     // Be gentle with the public API.
     await new Promise((r) => setTimeout(r, 300));
   }
-  const unique = dedupeSorted(all);
+  const unique = removeOverlaps(dedupeSorted(all));
   if (unique.length > MAX_PER_PROVIDER) {
     throw new Error(
       `${provider} has ${unique.length} prefixes, exceeds Front Door WAF cap of ${MAX_PER_PROVIDER}. ` +
