@@ -576,6 +576,81 @@ function buildBackboneLinks() {
   console.log(`Built ${drawn.size} backbone links`);
 }
 
+// Terrestrial landlines BETWEEN internet exchanges. These are rendered as part
+// of the Fiber Backbone overlay (toggle-fiber) so widening the map shows the
+// inter-exchange backbone, not just OSM-tagged fiber and landing→IX spurs.
+//   • intra-country: every IX links to its national hub (hub-and-spoke) and to
+//     its nearest neighbour, yielding a connected in-country backbone.
+//   • cross-border: national hubs link to neighbouring-country hubs (long-haul).
+const CROSS_BORDER_HUBS = [['NL', 'DE'], ['DE', 'PL'], ['NL', 'ES'], ['DE', 'ES']];
+
+function primaryHub(cc, list) {
+  const names = PRIMARY_IX[cc] || [];
+  for (const p of names) {
+    const hit = list.find(ix => ix.name.includes(p));
+    if (hit) return hit;
+  }
+  return list.slice().sort((a, b) => (b.net_count || 0) - (a.net_count || 0))[0] || null;
+}
+
+function buildIXBackbone() {
+  if (!ixData.length || !layers.fiberBackbone) return;
+
+  const drawn = new Set();
+  const addLink = (a, b, kind) => {
+    if (!a || !b || a.id === b.id) return;
+    const key = [a.id, b.id].sort().join('~');
+    if (drawn.has(key)) return;
+    drawn.add(key);
+    const dist = Math.round(haversineKm(a.lat, a.lng, b.lat, b.lng));
+    const isIntl = kind === 'intl';
+    L.polyline([[a.lat, a.lng], [b.lat, b.lng]], {
+      color: isIntl ? '#00e0a8' : '#33c9dc',
+      weight: isIntl ? 3 : 2,
+      opacity: isIntl ? 0.75 : 0.6
+    })
+      .bindPopup(`
+        <div class="popup-title">🔗 IX Landline</div>
+        <div class="popup-meta">
+          📡 ${a.name} ↔ ${b.name}<br>
+          📏 ~${dist} km ${isIntl ? 'cross-border long-haul' : 'terrestrial'}
+        </div>
+        <span class="popup-badge" style="background:${isIntl ? '#00e0a8' : '#33c9dc'};color:#000">IX INTERCONNECT</span>
+      `)
+      .addTo(layers.fiberBackbone);
+  };
+
+  // Group IXes by country.
+  const byCountry = {};
+  ixData.forEach(ix => {
+    if (!Number.isFinite(ix.lat) || !Number.isFinite(ix.lng)) return;
+    (byCountry[ix.country] = byCountry[ix.country] || []).push(ix);
+  });
+
+  // Intra-country: hub spokes + nearest-neighbour links.
+  Object.entries(byCountry).forEach(([cc, list]) => {
+    const hub = primaryHub(cc, list);
+    list.forEach(ix => {
+      if (hub) addLink(hub, ix, 'domestic');
+      let nearest = null, best = Infinity;
+      list.forEach(other => {
+        if (other.id === ix.id) return;
+        const d = haversineKm(ix.lat, ix.lng, other.lat, other.lng);
+        if (d < best) { best = d; nearest = other; }
+      });
+      if (nearest) addLink(ix, nearest, 'domestic');
+    });
+  });
+
+  // Cross-border: connect national hubs (long-haul landlines).
+  CROSS_BORDER_HUBS.forEach(([a, b]) => {
+    if (!byCountry[a] || !byCountry[b]) return;
+    addLink(primaryHub(a, byCountry[a]), primaryHub(b, byCountry[b]), 'intl');
+  });
+
+  console.log(`Built ${drawn.size} IX interconnect landlines`);
+}
+
 async function loadSubseaCables() {
   try {
     const [cablesData, lpData] = await Promise.all([
@@ -1325,6 +1400,7 @@ Promise.all([
   loadFiberBackbone()
 ]).then(() => {
   buildBackboneLinks();
+  buildIXBackbone();
 }).catch(err => {
   console.error('Failed to load initial data:', err);
   document.getElementById('property-list').innerHTML =
