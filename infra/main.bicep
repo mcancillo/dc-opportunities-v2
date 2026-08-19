@@ -143,6 +143,8 @@ module frontdoor 'modules/frontdoor.bicep' = {
     ziggoCidrs: ispAllowlist.ziggo
     odidoCidrs: ispAllowlist.odido
     adminAllowedIps: accessControl.admin.allowedIps
+    customerPublic: accessControl.customerPublic
+    adminPublic: accessControl.adminPublic
   }
 }
 

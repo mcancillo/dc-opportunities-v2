@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in — DC Opportunities</title>
+  <style>
+    :root { --bg:#0d1117; --panel:#161b22; --border:#30363d; --accent:#4da6ff; --text:#e6edf3; --muted:#8b949e; --err:#ff6b6b; --ok:#3fb950; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+      background:radial-gradient(1200px 600px at 50% -10%, #12263f 0%, var(--bg) 60%); color:var(--text); }
+    .card { width:360px; max-width:92vw; background:var(--panel); border:1px solid var(--border);
+      border-radius:12px; padding:28px 26px; box-shadow:0 20px 60px rgba(0,0,0,.45); }
+    .brand { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+    .brand h1 { font-size:1.15rem; margin:0; }
+    .sub { color:var(--muted); font-size:.82rem; margin:0 0 20px; }
+    label { display:block; font-size:.78rem; color:var(--muted); margin:14px 0 6px; }
+    input { width:100%; padding:10px 12px; background:#0d1117; border:1px solid var(--border);
+      border-radius:8px; color:var(--text); font-size:.95rem; }
+    input:focus { outline:none; border-color:var(--accent); }
+    button { width:100%; margin-top:20px; padding:11px; background:var(--accent); color:#04203f;
+      border:none; border-radius:8px; font-weight:700; font-size:.95rem; cursor:pointer; }
+    button:hover { filter:brightness(1.08); }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    .msg { margin-top:14px; font-size:.82rem; min-height:1em; }
+    .msg.err { color:var(--err); }
+    .msg.ok { color:var(--ok); }
+    .policy { font-size:.72rem; color:var(--muted); margin-top:10px; line-height:1.5; }
+    .rule { display:flex; align-items:center; gap:6px; }
+    .rule.pass { color:var(--ok); }
+    .badge { font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+      border:1px solid var(--border); padding:2px 8px; border-radius:999px; }
+    h2 { font-size:1rem; margin:0 0 4px; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <span style="font-size:1.4rem">🏢</span>
+      <h1>DC Opportunities</h1>
+      <span class="badge" id="portal-badge">portal</span>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <form id="login-view" autocomplete="on">
+      <p class="sub">Sign in to continue.</p>
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" autofocus />
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" />
+      <button id="login-btn" type="submit">Sign in</button>
+      <div class="msg err" id="login-msg"></div>
+    </form>
+
+    <!-- CHANGE PASSWORD VIEW -->
+    <form id="change-view" class="hidden" autocomplete="off">
+      <h2>Set a new password</h2>
+      <p class="sub" id="change-sub">Your temporary password must be changed before continuing.</p>
+      <label for="cur">Current password</label>
+      <input id="cur" type="password" autocomplete="current-password" />
+      <label for="np">New password</label>
+      <input id="np" type="password" autocomplete="new-password" />
+      <label for="cp">Confirm new password</label>
+      <input id="cp" type="password" autocomplete="new-password" />
+      <div class="policy" id="policy">
+        <div class="rule" data-rule="len">&bull; At least 10 characters</div>
+        <div class="rule" data-rule="upper">&bull; One uppercase letter</div>
+        <div class="rule" data-rule="num">&bull; One number</div>
+        <div class="rule" data-rule="spec">&bull; One special character</div>
+        <div class="rule" data-rule="match">&bull; Passwords match</div>
+      </div>
+      <button id="change-btn" type="submit">Update password &amp; continue</button>
+      <div class="msg err" id="change-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    const q = new URLSearchParams(location.search);
+    const el = (id) => document.getElementById(id);
+    const loginView = el('login-view'), changeView = el('change-view');
+
+    function showChange(sub) {
+      loginView.classList.add('hidden');
+      changeView.classList.remove('hidden');
+      if (sub) el('change-sub').textContent = sub;
+      el('np').focus();
+    }
+
+    fetch('/api/auth/policy').then(r => r.json()).then(d => {
+      el('portal-badge').textContent = d.portal || 'portal';
+    }).catch(() => {});
+
+    // If arriving with ?change=1 and already authenticated, go straight to change view.
+    if (q.get('change') === '1') {
+      fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(me => {
+        if (me) {
+          showChange(me.mustChangePassword
+            ? 'Your temporary password must be changed before continuing.'
+            : 'Choose a new password.');
+        }
+      }).catch(() => {});
+    }
+
+    // Live policy hints.
+    function checkPolicy() {
+      const p = el('np').value, c = el('cp').value;
+      const rules = {
+        len: p.length >= 10,
+        upper: /[A-Z]/.test(p),
+        num: /[0-9]/.test(p),
+        spec: /[^A-Za-z0-9]/.test(p),
+        match: p.length > 0 && p === c,
+      };
+      for (const [k, ok] of Object.entries(rules)) {
+        const node = document.querySelector('[data-rule="' + k + '"]');
+        if (node) node.classList.toggle('pass', ok);
+      }
+      return Object.values(rules).every(Boolean);
+    }
+    el('np').addEventListener('input', checkPolicy);
+    el('cp').addEventListener('input', checkPolicy);
+
+    // Login.
+    loginView.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      el('login-msg').textContent = '';
+      el('login-btn').disabled = true;
+      try {
+        const r = await fetch('/api/auth/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: el('username').value, password: el('password').value }),
+        });
+        const d = await r.json();
+        if (!r.ok) { el('login-msg').textContent = d.error || 'Sign in failed.'; return; }
+        if (d.mustChangePassword) {
+          el('cur').value = el('password').value; // carry the temp password forward
+          showChange('Your temporary password must be changed before continuing.');
+        } else {
+          location.href = '/';
+        }
+      } catch (err) {
+        el('login-msg').textContent = 'Network error. Please try again.';
+      } finally {
+        el('login-btn').disabled = false;
+      }
+    });
+
+    // Change password.
+    changeView.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      el('change-msg').className = 'msg err';
+      el('change-msg').textContent = '';
+      if (el('np').value !== el('cp').value) { el('change-msg').textContent = 'Passwords do not match.'; return; }
+      if (!checkPolicy()) { el('change-msg').textContent = 'Password does not meet the requirements.'; return; }
+      el('change-btn').disabled = true;
+      try {
+        const r = await fetch('/api/auth/change-password', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword: el('cur').value, newPassword: el('np').value }),
+        });
+        const d = await r.json();
+        if (!r.ok) { el('change-msg').textContent = d.error || 'Could not change password.'; return; }
+        el('change-msg').className = 'msg ok';
+        el('change-msg').textContent = 'Password updated. Redirecting…';
+        setTimeout(() => (location.href = '/'), 700);
+      } catch (err) {
+        el('change-msg').textContent = 'Network error. Please try again.';
+      } finally {
+        el('change-btn').disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

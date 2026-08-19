@@ -25,6 +25,12 @@ param odidoCidrs array
 @description('Explicit CIDRs allowed to reach the ADMIN endpoint. When set, admin is locked to these only; when empty, admin falls back to the ISP allowlist.')
 param adminAllowedIps array = []
 
+@description('When true, the customer endpoint is publicly accessible (rate-limited only); access is governed by the application login instead of the ISP allowlist.')
+param customerPublic bool = false
+
+@description('When true, the admin endpoint is publicly accessible (rate-limited only); access is governed by the application login instead of the ISP/IP allowlist.')
+param adminPublic bool = false
+
 var profileName = 'afd-${resourceToken}'
 
 // --- Reusable WAF custom-rule building blocks (allowlist model) ---
@@ -128,8 +134,12 @@ var blockAllRule = {
   action: 'Block'
 }
 
-// Public/customer endpoint: reachable from the Ziggo + KPN consumer ISP ranges only.
-var customerWafRules = [
+// Public/customer endpoint: when customerPublic is true it is reachable from the
+// whole internet (rate-limited only) and access is enforced by the app login;
+// otherwise it is restricted to the Ziggo + KPN + Odido consumer ISP ranges.
+var customerWafRules = customerPublic ? [
+  rateLimitRule
+] : [
   rateLimitRule
   allowKpnRule
   allowZiggoRule
@@ -137,9 +147,11 @@ var customerWafRules = [
   blockAllRule
 ]
 
-// Admin endpoint: if explicit admin CIDRs are configured, lock to those only;
-// otherwise fall back to the same ISP allowlist as the public site.
-var adminWafRules = empty(adminAllowedIps) ? [
+// Admin endpoint: public (login-governed) when adminPublic is true; else locked to
+// explicit admin CIDRs when configured, otherwise the ISP allowlist.
+var adminWafRules = adminPublic ? [
+  rateLimitRule
+] : empty(adminAllowedIps) ? [
   rateLimitRule
   allowKpnRule
   allowZiggoRule

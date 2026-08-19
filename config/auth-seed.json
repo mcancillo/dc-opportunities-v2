@@ -1,0 +1,23 @@
+{
+  "_comment": "Seed users for app login. Passwords are scrypt hashes of the initial TEMPORARY passwords; users must change on first login. Merged (never overwrites changed passwords) by src/services/auth.js.",
+  "users": [
+    {
+      "username": "Edwin",
+      "portal": "customer",
+      "hash": "scrypt$9c8ba2ae3b1d31377350a0ef75d236fa$942c1334b419f04b6f48e300f93ff1365bce311da358f29dbff2e4a3964b8424a799598084ad2038c0525a9733c50da92bb8ec22d0cf29c07db8e715363f277e",
+      "mustChangePassword": true
+    },
+    {
+      "username": "marco",
+      "portal": "customer",
+      "hash": "scrypt$b2ff8ad71667cd856797a4c1b3a7db9d$bf8ef88a50dbc86137d726fa0c7a443c9d693df2a9395f6cd53a3803ed09d28ae5daf8c7632d8e3dc76622af55feeb07b822fb005d4a7a96efa89fffe19bb409",
+      "mustChangePassword": true
+    },
+    {
+      "username": "macadmin",
+      "portal": "admin",
+      "hash": "scrypt$c82be8fe6981743bc8d05612bb642ea5$24f35f1e70f290d54f6a0961ae4741ce48044a5491fce10fdc961e1a1500ea4a843b5d7e23b6d4568694bedcf1ab0e790c8f715744f448462ba6a95fd8b4c59e",
+      "mustChangePassword": true
+    }
+  ]
+}

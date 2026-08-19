@@ -44,6 +44,10 @@ var commonAppSettings = [
     value: '0'
   }
   {
+    name: 'AUTH_STORE_PATH'
+    value: '/home/data/auth.json'
+  }
+  {
     name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
     value: appInsightsConnectionString
   }
@@ -131,6 +135,10 @@ resource adminApp 'Microsoft.Web/sites@2024-04-01' = {
           name: 'APP_ROLE'
           value: 'admin'
         }
+        {
+          name: 'AUTH_SECRET'
+          value: guid(resourceGroup().id, 'auth-secret', 'admin')
+        }
       ])
     }
   }
@@ -165,6 +173,10 @@ resource customerApp 'Microsoft.Web/sites@2024-04-01' = {
         {
           name: 'APP_ROLE'
           value: 'customer'
+        }
+        {
+          name: 'AUTH_SECRET'
+          value: guid(resourceGroup().id, 'auth-secret', 'customer')
         }
       ])
     }
