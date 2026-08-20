@@ -5,6 +5,7 @@ const overpass = require('../services/overpass');
 const properties = require('../services/properties');
 const commercial = require('../services/commercial');
 const cables = require('../services/cables');
+const geant = require('../services/geant');
 const { scoreProperty } = require('../services/scoring');
 const liveListings = require('../services/live-listings');
 const ledger = require('../services/ledger');
@@ -225,6 +226,17 @@ router.get('/fiber-backbone', async (req, res) => {
     // Map layer — degrade to empty rather than 500ing the portal.
     console.error('Fiber backbone error:', err.message);
     res.json([]);
+  }
+});
+
+// Get REAL inter-exchange backbone landlines (GÉANT pan-European feed)
+router.get('/backbone-links', async (req, res) => {
+  try {
+    const data = await geant.getBackboneLinks();
+    res.json(data);
+  } catch (err) {
+    console.error('Backbone links error:', err.message);
+    res.json({ nodes: [], links: [] });
   }
 });
 

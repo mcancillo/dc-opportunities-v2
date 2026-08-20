@@ -8,6 +8,8 @@
 
 DC Opportunities v2 is an interactive map-based tool that helps identify potential data center sites near Internet Exchange (IX) points in **Netherlands**, **Germany**, **Poland**, and **Spain**.
 
+It ships as **two login-gated portals** — a public **customer** portal and a restricted **admin** portal — deployed to Azure behind Front Door with a zero-trust WAF. See [Security & Access Control](#-security--access-control).
+
 ### Features
 
 - 🗺️ **Interactive Map** — Leaflet.js with dark CARTO tiles
@@ -15,10 +17,13 @@ DC Opportunities v2 is an interactive map-based tool that helps identify potenti
 - 🏭 **Property Listings** — Commercial/industrial sites ≥5,000 m² with estimated power ≥10 MW
 - 🔴 **For Sale** — Red markers for properties on the market
 - 🟠 **Not For Sale** — Orange markers for occupied high-power sites
-- 🔵 **Existing Datacenters** — Live from OpenStreetMap/Overpass API
+- 🔵 **Existing Datacenters** — Live from OpenStreetMap/Overpass API, enriched with a curated **DataCenterMap** extract (current **and** upcoming sites)
 - 📒 **Opportunity Ledger** — Every interesting plot is auto-recorded with **sources** and **why it's interesting** (score-driven reasons), deduplicated and exportable to CSV
-- 📏 **Adjustable Radius** — 10–100 km search radius around IX points
+- 📏 **Adjustable Radius** — 10–100 km search radius around IX points (results accumulate — they never disappear when you widen the radius)
 - 📋 **Data Sources** — Documented real estate portals, cadastral data, and grid operators per country
+- 🔐 **Authentication** — App-level login on both portals, per-user password management, and an enforced password policy
+- 🛡️ **Zero-trust access control** — Azure Front Door + WAF, ISP-scoped allowlists (KPN / Ziggo / Odido), and an admin portal locked to explicit IPs — all managed via GitOps config files
+- 🧾 **Connection logging** — Classify inbound Front Door connections by ISP and export to CSV
 
 ## Quick Start
 
@@ -97,8 +102,10 @@ Browse it in the **📒 Ledger** tab, filter by country/tier/for-sale, and **exp
 | Category | Source | Coverage |
 |----------|--------|----------|
 | IX Locations | [PeeringDB](https://www.peeringdb.com) | Live API |
-| Datacenters | [OpenStreetMap](https://www.openstreetmap.org) via Overpass | Live API |
-| Properties | Sample dataset | Illustrative |
+| Datacenters | [OpenStreetMap](https://www.openstreetmap.org) via Overpass + curated [DataCenterMap](https://www.datacentermap.com) extract | Live API + curated |
+| Backbone landlines | [GÉANT Connectivity Map](https://map.geant.org) (`/maps/nodes_and_edges`) | Live feed + snapshot |
+| Fiber / subsea | OpenStreetMap (`telecom`/`communication` lines, submarine cables) | Live API |
+| Properties | Sample dataset + live OSM/PDOK/Cadastre | Illustrative + live |
 
 ### Real Estate Portals (for integration)
 

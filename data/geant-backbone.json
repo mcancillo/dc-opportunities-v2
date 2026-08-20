@@ -1,0 +1,1626 @@
+{
+  "source": "GÉANT Connectivity Map (map.geant.org/maps/nodes_and_edges)",
+  "fetched": "2026-08-20T07:13:17.701Z",
+  "node_count": 56,
+  "link_count": 72,
+  "nodes": [
+    {
+      "name": "Yerevan",
+      "lat": 40.183333,
+      "lng": 44.516666,
+      "country": "ARM",
+      "open_exchange": false
+    },
+    {
+      "name": "Vienna",
+      "lat": 48.2,
+      "lng": 16.3667,
+      "country": "AUT",
+      "open_exchange": false
+    },
+    {
+      "name": "Brussels",
+      "lat": 50.8503396,
+      "lng": 4.3517103,
+      "country": "BEL",
+      "open_exchange": false
+    },
+    {
+      "name": "Sofia",
+      "lat": 42.6977082,
+      "lng": 23.3218675,
+      "country": "BGR",
+      "open_exchange": false
+    },
+    {
+      "name": "Minsk",
+      "lat": 53.916667,
+      "lng": 27.55,
+      "country": "BLR",
+      "open_exchange": false
+    },
+    {
+      "name": "Geneva",
+      "lat": 46.204391,
+      "lng": 6.143158,
+      "country": "CHE",
+      "open_exchange": false
+    },
+    {
+      "name": "Nicosia",
+      "lat": 35.0400155,
+      "lng": 33.1239049,
+      "country": "CYP",
+      "open_exchange": false
+    },
+    {
+      "name": "Limassol",
+      "lat": 34.70713,
+      "lng": 33.022617,
+      "country": "CYP",
+      "open_exchange": false
+    },
+    {
+      "name": "Prague",
+      "lat": 50.0755381,
+      "lng": 14.43780049,
+      "country": "CZE",
+      "open_exchange": false
+    },
+    {
+      "name": "Frankfurt",
+      "lat": 50.1167,
+      "lng": 8.6833,
+      "country": "DEU",
+      "open_exchange": false
+    },
+    {
+      "name": "Hamburg",
+      "lat": 53.5510846,
+      "lng": 9.99368179,
+      "country": "DEU",
+      "open_exchange": false
+    },
+    {
+      "name": "Copenhagen",
+      "lat": 55.6760968,
+      "lng": 12.5683371,
+      "country": "DNK",
+      "open_exchange": false
+    },
+    {
+      "name": "Madrid",
+      "lat": 40.416775,
+      "lng": -3.70379,
+      "country": "ESP",
+      "open_exchange": false
+    },
+    {
+      "name": "Tartu",
+      "lat": 58.380121,
+      "lng": 26.72245,
+      "country": "EST",
+      "open_exchange": false
+    },
+    {
+      "name": "Helsinki",
+      "lat": 60.169856,
+      "lng": 24.938379,
+      "country": "FIN",
+      "open_exchange": false
+    },
+    {
+      "name": "Marseilles",
+      "lat": 43.296482,
+      "lng": 5.36978,
+      "country": "FRA",
+      "open_exchange": true
+    },
+    {
+      "name": "Paris",
+      "lat": 48.8567,
+      "lng": 2.3508,
+      "country": "FRA",
+      "open_exchange": true
+    },
+    {
+      "name": "London",
+      "lat": 51.5072,
+      "lng": 0.1275,
+      "country": "GBR",
+      "open_exchange": true
+    },
+    {
+      "name": "Tbilisi",
+      "lat": 41.716667,
+      "lng": 44.783333,
+      "country": "GEO",
+      "open_exchange": false
+    },
+    {
+      "name": "Athens",
+      "lat": 37.983917,
+      "lng": 23.7293599,
+      "country": "GRC",
+      "open_exchange": false
+    },
+    {
+      "name": "Thessaloniki",
+      "lat": 40.635238,
+      "lng": 22.932803,
+      "country": "GRC",
+      "open_exchange": false
+    },
+    {
+      "name": "Zagreb",
+      "lat": 45.8150108,
+      "lng": 15.981919,
+      "country": "HRV",
+      "open_exchange": false
+    },
+    {
+      "name": "Budapest",
+      "lat": 47.497912,
+      "lng": 19.040235,
+      "country": "HUN",
+      "open_exchange": false
+    },
+    {
+      "name": "Dublin",
+      "lat": 53.3498053,
+      "lng": -6.2603097,
+      "country": "IRL",
+      "open_exchange": false
+    },
+    {
+      "name": "Cork",
+      "lat": 51.89797,
+      "lng": -8.47061,
+      "country": "IRL",
+      "open_exchange": false
+    },
+    {
+      "name": "Reykjavik",
+      "lat": 64.133333,
+      "lng": -21.933333,
+      "country": "ISL",
+      "open_exchange": false
+    },
+    {
+      "name": "Milan",
+      "lat": 45.4654219,
+      "lng": 9.1859243,
+      "country": "ITA",
+      "open_exchange": false
+    },
+    {
+      "name": "Udine",
+      "lat": 46.063463,
+      "lng": 13.235838,
+      "country": "ITA",
+      "open_exchange": false
+    },
+    {
+      "name": "Kaunas",
+      "lat": 54.898521,
+      "lng": 23.903597,
+      "country": "LTU",
+      "open_exchange": false
+    },
+    {
+      "name": "Bettembourg",
+      "lat": 49.5160219,
+      "lng": 6.1012825,
+      "country": "LUX",
+      "open_exchange": false
+    },
+    {
+      "name": "Luxembourg",
+      "lat": 49.611621,
+      "lng": 6.1319346,
+      "country": "LUX",
+      "open_exchange": false
+    },
+    {
+      "name": "Riga",
+      "lat": 56.9496487,
+      "lng": 24.1051863,
+      "country": "LVA",
+      "open_exchange": false
+    },
+    {
+      "name": "Chisinau",
+      "lat": 47.0104529,
+      "lng": 28.8638103,
+      "country": "MDA",
+      "open_exchange": false
+    },
+    {
+      "name": "Skopje",
+      "lat": 41.9973462,
+      "lng": 21.4279956,
+      "country": "MKD",
+      "open_exchange": false
+    },
+    {
+      "name": "Msida",
+      "lat": 35.8978,
+      "lng": 14.4894,
+      "country": "MLT",
+      "open_exchange": false
+    },
+    {
+      "name": "Podgorica",
+      "lat": 42.441286,
+      "lng": 19.262892,
+      "country": "MNE",
+      "open_exchange": false
+    },
+    {
+      "name": "Amsterdam",
+      "lat": 52.3667,
+      "lng": 4.9,
+      "country": "NLD",
+      "open_exchange": false
+    },
+    {
+      "name": "Oslo",
+      "lat": 59.9138688,
+      "lng": 10.75224539,
+      "country": "NOR",
+      "open_exchange": false
+    },
+    {
+      "name": "Poznan",
+      "lat": 52.406374,
+      "lng": 16.925168,
+      "country": "POL",
+      "open_exchange": false
+    },
+    {
+      "name": "Lisbon",
+      "lat": 38.722252,
+      "lng": -9.139337,
+      "country": "PRT",
+      "open_exchange": false
+    },
+    {
+      "name": "Bucharest",
+      "lat": 44.4267674,
+      "lng": 26.1025384,
+      "country": "ROU",
+      "open_exchange": false
+    },
+    {
+      "name": "Belgrade",
+      "lat": 44.786568,
+      "lng": 20.4489216,
+      "country": "SRB",
+      "open_exchange": false
+    },
+    {
+      "name": "Bratislava",
+      "lat": 48.1458923,
+      "lng": 17.1071373,
+      "country": "SVK",
+      "open_exchange": false
+    },
+    {
+      "name": "Ljubljana",
+      "lat": 46.0569465,
+      "lng": 14.505751,
+      "country": "SVN",
+      "open_exchange": false
+    },
+    {
+      "name": "Stockholm",
+      "lat": 59.3293234,
+      "lng": 18.06858,
+      "country": "SWE",
+      "open_exchange": false
+    },
+    {
+      "name": "Istanbul",
+      "lat": 41.015137,
+      "lng": 28.97953,
+      "country": "TUR",
+      "open_exchange": false
+    },
+    {
+      "name": "Kyiv",
+      "lat": 50.4501,
+      "lng": 30.5234,
+      "country": "UKR",
+      "open_exchange": false
+    },
+    {
+      "name": "Tirana",
+      "lat": 41.327953,
+      "lng": 19.819025,
+      "country": "ALB",
+      "open_exchange": false
+    },
+    {
+      "name": "Algiers",
+      "lat": 36.753768,
+      "lng": 3.058756,
+      "country": "DZA",
+      "open_exchange": false
+    },
+    {
+      "name": "Moscow",
+      "lat": 55.75222,
+      "lng": 37.61556,
+      "country": "RUS",
+      "open_exchange": false
+    },
+    {
+      "name": "Malmö",
+      "lat": 55.60587,
+      "lng": 13.00073,
+      "country": "SWE",
+      "open_exchange": false
+    },
+    {
+      "name": "Tunis",
+      "lat": 36.806496,
+      "lng": 10.181532,
+      "country": "TUN",
+      "open_exchange": false
+    },
+    {
+      "name": "Bilbao",
+      "lat": 43.263012,
+      "lng": -2.934985,
+      "country": "ES",
+      "open_exchange": false
+    },
+    {
+      "name": "Porto",
+      "lat": 41.541231,
+      "lng": -8.608335,
+      "country": "PT",
+      "open_exchange": false
+    },
+    {
+      "name": "Prizren",
+      "lat": 42.21048,
+      "lng": 20.73217,
+      "country": "XKX",
+      "open_exchange": false
+    },
+    {
+      "name": "Sarajevo",
+      "lat": 43.856258,
+      "lng": 18.413076,
+      "country": "BIH",
+      "open_exchange": false
+    }
+  ],
+  "links": [
+    {
+      "name": "Amsterdam ↔ Brussels",
+      "operator": "GÉANT",
+      "from": "Amsterdam",
+      "to": "Brussels",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          52.3667,
+          4.9
+        ],
+        [
+          50.8503396,
+          4.3517103
+        ]
+      ]
+    },
+    {
+      "name": "Athens ↔ Nicosia",
+      "operator": "GÉANT",
+      "from": "Athens",
+      "to": "Nicosia",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          37.983917,
+          23.7293599
+        ],
+        [
+          35.0400155,
+          33.1239049
+        ]
+      ]
+    },
+    {
+      "name": "Athens ↔ Thessaloniki",
+      "operator": "GÉANT",
+      "from": "Athens",
+      "to": "Thessaloniki",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          37.983917,
+          23.7293599
+        ],
+        [
+          40.635238,
+          22.932803
+        ]
+      ]
+    },
+    {
+      "name": "Bilbao ↔ Paris",
+      "operator": "GÉANT",
+      "from": "Bilbao",
+      "to": "Paris",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          43.263012,
+          -2.934985
+        ],
+        [
+          48.8567,
+          2.3508
+        ]
+      ]
+    },
+    {
+      "name": "Bratislava ↔ Budapest",
+      "operator": "GÉANT",
+      "from": "Bratislava",
+      "to": "Budapest",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          48.1458923,
+          17.1071373
+        ],
+        [
+          47.497912,
+          19.040235
+        ]
+      ]
+    },
+    {
+      "name": "Bucharest ↔ Chisinau",
+      "operator": "GÉANT",
+      "from": "Bucharest",
+      "to": "Chisinau",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          44.4267674,
+          26.1025384
+        ],
+        [
+          47.0104529,
+          28.8638103
+        ]
+      ]
+    },
+    {
+      "name": "Budapest ↔ Sarajevo",
+      "operator": "GÉANT",
+      "from": "Budapest",
+      "to": "Sarajevo",
+      "capacity": "1 - 10",
+      "coords": [
+        [
+          47.497912,
+          19.040235
+        ],
+        [
+          43.856258,
+          18.413076
+        ]
+      ]
+    },
+    {
+      "name": "Sofia ↔ Belgrade",
+      "operator": "GÉANT",
+      "from": "Sofia",
+      "to": "Belgrade",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          42.6977082,
+          23.3218675
+        ],
+        [
+          44.786568,
+          20.4489216
+        ]
+      ]
+    },
+    {
+      "name": "Budapest ↔ Bucharest",
+      "operator": "GÉANT",
+      "from": "Budapest",
+      "to": "Bucharest",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          47.497912,
+          19.040235
+        ],
+        [
+          44.4267674,
+          26.1025384
+        ]
+      ]
+    },
+    {
+      "name": "Budapest ↔ Istanbul",
+      "operator": "GÉANT",
+      "from": "Budapest",
+      "to": "Istanbul",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          47.497912,
+          19.040235
+        ],
+        [
+          41.015137,
+          28.97953
+        ]
+      ]
+    },
+    {
+      "name": "Zagreb ↔ Podgorica",
+      "operator": "GÉANT",
+      "from": "Zagreb",
+      "to": "Podgorica",
+      "capacity": "1 - 10",
+      "coords": [
+        [
+          45.8150108,
+          15.981919
+        ],
+        [
+          42.441286,
+          19.262892
+        ]
+      ]
+    },
+    {
+      "name": "Budapest ↔ Zagreb",
+      "operator": "GÉANT",
+      "from": "Budapest",
+      "to": "Zagreb",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          47.497912,
+          19.040235
+        ],
+        [
+          45.8150108,
+          15.981919
+        ]
+      ]
+    },
+    {
+      "name": "Copenhagen ↔ Malmö",
+      "operator": "GÉANT",
+      "from": "Copenhagen",
+      "to": "Malmö",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          55.6760968,
+          12.5683371
+        ],
+        [
+          55.60587,
+          13.00073
+        ]
+      ]
+    },
+    {
+      "name": "Copenhagen ↔ Oslo",
+      "operator": "GÉANT",
+      "from": "Copenhagen",
+      "to": "Oslo",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          55.6760968,
+          12.5683371
+        ],
+        [
+          59.9138688,
+          10.75224539
+        ]
+      ]
+    },
+    {
+      "name": "Copenhagen ↔ Reykjavik",
+      "operator": "GÉANT",
+      "from": "Copenhagen",
+      "to": "Reykjavik",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          55.6760968,
+          12.5683371
+        ],
+        [
+          64.133333,
+          -21.933333
+        ]
+      ]
+    },
+    {
+      "name": "Copenhagen ↔ Stockholm",
+      "operator": "GÉANT",
+      "from": "Copenhagen",
+      "to": "Stockholm",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          55.6760968,
+          12.5683371
+        ],
+        [
+          59.3293234,
+          18.06858
+        ]
+      ]
+    },
+    {
+      "name": "Copenhagen ↔ Helsinki",
+      "operator": "GÉANT",
+      "from": "Copenhagen",
+      "to": "Helsinki",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          55.6760968,
+          12.5683371
+        ],
+        [
+          60.169856,
+          24.938379
+        ]
+      ]
+    },
+    {
+      "name": "Helsinki ↔ Tartu",
+      "operator": "GÉANT",
+      "from": "Helsinki",
+      "to": "Tartu",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          60.169856,
+          24.938379
+        ],
+        [
+          58.380121,
+          26.72245
+        ]
+      ]
+    },
+    {
+      "name": "Cork ↔ Dublin",
+      "operator": "GÉANT",
+      "from": "Cork",
+      "to": "Dublin",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          51.89797,
+          -8.47061
+        ],
+        [
+          53.3498053,
+          -6.2603097
+        ]
+      ]
+    },
+    {
+      "name": "Frankfurt ↔ Amsterdam",
+      "operator": "GÉANT",
+      "from": "Frankfurt",
+      "to": "Amsterdam",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          50.1167,
+          8.6833
+        ],
+        [
+          52.3667,
+          4.9
+        ]
+      ]
+    },
+    {
+      "name": "Frankfurt ↔ Bettembourg",
+      "operator": "GÉANT",
+      "from": "Frankfurt",
+      "to": "Bettembourg",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          50.1167,
+          8.6833
+        ],
+        [
+          49.5160219,
+          6.1012825
+        ]
+      ]
+    },
+    {
+      "name": "Frankfurt ↔ Bucharest",
+      "operator": "GÉANT",
+      "from": "Frankfurt",
+      "to": "Bucharest",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          50.1167,
+          8.6833
+        ],
+        [
+          44.4267674,
+          26.1025384
+        ]
+      ]
+    },
+    {
+      "name": "Frankfurt ↔ Geneva",
+      "operator": "GÉANT",
+      "from": "Frankfurt",
+      "to": "Geneva",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          50.1167,
+          8.6833
+        ],
+        [
+          46.204391,
+          6.143158
+        ]
+      ]
+    },
+    {
+      "name": "Frankfurt ↔ Istanbul",
+      "operator": "GÉANT",
+      "from": "Frankfurt",
+      "to": "Istanbul",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          50.1167,
+          8.6833
+        ],
+        [
+          41.015137,
+          28.97953
+        ]
+      ]
+    },
+    {
+      "name": "Frankfurt ↔ Yerevan",
+      "operator": "GÉANT",
+      "from": "Frankfurt",
+      "to": "Yerevan",
+      "capacity": "1 - 10",
+      "coords": [
+        [
+          50.1167,
+          8.6833
+        ],
+        [
+          40.183333,
+          44.516666
+        ]
+      ]
+    },
+    {
+      "name": "Geneva ↔ Milan",
+      "operator": "GÉANT",
+      "from": "Geneva",
+      "to": "Milan",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          46.204391,
+          6.143158
+        ],
+        [
+          45.4654219,
+          9.1859243
+        ]
+      ]
+    },
+    {
+      "name": "Hamburg ↔ Amsterdam",
+      "operator": "GÉANT",
+      "from": "Hamburg",
+      "to": "Amsterdam",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          53.5510846,
+          9.99368179
+        ],
+        [
+          52.3667,
+          4.9
+        ]
+      ]
+    },
+    {
+      "name": "Hamburg ↔ Copenhagen",
+      "operator": "GÉANT",
+      "from": "Hamburg",
+      "to": "Copenhagen",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          53.5510846,
+          9.99368179
+        ],
+        [
+          55.6760968,
+          12.5683371
+        ]
+      ]
+    },
+    {
+      "name": "Hamburg ↔ Poznan",
+      "operator": "GÉANT",
+      "from": "Hamburg",
+      "to": "Poznan",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          53.5510846,
+          9.99368179
+        ],
+        [
+          52.406374,
+          16.925168
+        ]
+      ]
+    },
+    {
+      "name": "Kaunas ↔ Riga",
+      "operator": "GÉANT",
+      "from": "Kaunas",
+      "to": "Riga",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          54.898521,
+          23.903597
+        ],
+        [
+          56.9496487,
+          24.1051863
+        ]
+      ]
+    },
+    {
+      "name": "Kyiv ↔ Chisinau",
+      "operator": "GÉANT",
+      "from": "Kyiv",
+      "to": "Chisinau",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          50.4501,
+          30.5234
+        ],
+        [
+          47.0104529,
+          28.8638103
+        ]
+      ]
+    },
+    {
+      "name": "Lisbon ↔ Porto",
+      "operator": "GÉANT",
+      "from": "Lisbon",
+      "to": "Porto",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          38.722252,
+          -9.139337
+        ],
+        [
+          41.541231,
+          -8.608335
+        ]
+      ]
+    },
+    {
+      "name": "London ↔ Amsterdam",
+      "operator": "GÉANT",
+      "from": "London",
+      "to": "Amsterdam",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          51.5072,
+          0.1275
+        ],
+        [
+          52.3667,
+          4.9
+        ]
+      ]
+    },
+    {
+      "name": "London ↔ Cork",
+      "operator": "GÉANT",
+      "from": "London",
+      "to": "Cork",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          51.5072,
+          0.1275
+        ],
+        [
+          51.89797,
+          -8.47061
+        ]
+      ]
+    },
+    {
+      "name": "London ↔ Dublin",
+      "operator": "GÉANT",
+      "from": "London",
+      "to": "Dublin",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          51.5072,
+          0.1275
+        ],
+        [
+          53.3498053,
+          -6.2603097
+        ]
+      ]
+    },
+    {
+      "name": "London ↔ Paris",
+      "operator": "GÉANT",
+      "from": "London",
+      "to": "Paris",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          51.5072,
+          0.1275
+        ],
+        [
+          48.8567,
+          2.3508
+        ]
+      ]
+    },
+    {
+      "name": "London ↔ Reykjavik",
+      "operator": "GÉANT",
+      "from": "London",
+      "to": "Reykjavik",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          51.5072,
+          0.1275
+        ],
+        [
+          64.133333,
+          -21.933333
+        ]
+      ]
+    },
+    {
+      "name": "Madrid ↔ Bilbao",
+      "operator": "GÉANT",
+      "from": "Madrid",
+      "to": "Bilbao",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          40.416775,
+          -3.70379
+        ],
+        [
+          43.263012,
+          -2.934985
+        ]
+      ]
+    },
+    {
+      "name": "Madrid ↔ Lisbon",
+      "operator": "GÉANT",
+      "from": "Madrid",
+      "to": "Lisbon",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          40.416775,
+          -3.70379
+        ],
+        [
+          38.722252,
+          -9.139337
+        ]
+      ]
+    },
+    {
+      "name": "Madrid ↔ Marseilles",
+      "operator": "GÉANT",
+      "from": "Madrid",
+      "to": "Marseilles",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          40.416775,
+          -3.70379
+        ],
+        [
+          43.296482,
+          5.36978
+        ]
+      ]
+    },
+    {
+      "name": "Marseilles ↔ Geneva",
+      "operator": "GÉANT",
+      "from": "Marseilles",
+      "to": "Geneva",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          43.296482,
+          5.36978
+        ],
+        [
+          46.204391,
+          6.143158
+        ]
+      ]
+    },
+    {
+      "name": "Marseilles ↔ Limassol",
+      "operator": "GÉANT",
+      "from": "Marseilles",
+      "to": "Limassol",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          43.296482,
+          5.36978
+        ],
+        [
+          34.70713,
+          33.022617
+        ]
+      ]
+    },
+    {
+      "name": "Marseilles ↔ Milan",
+      "operator": "GÉANT",
+      "from": "Marseilles",
+      "to": "Milan",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          43.296482,
+          5.36978
+        ],
+        [
+          45.4654219,
+          9.1859243
+        ]
+      ]
+    },
+    {
+      "name": "Milan ↔ Athens",
+      "operator": "GÉANT",
+      "from": "Milan",
+      "to": "Athens",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          45.4654219,
+          9.1859243
+        ],
+        [
+          37.983917,
+          23.7293599
+        ]
+      ]
+    },
+    {
+      "name": "Milan ↔ Msida",
+      "operator": "GÉANT",
+      "from": "Milan",
+      "to": "Msida",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          45.4654219,
+          9.1859243
+        ],
+        [
+          35.8978,
+          14.4894
+        ]
+      ]
+    },
+    {
+      "name": "Milan ↔ Thessaloniki",
+      "operator": "GÉANT",
+      "from": "Milan",
+      "to": "Thessaloniki",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          45.4654219,
+          9.1859243
+        ],
+        [
+          40.635238,
+          22.932803
+        ]
+      ]
+    },
+    {
+      "name": "Milan ↔ Tirana",
+      "operator": "GÉANT",
+      "from": "Milan",
+      "to": "Tirana",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          45.4654219,
+          9.1859243
+        ],
+        [
+          41.327953,
+          19.819025
+        ]
+      ]
+    },
+    {
+      "name": "Milan ↔ Udine",
+      "operator": "GÉANT",
+      "from": "Milan",
+      "to": "Udine",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          45.4654219,
+          9.1859243
+        ],
+        [
+          46.063463,
+          13.235838
+        ]
+      ]
+    },
+    {
+      "name": "Oslo ↔ Stockholm",
+      "operator": "GÉANT",
+      "from": "Oslo",
+      "to": "Stockholm",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          59.9138688,
+          10.75224539
+        ],
+        [
+          59.3293234,
+          18.06858
+        ]
+      ]
+    },
+    {
+      "name": "Paris ↔ Brussels",
+      "operator": "GÉANT",
+      "from": "Paris",
+      "to": "Brussels",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          48.8567,
+          2.3508
+        ],
+        [
+          50.8503396,
+          4.3517103
+        ]
+      ]
+    },
+    {
+      "name": "Paris ↔ Geneva",
+      "operator": "GÉANT",
+      "from": "Paris",
+      "to": "Geneva",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          48.8567,
+          2.3508
+        ],
+        [
+          46.204391,
+          6.143158
+        ]
+      ]
+    },
+    {
+      "name": "Paris ↔ Luxembourg",
+      "operator": "GÉANT",
+      "from": "Paris",
+      "to": "Luxembourg",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          48.8567,
+          2.3508
+        ],
+        [
+          49.611621,
+          6.1319346
+        ]
+      ]
+    },
+    {
+      "name": "Porto ↔ Bilbao",
+      "operator": "GÉANT",
+      "from": "Porto",
+      "to": "Bilbao",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          41.541231,
+          -8.608335
+        ],
+        [
+          43.263012,
+          -2.934985
+        ]
+      ]
+    },
+    {
+      "name": "Poznan ↔ Kaunas",
+      "operator": "GÉANT",
+      "from": "Poznan",
+      "to": "Kaunas",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          52.406374,
+          16.925168
+        ],
+        [
+          54.898521,
+          23.903597
+        ]
+      ]
+    },
+    {
+      "name": "Poznan ↔ Kyiv",
+      "operator": "GÉANT",
+      "from": "Poznan",
+      "to": "Kyiv",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          52.406374,
+          16.925168
+        ],
+        [
+          50.4501,
+          30.5234
+        ]
+      ]
+    },
+    {
+      "name": "Poznan ↔ Minsk",
+      "operator": "GÉANT",
+      "from": "Poznan",
+      "to": "Minsk",
+      "capacity": "1 - 10",
+      "coords": [
+        [
+          52.406374,
+          16.925168
+        ],
+        [
+          53.916667,
+          27.55
+        ]
+      ]
+    },
+    {
+      "name": "Poznan ↔ Prague",
+      "operator": "GÉANT",
+      "from": "Poznan",
+      "to": "Prague",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          52.406374,
+          16.925168
+        ],
+        [
+          50.0755381,
+          14.43780049
+        ]
+      ]
+    },
+    {
+      "name": "Prague ↔ Frankfurt",
+      "operator": "GÉANT",
+      "from": "Prague",
+      "to": "Frankfurt",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          50.0755381,
+          14.43780049
+        ],
+        [
+          50.1167,
+          8.6833
+        ]
+      ]
+    },
+    {
+      "name": "Riga ↔ Tartu",
+      "operator": "GÉANT",
+      "from": "Riga",
+      "to": "Tartu",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          56.9496487,
+          24.1051863
+        ],
+        [
+          58.380121,
+          26.72245
+        ]
+      ]
+    },
+    {
+      "name": "Sofia ↔ Bucharest",
+      "operator": "GÉANT",
+      "from": "Sofia",
+      "to": "Bucharest",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          42.6977082,
+          23.3218675
+        ],
+        [
+          44.4267674,
+          26.1025384
+        ]
+      ]
+    },
+    {
+      "name": "Sofia ↔ Skopje",
+      "operator": "GÉANT",
+      "from": "Sofia",
+      "to": "Skopje",
+      "capacity": "1 - 10",
+      "coords": [
+        [
+          42.6977082,
+          23.3218675
+        ],
+        [
+          41.9973462,
+          21.4279956
+        ]
+      ]
+    },
+    {
+      "name": "Stockholm ↔ Helsinki",
+      "operator": "GÉANT",
+      "from": "Stockholm",
+      "to": "Helsinki",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          59.3293234,
+          18.06858
+        ],
+        [
+          60.169856,
+          24.938379
+        ]
+      ]
+    },
+    {
+      "name": "Thessaloniki ↔ Sofia",
+      "operator": "GÉANT",
+      "from": "Thessaloniki",
+      "to": "Sofia",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          40.635238,
+          22.932803
+        ],
+        [
+          42.6977082,
+          23.3218675
+        ]
+      ]
+    },
+    {
+      "name": "Udine ↔ Ljubljana",
+      "operator": "GÉANT",
+      "from": "Udine",
+      "to": "Ljubljana",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          46.063463,
+          13.235838
+        ],
+        [
+          46.0569465,
+          14.505751
+        ]
+      ]
+    },
+    {
+      "name": "Vienna ↔ Bratislava",
+      "operator": "GÉANT",
+      "from": "Vienna",
+      "to": "Bratislava",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          48.2,
+          16.3667
+        ],
+        [
+          48.1458923,
+          17.1071373
+        ]
+      ]
+    },
+    {
+      "name": "Vienna ↔ Prague",
+      "operator": "GÉANT",
+      "from": "Vienna",
+      "to": "Prague",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          48.2,
+          16.3667
+        ],
+        [
+          50.0755381,
+          14.43780049
+        ]
+      ]
+    },
+    {
+      "name": "Vienna ↔ Tbilisi",
+      "operator": "GÉANT",
+      "from": "Vienna",
+      "to": "Tbilisi",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          48.2,
+          16.3667
+        ],
+        [
+          41.716667,
+          44.783333
+        ]
+      ]
+    },
+    {
+      "name": "Vienna ↔ Udine",
+      "operator": "GÉANT",
+      "from": "Vienna",
+      "to": "Udine",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          48.2,
+          16.3667
+        ],
+        [
+          46.063463,
+          13.235838
+        ]
+      ]
+    },
+    {
+      "name": "Zagreb ↔ Belgrade",
+      "operator": "GÉANT",
+      "from": "Zagreb",
+      "to": "Belgrade",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          45.8150108,
+          15.981919
+        ],
+        [
+          44.786568,
+          20.4489216
+        ]
+      ]
+    },
+    {
+      "name": "Zagreb ↔ Ljubljana",
+      "operator": "GÉANT",
+      "from": "Zagreb",
+      "to": "Ljubljana",
+      "capacity": "Fibre link",
+      "coords": [
+        [
+          45.8150108,
+          15.981919
+        ],
+        [
+          46.0569465,
+          14.505751
+        ]
+      ]
+    },
+    {
+      "name": "Zagreb ↔ Prizren",
+      "operator": "GÉANT",
+      "from": "Zagreb",
+      "to": "Prizren",
+      "capacity": "1 - 10",
+      "coords": [
+        [
+          45.8150108,
+          15.981919
+        ],
+        [
+          42.21048,
+          20.73217
+        ]
+      ]
+    },
+    {
+      "name": "Zagreb ↔ Skopje",
+      "operator": "GÉANT",
+      "from": "Zagreb",
+      "to": "Skopje",
+      "capacity": "10 - 100",
+      "coords": [
+        [
+          45.8150108,
+          15.981919
+        ],
+        [
+          41.9973462,
+          21.4279956
+        ]
+      ]
+    }
+  ]
+}
