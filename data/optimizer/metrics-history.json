@@ -40,7 +40,52 @@
           "status": "error"
         }
       ]
+    },
+    {
+      "date": "2026-08-20",
+      "run_at": "2026-08-20T03:36:42.200Z",
+      "quality_score": 60,
+      "reachability": 0.6666666666666666,
+      "reachability_checked": 9,
+      "country_coverage": 1,
+      "category_diversity": 0.918,
+      "promotion_rate": 0,
+      "duplicate_rate": 1,
+      "briefing_utilization": 0,
+      "counts": {
+        "discovered": 15,
+        "promoted": 0,
+        "backlog_added": 0,
+        "rejected": 15
+      },
+      "country_counts": {
+        "NL": 2,
+        "BE": 1,
+        "DE": 2,
+        "PL": 1,
+        "ES": 3
+      },
+      "category_counts": {
+        "industrial-land": 4,
+        "port-land": 2,
+        "grid-capacity": 2,
+        "brownfield": 1
+      },
+      "dead_links": [
+        {
+          "url": "https://www.bbsr.bund.de",
+          "status": "timeout"
+        },
+        {
+          "url": "https://www.sepes.es",
+          "status": "error"
+        },
+        {
+          "url": "https://www.plazalogistica.com",
+          "status": "error"
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-05T09:19:30.373Z"
+  "updated_at": "2026-08-20T03:37:09.285Z"
 }
