@@ -773,3 +773,59 @@ input[type="range"] {
 .iam-mini.danger:hover { background: #ff444422; }
 
 
+
+/* ── Secondary button + pick hint ─────────────────────────────── */
+.secondary-btn {
+  padding: 10px 12px;
+  background: transparent;
+  color: #e0e0e0;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  width: 100%;
+}
+.secondary-btn:hover { background: #0f3460; border-color: #4da6ff; }
+.pick-hint {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(77,166,255,0.12);
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #9cc4ff;
+}
+
+/* ── Assessment report ────────────────────────────────────────── */
+.assess-content { max-width: 820px; }
+.assess-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.assess-head h2 { margin-bottom: 4px; }
+.assess-sub { font-size: 0.82rem; color: #9aa7bd; }
+.assess-readiness {
+  text-align: center; border: 1px solid #0f3460; border-radius: 10px;
+  padding: 10px 16px; min-width: 130px; background: #0d1b34;
+}
+.assess-readiness .num { font-size: 1.8rem; font-weight: 700; color: #4da6ff; }
+.assess-readiness .lbl { font-size: 0.7rem; color: #9aa7bd; }
+.assess-toolbar { display: flex; gap: 8px; margin: 4px 0 16px; flex-wrap: wrap; }
+.assess-toolbar button {
+  padding: 8px 12px; border-radius: 8px; border: 1px solid #0f3460;
+  background: #0f3460; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.82rem;
+}
+.assess-toolbar button:hover { background: #145088; }
+.assess-section { border: 1px solid #0f3460; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; background: #0d1b34; }
+.assess-section h3 { margin-top: 0; display: flex; align-items: center; gap: 8px; }
+.assess-status { font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.assess-status.favorable { background: #14432a; color: #4ade80; }
+.assess-status.review { background: #423a14; color: #fbbf24; }
+.assess-status.action_required { background: #4a1c1c; color: #f87171; }
+.assess-status.unknown { background: #333; color: #aaa; }
+.assess-summary { font-size: 0.85rem; color: #cdd6e5; margin: 6px 0 10px; }
+.assess-items { list-style: none; padding: 0; margin: 0; }
+.assess-items li { padding: 5px 0; font-size: 0.82rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.assess-items li:first-child { border-top: none; }
+.assess-items .k { color: #9aa7bd; }
+.assess-checklist { margin: 10px 0 0; padding-left: 18px; }
+.assess-checklist li { font-size: 0.8rem; color: #cdd6e5; padding: 2px 0; }

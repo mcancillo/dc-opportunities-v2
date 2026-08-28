@@ -6,6 +6,7 @@ const properties = require('../services/properties');
 const commercial = require('../services/commercial');
 const cables = require('../services/cables');
 const geant = require('../services/geant');
+const { buildAssessment } = require('../services/assessment');
 const { scoreProperty } = require('../services/scoring');
 const liveListings = require('../services/live-listings');
 const ledger = require('../services/ledger');
@@ -332,6 +333,39 @@ router.get('/ledger/export.csv', (req, res) => {
     res.status(500).json({ error: 'Failed to export ledger' });
   }
 });
+
+// ─── Property assessment ───────────────────────────────────────
+// On-demand due-diligence report for a specific plot (for-sale property or a
+// hand-dropped "undiscovered" site): permits, water, zoning, federal/regional
+// plans and regional power + potential suppliers. Consumed by the UI modal and
+// the Word/PDF export.
+async function handleAssess(req, res) {
+  try {
+    const src = req.method === 'POST' ? (req.body || {}) : (req.query || {});
+    const lat = parseFloat(src.lat);
+    const lng = parseFloat(src.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      return res.status(400).json({ error: 'Valid lat/lng are required' });
+    }
+    const report = await buildAssessment({
+      lat, lng,
+      country: src.country || null,
+      name: src.name || null,
+      city: src.city || null,
+      area_m2: src.area_m2,
+      power_mw: src.power_mw,
+      estimated_power_mw: src.estimated_power_mw,
+      for_sale: src.for_sale,
+      listing_url: src.listing_url || null
+    });
+    res.json(report);
+  } catch (err) {
+    console.error('Assessment error:', err.message);
+    res.status(500).json({ error: 'Failed to build assessment' });
+  }
+}
+router.get('/assess', handleAssess);
+router.post('/assess', handleAssess);
 
 // ─── Manual entries (Admin scope) ──────────────────────────────
 // Admins can drop a plot on the globe by hand. It is scored like any other

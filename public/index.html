@@ -68,6 +68,9 @@
 
     <button id="search-btn" disabled>🔍 Search Opportunities</button>
 
+    <button id="add-undiscovered-btn" class="secondary-btn" style="margin-top:8px">➕ Add undiscovered property</button>
+    <div id="undiscovered-hint" class="pick-hint hidden">Click anywhere on the map to drop the property, then fill in the details.</div>
+
     <div id="loading" class="hidden">
       <div class="spinner"></div>
       <span>Searching…</span>
@@ -451,6 +454,62 @@
       <button class="modal-close" id="sources-close">&times;</button>
       <h2>Data Sources by Country</h2>
       <div id="sources-body"></div>
+    </div>
+  </div>
+
+  <!-- Property assessment modal -->
+  <div id="assess-modal" class="modal hidden">
+    <div class="modal-content assess-content">
+      <button class="modal-close" id="assess-close">&times;</button>
+      <div id="assess-body"></div>
+    </div>
+  </div>
+
+  <!-- Add undiscovered property modal -->
+  <div id="undiscovered-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="undiscovered-close">&times;</button>
+      <h2>➕ Add undiscovered property</h2>
+      <p class="subtitle" id="undiscovered-coords">—</p>
+      <div class="control-group">
+        <label for="ud-name">Name *</label>
+        <input type="text" id="ud-name" placeholder="e.g. Former factory site" />
+      </div>
+      <div class="control-group">
+        <label for="ud-country">Country</label>
+        <select id="ud-country">
+          <option value="">Select…</option>
+          <option value="NL">🇳🇱 Netherlands</option>
+          <option value="BE">🇧🇪 Belgium</option>
+          <option value="DE">🇩🇪 Germany</option>
+          <option value="PL">🇵🇱 Poland</option>
+          <option value="ES">🇪🇸 Spain</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="ud-city">City / area</label>
+        <input type="text" id="ud-city" placeholder="Optional" />
+      </div>
+      <div class="control-group">
+        <label for="ud-area">Area (m²)</label>
+        <input type="number" id="ud-area" placeholder="Optional" />
+      </div>
+      <div class="control-group">
+        <label for="ud-power">Estimated power (MW)</label>
+        <input type="number" id="ud-power" placeholder="Optional" />
+      </div>
+      <div class="control-group">
+        <label for="ud-notes">Notes</label>
+        <input type="text" id="ud-notes" placeholder="Optional" />
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="ud-forsale" />
+        <label for="ud-forsale">Marked as for sale</label>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="ud-save">Save property</button>
+        <button id="ud-cancel" class="secondary-btn">Cancel</button>
+      </div>
     </div>
   </div>
 

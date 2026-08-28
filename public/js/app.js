@@ -57,6 +57,20 @@ function mapUrl(p) {
 function mapLink(p, cls) {
   return `<a href="${mapUrl(p)}" target="_blank" rel="noopener" class="listing-link${cls ? ' ' + cls : ''}" onclick="event.stopPropagation()">📍 View on Map →</a>`;
 }
+
+// Register a property for assessment and return a "Run assessment" button.
+// Popups are HTML strings, so we stash the target in a keyed registry and call
+// a global handler by key (avoids fragile inline JSON/quote escaping).
+window.__assessTargets = window.__assessTargets || {};
+function assessButton(p, powerMw) {
+  const key = 'a' + Math.random().toString(36).slice(2, 10);
+  window.__assessTargets[key] = {
+    lat: p.lat, lng: p.lng, country: p.country || '', name: p.name || 'Selected property',
+    city: p.city || '', area_m2: p.area_m2 ?? '', power_mw: powerMw ?? '',
+    for_sale: !!p.for_sale, listing_url: p.listing_url || ''
+  };
+  return `<div style="margin-top:8px"><button onclick="event.stopPropagation();window.runAssessment('${key}')" style="width:100%;padding:7px;background:#0f3460;color:#fff;border:1px solid #145088;border-radius:6px;font-weight:600;font-size:0.8rem;cursor:pointer">🔬 Run assessment</button></div>`;
+}
 function propertyPopup(p) {
   const badge = p.for_sale
     ? '<span class="popup-badge sale">FOR SALE</span>'
@@ -79,6 +93,7 @@ function propertyPopup(p) {
     </div>
     ${badge}${listing}
     <div style="margin-top:6px"><a href="${mapUrl(p)}" target="_blank" rel="noopener" style="color:#4da6ff;font-weight:600;font-size:0.85rem;text-decoration:none;">📍 View on Map →</a></div>
+    ${p.for_sale ? assessButton(p, p.estimated_power_mw) : ''}
     ${scoreLine}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
@@ -103,6 +118,7 @@ function commercialPopup(p) {
     </div>
     ${badge}${listing}
     <div style="margin-top:6px"><a href="${mapUrl(p)}" target="_blank" rel="noopener" style="color:#aa44ff;font-weight:600;font-size:0.85rem;text-decoration:none;">📍 View on Map →</a></div>
+    ${p.for_sale ? assessButton(p, p.estimated_power_kw ? +(p.estimated_power_kw / 1000).toFixed(2) : null) : ''}
     ${scoreLine}
     <div style="margin-top:6px;font-size:0.7rem;color:#888">${p.data_source}</div>
   `;
@@ -1403,7 +1419,8 @@ function manualPopup(item) {
       ${escapeHtml([item.city, item.country].filter(Boolean).join(', '))}${price}${notes}<br>
       <span style="color:#ffd23f">Manual entry (admin)</span>
     </div>
-    ${scoreLine}${listing}`;
+    ${scoreLine}${listing}
+    ${assessButton(item, item.estimated_power_mw)}`;
 }
 
 async function loadManualEntries() {
@@ -1536,3 +1553,210 @@ document.getElementById('manual-add')?.addEventListener('click', async () => {
 });
 
 initManualEntries();
+
+// ─── Property Assessment ────────────────────────────────────────
+// On-demand due-diligence report for a for-sale or undiscovered plot, with
+// Word/PDF export. Popups call window.runAssessment(key).
+const ASSESS_STATUS_LABEL = { favorable: 'Favorable', review: 'Review', action_required: 'Action required', unknown: 'Unknown' };
+
+function assessItemsHtml(items) {
+  if (!items || !items.length) return '';
+  return '<ul class="assess-items">' + items.map(it => {
+    const val = it.url
+      ? `<a href="${escapeHtml(it.url)}" target="_blank" rel="noopener">${escapeHtml(it.detail || 'Open')} ↗</a>`
+      : escapeHtml(it.detail || '');
+    return `<li><span class="k">${escapeHtml(it.label)}:</span> ${val}</li>`;
+  }).join('') + '</ul>';
+}
+function assessChecklistHtml(list) {
+  if (!list || !list.length) return '';
+  return '<ul class="assess-checklist">' + list.map(c => `<li>${escapeHtml(c)}</li>`).join('') + '</ul>';
+}
+function assessSectionsHtml(report) {
+  return report.sections.map(s => `
+    <div class="assess-section">
+      <h3>${escapeHtml(s.title)} <span class="assess-status ${s.status}">${ASSESS_STATUS_LABEL[s.status] || s.status}</span></h3>
+      <div class="assess-summary">${escapeHtml(s.summary || '')}</div>
+      ${assessItemsHtml(s.items)}
+      ${assessChecklistHtml(s.checklist)}
+    </div>`).join('');
+}
+function renderAssessment(report) {
+  const p = report.property;
+  const loc = report.location || {};
+  const where = [loc.municipality, loc.region, p.country_name || p.country].filter(Boolean).join(', ') || '—';
+  const body = document.getElementById('assess-body');
+  body.innerHTML = `
+    <button class="modal-close" id="assess-close2">&times;</button>
+    <div class="assess-head">
+      <div>
+        <h2>🔬 Site assessment</h2>
+        <div class="assess-sub"><b>${escapeHtml(p.name)}</b><br>${escapeHtml(where)} · ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}${p.estimated_power_mw ? ' · ~' + p.estimated_power_mw + ' MW' : ''}</div>
+      </div>
+      <div class="assess-readiness">
+        <div class="num">${report.overall.readiness_score}</div>
+        <div class="lbl">Readiness / 100<br>${escapeHtml(report.overall.readiness_label)}</div>
+      </div>
+    </div>
+    <div class="assess-toolbar">
+      <button onclick="window.exportAssessment('word')">⬇ Export Word</button>
+      <button onclick="window.exportAssessment('pdf')">🖨 Export PDF</button>
+      <a href="${escapeHtml(p.map_url)}" target="_blank" rel="noopener" style="align-self:center;color:#4da6ff;font-size:0.82rem">📍 View on map ↗</a>
+    </div>
+    ${assessSectionsHtml(report)}
+    <div class="assess-sub" style="margin-top:8px">Generated ${new Date(report.generated_at).toLocaleString()} · Findings link to authoritative national/regional bodies; verify before acting.</div>`;
+  document.getElementById('assess-close2').addEventListener('click', closeAssessModal);
+}
+function closeAssessModal() { document.getElementById('assess-modal').classList.add('hidden'); }
+
+window.runAssessment = async function (key) {
+  const t = window.__assessTargets[key];
+  if (!t) return;
+  const modal = document.getElementById('assess-modal');
+  const body = document.getElementById('assess-body');
+  body.innerHTML = '<button class="modal-close" id="assess-close2">&times;</button><div style="padding:30px;text-align:center"><div class="spinner"></div><p>Building assessment…</p></div>';
+  modal.classList.remove('hidden');
+  document.getElementById('assess-close2').addEventListener('click', closeAssessModal);
+  try {
+    const r = await fetch('/api/assess', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(t)
+    });
+    if (!r.ok) throw new Error('API error ' + r.status);
+    const report = await r.json();
+    window.__lastAssessment = report;
+    renderAssessment(report);
+  } catch (e) {
+    body.innerHTML = `<button class="modal-close" id="assess-close2">&times;</button><p style="color:#ff6666;padding:20px">Failed to build assessment: ${escapeHtml(e.message)}</p>`;
+    document.getElementById('assess-close2').addEventListener('click', closeAssessModal);
+  }
+};
+
+// Build a printable HTML document string from the last report (shared by both
+// exporters — dependency-free).
+function assessmentDocHtml(report) {
+  const p = report.property, loc = report.location || {};
+  const where = [loc.municipality, loc.region, p.country_name || p.country].filter(Boolean).join(', ') || '—';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const sections = report.sections.map(s => {
+    const items = (s.items || []).map(it => `<li><b>${esc(it.label)}:</b> ${it.url ? `<a href="${esc(it.url)}">${esc(it.detail || 'link')}</a>` : esc(it.detail)}</li>`).join('');
+    const checks = (s.checklist || []).map(c => `<li>${esc(c)}</li>`).join('');
+    return `<h2>${esc(s.title)} — ${esc(ASSESS_STATUS_LABEL[s.status] || s.status)}</h2>
+      <p>${esc(s.summary)}</p>
+      ${items ? '<ul>' + items + '</ul>' : ''}
+      ${checks ? '<h4>Checklist</h4><ul>' + checks + '</ul>' : ''}`;
+  }).join('');
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Site Assessment — ${esc(p.name)}</title>
+    <style>body{font-family:Segoe UI,Arial,sans-serif;color:#111;margin:32px;line-height:1.45}
+    h1{color:#0f3460;margin-bottom:4px}h2{color:#0f3460;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:22px}
+    h4{margin-bottom:4px}a{color:#0645ad}.meta{color:#555;font-size:13px}ul{margin-top:6px}
+    .badge{display:inline-block;padding:2px 10px;border:1px solid #0f3460;border-radius:6px;font-weight:bold}</style></head>
+    <body>
+    <h1>Datacenter Site Assessment</h1>
+    <p class="meta"><b>${esc(p.name)}</b> — ${esc(where)}<br>
+    Coordinates: ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}${p.estimated_power_mw ? ' · Estimated demand ~' + p.estimated_power_mw + ' MW' : ''}${p.area_m2 ? ' · Area ' + Number(p.area_m2).toLocaleString() + ' m²' : ''}<br>
+    Generated ${new Date(report.generated_at).toLocaleString()}</p>
+    <p class="badge">Overall readiness: ${report.overall.readiness_score}/100 — ${esc(report.overall.readiness_label)}</p>
+    ${sections}
+    <p class="meta" style="margin-top:24px">Findings link to authoritative national/regional bodies. This report is a screening aid; verify all items with the relevant authorities before investment decisions.</p>
+    </body></html>`;
+}
+
+window.exportAssessment = function (fmt) {
+  const report = window.__lastAssessment;
+  if (!report) return;
+  const html = assessmentDocHtml(report);
+  const safeName = (report.property.name || 'assessment').replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 40);
+  if (fmt === 'word') {
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `site-assessment-${safeName}.doc`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  } else {
+    const w = window.open('', '_blank');
+    if (!w) { alert('Allow pop-ups to export the PDF.'); return; }
+    w.document.write(html + '<script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>');
+    w.document.close();
+  }
+};
+
+document.getElementById('assess-close')?.addEventListener('click', closeAssessModal);
+document.getElementById('assess-modal')?.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeAssessModal();
+});
+
+// ─── Add undiscovered property (both portals) ───────────────────
+let undiscoveredPickMode = false;
+let undiscoveredMarker = null;
+let undiscoveredCoords = null;
+
+function toggleUndiscoveredPick(on) {
+  undiscoveredPickMode = on;
+  document.getElementById('undiscovered-hint').classList.toggle('hidden', !on);
+  const btn = document.getElementById('add-undiscovered-btn');
+  if (btn) btn.textContent = on ? '✖ Cancel — click map to place' : '➕ Add undiscovered property';
+  if (map) document.getElementById('map').style.cursor = on ? 'crosshair' : '';
+}
+document.getElementById('add-undiscovered-btn')?.addEventListener('click', () => {
+  toggleUndiscoveredPick(!undiscoveredPickMode);
+});
+document.getElementById('undiscovered-close')?.addEventListener('click', () => {
+  document.getElementById('undiscovered-modal').classList.add('hidden');
+});
+document.getElementById('ud-cancel')?.addEventListener('click', () => {
+  document.getElementById('undiscovered-modal').classList.add('hidden');
+});
+
+function openUndiscoveredForm(lat, lng) {
+  undiscoveredCoords = { lat, lng };
+  document.getElementById('undiscovered-coords').textContent = `Location: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  ['ud-name', 'ud-city', 'ud-area', 'ud-power', 'ud-notes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('ud-country').value = '';
+  document.getElementById('ud-forsale').checked = false;
+  document.getElementById('undiscovered-modal').classList.remove('hidden');
+}
+
+function initUndiscovered() {
+  if (!map) return;
+  map.on('click', (e) => {
+    if (!undiscoveredPickMode) return;
+    undiscoveredPickMode = false;
+    toggleUndiscoveredPick(false);
+    if (undiscoveredMarker) map.removeLayer(undiscoveredMarker);
+    undiscoveredMarker = L.marker([e.latlng.lat, e.latlng.lng], { icon: (typeof manualIcon === 'function' ? manualIcon() : undefined), opacity: 0.8 }).addTo(map);
+    openUndiscoveredForm(e.latlng.lat, e.latlng.lng);
+  });
+}
+initUndiscovered();
+
+document.getElementById('ud-save')?.addEventListener('click', async () => {
+  if (!undiscoveredCoords) return;
+  const name = document.getElementById('ud-name').value.trim();
+  if (!name) { alert('A name is required.'); return; }
+  const num = id => { const v = document.getElementById(id).value.trim(); return v === '' ? null : Number(v); };
+  const body = {
+    lat: undiscoveredCoords.lat, lng: undiscoveredCoords.lng, name,
+    country: document.getElementById('ud-country').value || null,
+    city: document.getElementById('ud-city').value.trim() || null,
+    area_m2: num('ud-area'),
+    estimated_power_mw: num('ud-power'),
+    for_sale: document.getElementById('ud-forsale').checked,
+    notes: document.getElementById('ud-notes').value.trim() || null,
+    sector: 'Undiscovered (user-added)',
+    added_by: 'portal-user'
+  };
+  const r = await fetch('/api/ledger/manual', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  const j = await r.json();
+  if (!r.ok || j.error) { alert(j.error || 'Failed to add property.'); return; }
+  document.getElementById('undiscovered-modal').classList.add('hidden');
+  if (undiscoveredMarker) { map.removeLayer(undiscoveredMarker); undiscoveredMarker = null; }
+  if (typeof loadManualEntries === 'function') loadManualEntries();
+  if (confirm(`Added "${name}". Run a site assessment now?`)) {
+    const key = 'ud' + Math.random().toString(36).slice(2, 10);
+    window.__assessTargets[key] = { ...body, power_mw: body.estimated_power_mw };
+    window.runAssessment(key);
+  }
+});
