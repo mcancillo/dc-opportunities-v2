@@ -41,6 +41,36 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000)
 
+### Deploy the map hotfix to Azure
+
+Use the production Azure subscription and region explicitly when deploying from
+a new PC:
+
+```powershell
+git checkout master
+git pull origin master
+git merge --ff-only origin/hotfix/map-basemap-no-api-key
+git push origin master
+
+azd auth login
+azd env new dcopps-prod `
+  --subscription 6cbb5372-2516-4048-b672-a3e0a36fac8b `
+  --location swedencentral
+azd env set AZURE_SUBSCRIPTION_ID 6cbb5372-2516-4048-b672-a3e0a36fac8b
+azd env set AZURE_LOCATION swedencentral
+azd env refresh --environment dcopps-prod
+azd deploy --all --environment dcopps-prod
+```
+
+If `dcopps-prod` already exists on that PC, replace `azd env new ...` with:
+
+```powershell
+azd env select dcopps-prod
+```
+
+`azd env refresh` restores the existing production deployment outputs before
+the code-only deployment. Do not run `azd provision` for this hotfix.
+
 ## Usage
 
 1. Select a **country** (NL, DE, PL, ES)
