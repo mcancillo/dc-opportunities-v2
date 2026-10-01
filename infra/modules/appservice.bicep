@@ -32,6 +32,10 @@ var configureAuth = !empty(authClientId)
 
 var commonAppSettings = [
   {
+    name: 'DEPLOYMENT_TARGET'
+    value: 'azure-app-service'
+  }
+  {
     name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
     value: 'true'
   }

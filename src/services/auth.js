@@ -4,28 +4,27 @@
 // HMAC-signed stateless session tokens, and a file-backed user store that is
 // seeded/merged from config/auth-seed.json.
 //
-// Persistence: AUTH_STORE_PATH (set to a durable path such as /home/data/auth.json
-// on Azure App Service so password changes survive redeploys). Falls back to a
-// local data/auth.json for development.
+// Persistence: AUTH_STORE_PATH points to durable Azure App Service storage so
+// password changes survive redeploys.
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const STORE_PATH =
-  process.env.AUTH_STORE_PATH || path.join(__dirname, '..', '..', 'data', 'auth.json');
+const STORE_PATH = process.env.AUTH_STORE_PATH;
 const SEED_PATH = path.join(__dirname, '..', '..', 'config', 'auth-seed.json');
 
 // Portal this instance serves: 'customer' | 'admin'. Users may only sign in to
 // the portal they belong to.
 const PORTAL = (process.env.APP_ROLE || 'customer').toLowerCase();
 
-// Token lifetime and signing secret. In production AUTH_SECRET is set per app.
+// Token lifetime and signing secret.
 const TOKEN_TTL_MS = 12 * 60 * 60 * 1000; // 12h
-const SECRET =
-  process.env.AUTH_SECRET ||
-  // Dev fallback — stable within a process run only.
-  crypto.createHash('sha256').update(`dcopps-dev-secret-${PORTAL}`).digest('hex');
+const SECRET = process.env.AUTH_SECRET;
+
+if (!STORE_PATH || !SECRET) {
+  throw new Error('Azure App Service must provide AUTH_STORE_PATH and AUTH_SECRET.');
+}
 
 // ─── Password hashing (scrypt) ─────────────────────────────────
 function hashPassword(password) {

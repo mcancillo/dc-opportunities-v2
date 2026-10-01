@@ -1,3 +1,10 @@
+if (process.env.DEPLOYMENT_TARGET !== 'azure-app-service') {
+  console.error(
+    'Local application execution is disabled. Deploy and run this service through Azure App Service.'
+  );
+  process.exit(1);
+}
+
 const express = require('express');
 const path = require('path');
 const apiRoutes = require('./src/routes/api');
@@ -5,7 +12,11 @@ const { router: authRoutes } = require('./src/routes/auth');
 const auth = require('./src/services/auth');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  throw new Error('Azure App Service did not provide the required PORT setting.');
+}
 
 app.use(express.json());
 
@@ -64,5 +75,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`DC Opportunities v2 (${auth.PORTAL}) running at http://localhost:${PORT}`);
+  const hostname = process.env.WEBSITE_HOSTNAME || 'Azure App Service';
+  console.log(`DC Opportunities v2 (${auth.PORTAL}) running on https://${hostname}`);
 });

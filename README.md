@@ -25,21 +25,29 @@ It ships as **two login-gated portals** — a public **customer** portal and a r
 - 🛡️ **Zero-trust access control** — Azure Front Door + WAF, ISP-scoped allowlists (KPN / Ziggo / Odido), and an admin portal locked to explicit IPs — all managed via GitOps config files
 - 🧾 **Connection logging** — Classify inbound Front Door connections by ISP and export to CSV
 
-## Quick Start
+## Azure Runtime
+
+The application is supported only on its Azure deployment. Local application
+execution is intentionally disabled; the repository is a development and
+infrastructure workspace, not a local runtime.
+
+| Portal | Azure Front Door URL |
+|--------|----------------------|
+| Admin | https://admin-m4b2vdcrzbbii-bpcvbueqhfbjbeef.b01.azurefd.net |
+| Customer | https://customer-m4b2vdcrzbbii-hhhtb7dfc0ecf5e9.b01.azurefd.net |
+
+Deploy changes through Azure Developer CLI:
 
 ```bash
-# Clone
-git clone https://github.com/mcancillo/dc-opportunities-v2.git
-cd dc-opportunities-v2
-
-# Install
-npm install
-
-# Run
-npm start
+azd auth login
+azd env select dcopps-prod
+azd provision
+azd deploy
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+`npm start` is retained only as the Azure App Service startup command and exits
+when the required Azure deployment settings are absent. There is no local
+development server script.
 
 ## Usage
 
