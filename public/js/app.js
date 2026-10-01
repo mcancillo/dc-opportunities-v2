@@ -3,12 +3,80 @@ let map, ixData = [], landingData = [], searchCircle;
 const layers = { properties: null, datacenters: null, ix: null, subseaCables: null, landingPoints: null, fiberBackbone: null, backboneLinks: null };
 
 // ─── Map Init ────────────────────────────────────────────────────
+// Basemap providers, tried in order. CARTO's free dark_all raster tiles now
+// require a (free) API key (enforced CARTO-wide since Aug 2026) and show an
+// "API KEY REQUIRED" watermark without one — so we default to Esri's World
+// Dark Gray Canvas, which needs no key/signup and has the same dark aesthetic.
+// If the user has their own free CARTO key saved in the credentials panel
+// (`cartoApiKey`), it's used instead (sharper labels, higher max zoom).
+// A silent runtime fallback to plain OpenStreetMap tiles kicks in if the
+// active basemap fails to load, so the map never goes blank.
+function basemapLayers() {
+  const cartoKey = (() => { try { return localStorage.getItem('cred_carto_key') || ''; } catch (e) { return ''; } })();
+  if (cartoKey) {
+    return [{
+      name: 'carto-dark',
+      tiles: [L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${encodeURIComponent(cartoKey)}`, {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        maxZoom: 19
+      })]
+    }];
+  }
+  return [
+    {
+      // Esri World Dark Gray Canvas — free, no API key required.
+      name: 'esri-dark-gray',
+      tiles: [
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, FAO, NOAA, USGS',
+          maxZoom: 19,
+          maxNativeZoom: 16
+        }),
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19,
+          maxNativeZoom: 16,
+          pane: 'shadowPane' // renders above the base layer, below markers
+        })
+      ]
+    },
+    {
+      // Last-resort fallback — standard OSM raster tiles (free, no key, but
+      // subject to OSM's fair-use tile policy under sustained heavy load).
+      name: 'osm-standard',
+      tiles: [L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      })]
+    }
+  ];
+}
+
 function initMap() {
   map = L.map('map', { zoomControl: true }).setView([50.5, 10], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-    maxZoom: 19
-  }).addTo(map);
+
+  const candidates = basemapLayers();
+  let active = 0;
+  let failedTiles = 0;
+
+  function mount(index) {
+    const choice = candidates[index];
+    choice.tiles.forEach(layer => {
+      layer.addTo(map);
+      layer.on('tileerror', () => {
+        failedTiles++;
+        // A handful of individual tile hiccups is normal (flaky network); only
+        // fail over to the next provider once it looks systemic.
+        if (failedTiles > 8 && index < candidates.length - 1) {
+          console.warn(`[map] "${choice.name}" basemap failing — switching to "${candidates[index + 1].name}"`);
+          choice.tiles.forEach(l => map.removeLayer(l));
+          active = index + 1;
+          failedTiles = 0;
+          mount(active);
+        }
+      });
+    });
+  }
+  mount(active);
 }
 
 // ─── Marker Factories ───────────────────────────────────────────
@@ -1258,7 +1326,8 @@ const CRED_KEYS = [
   { id: 'otodom-key', storageKey: 'cred_otodom_key' },
   { id: 'otodom-secret', storageKey: 'cred_otodom_secret' },
   { id: 'entsoe-token', storageKey: 'cred_entsoe_token' },
-  { id: 'opencage-key', storageKey: 'cred_opencage_key' }
+  { id: 'opencage-key', storageKey: 'cred_opencage_key' },
+  { id: 'carto-key', storageKey: 'cred_carto_key' }
 ];
 
 function loadCredentials() {
@@ -1281,7 +1350,7 @@ function saveCredentials() {
     }
   });
   updateCredStatusDots();
-  showCredMsg('Credentials saved to browser storage.', 'success');
+  showCredMsg('Credentials saved to browser storage. Reload the page to apply a new CARTO map key.', 'success');
 
   // Push credentials to backend
   const creds = {};
@@ -1313,7 +1382,8 @@ function updateCredStatusDots() {
     'kadaster': ['kadaster-key'],
     'otodom': ['otodom-key', 'otodom-secret'],
     'entsoe': ['entsoe-token'],
-    'opencage': ['opencage-key']
+    'opencage': ['opencage-key'],
+    'carto': ['carto-key']
   };
 
   Object.entries(statusMap).forEach(([name, fields]) => {
@@ -1348,6 +1418,15 @@ async function testCredentials() {
       const j = await r.json();
       results.push(j.status?.code === 200 ? '✅ OpenCage: connected' : `❌ OpenCage: ${j.status?.message || 'failed'}`);
     } catch { results.push('❌ OpenCage: network error'); }
+  }
+
+  // Test CARTO basemaps key (fetches a single sample tile)
+  const cartoKey = document.getElementById('carto-key')?.value;
+  if (cartoKey) {
+    try {
+      const r = await fetch(`https://a.basemaps.cartocdn.com/dark_all/5/16/10.png?api_key=${encodeURIComponent(cartoKey)}`);
+      results.push(r.ok ? '✅ CARTO basemaps: connected' : `❌ CARTO basemaps: HTTP ${r.status}`);
+    } catch { results.push('❌ CARTO basemaps: network error'); }
   }
 
   if (results.length === 0) results.push('No testable credentials configured');
