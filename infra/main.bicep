@@ -9,6 +9,10 @@ param environmentName string
 @description('Primary Azure region for all resources.')
 param location string
 
+@minLength(1)
+@description('Existing production resource group name.')
+param resourceGroupName string
+
 @description('Object ID of the workforce Entra admin (macancil@microsoft.com) used as SQL Entra admin and app admin.')
 param sqlAdminObjectId string = '152ac45e-e0f3-4c02-96bc-4fe700f205cd'
 
@@ -37,7 +41,7 @@ var ispAllowlist = loadJsonContent('../config/isp-allowlist.json')
 var accessControl = loadJsonContent('../config/access-control.json')
 
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: 'rg-${environmentName}'
+  name: resourceGroupName
   location: location
   tags: tags
 }
@@ -159,6 +163,7 @@ module budget 'modules/budget.bicep' = {
 }
 
 output AZURE_LOCATION string = location
+output AZURE_RESOURCE_GROUP string = rg.name
 output AZURE_TENANT_ID string = tenant().tenantId
 output SERVICE_ADMIN_NAME string = app.outputs.adminName
 output SERVICE_CUSTOMER_NAME string = app.outputs.customerName

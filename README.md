@@ -58,6 +58,7 @@ azd env new dcopps-prod `
   --location swedencentral
 azd env set AZURE_SUBSCRIPTION_ID 6cbb5372-2516-4048-b672-a3e0a36fac8b
 azd env set AZURE_LOCATION swedencentral
+azd env set AZURE_RESOURCE_GROUP rf-dcopps-prod
 azd env refresh --environment dcopps-prod
 azd deploy --all --environment dcopps-prod
 ```
