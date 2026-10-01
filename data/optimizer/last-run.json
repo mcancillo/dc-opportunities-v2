@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-08-05T09:19:21.932Z",
+  "run_at": "2026-08-20T03:36:42.200Z",
   "scope": [
     "NL",
     "BE",
@@ -28,39 +28,6 @@
   "promoted": [],
   "algorithm_recommendations": [],
   "rejected_sample": [
-    {
-      "name": "Netbeheer Nederland — Capaciteitskaart (grid capacity)",
-      "url": "https://capaciteitskaart.netbeheernederland.nl",
-      "category": "grid-capacity",
-      "angle": "Filter plots by available substation capacity to avoid congestion (transportschaarste) zones.",
-      "country": "NL",
-      "source": "seed",
-      "confidence": 0.75,
-      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
-      "reason": "already in sources.json"
-    },
-    {
-      "name": "RVO Bedrijventerreinen / IBIS industrial estates",
-      "url": "https://www.rvo.nl",
-      "category": "industrial-land",
-      "angle": "National register of business/industrial parks with zoning already suited to heavy power use.",
-      "country": "NL",
-      "source": "seed",
-      "confidence": 0.75,
-      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
-      "reason": "already in sources.json"
-    },
-    {
-      "name": "Groningen Seaports / Eemshaven land",
-      "url": "https://www.groningen-seaports.com",
-      "category": "port-land",
-      "angle": "Port authority land with green power + subsea/backhaul, a known hyperscaler cluster.",
-      "country": "NL",
-      "source": "seed",
-      "confidence": 0.75,
-      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
-      "reason": "already in sources.json"
-    },
     {
       "name": "Elia — grid data & capacity",
       "url": "https://www.elia.be/en/grid-data",
@@ -95,39 +62,6 @@
       "reason": "already in sources.json"
     },
     {
-      "name": "Bundesnetzagentur — grid & connection data",
-      "url": "https://www.bundesnetzagentur.de",
-      "category": "grid-capacity",
-      "angle": "Federal grid-connection and Netzentwicklungsplan data to target upgrade corridors.",
-      "country": "DE",
-      "source": "seed",
-      "confidence": 0.75,
-      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
-      "reason": "already in sources.json"
-    },
-    {
-      "name": "Gewerbegebiete / GENIOS industrial land registers",
-      "url": "https://www.geoportal.de",
-      "category": "industrial-land",
-      "angle": "State Gewerbegebiet layers for pre-zoned commercial/industrial plots.",
-      "country": "DE",
-      "source": "seed",
-      "confidence": 0.75,
-      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
-      "reason": "already in sources.json"
-    },
-    {
-      "name": "Braunfeld/brownfield & Konversionsflächen registers",
-      "url": "https://www.bbsr.bund.de",
-      "category": "brownfield",
-      "angle": "Former industrial/military conversion land — fast-track power + planning.",
-      "country": "DE",
-      "source": "seed",
-      "confidence": 0.75,
-      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
-      "reason": "already in sources.json"
-    },
-    {
       "name": "PSE — grid connection capacity",
       "url": "https://www.pse.pl",
       "category": "grid-capacity",
@@ -155,6 +89,72 @@
       "category": "cadastral",
       "angle": "National parcel/land-use WMS for automated plot screening.",
       "country": "PL",
+      "source": "seed",
+      "confidence": 0.75,
+      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
+      "reason": "already in sources.json"
+    },
+    {
+      "name": "Netbeheer Nederland — Capaciteitskaart (grid capacity)",
+      "url": "https://capaciteitskaart.netbeheernederland.nl",
+      "category": "grid-capacity",
+      "angle": "Filter plots by available substation capacity to avoid congestion (transportschaarste) zones.",
+      "country": "NL",
+      "source": "seed",
+      "confidence": 0.75,
+      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
+      "reason": "already in sources.json"
+    },
+    {
+      "name": "RVO Bedrijventerreinen / IBIS industrial estates",
+      "url": "https://www.rvo.nl",
+      "category": "industrial-land",
+      "angle": "National register of business/industrial parks with zoning already suited to heavy power use.",
+      "country": "NL",
+      "source": "seed",
+      "confidence": 0.75,
+      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
+      "reason": "already in sources.json"
+    },
+    {
+      "name": "Groningen Seaports / Eemshaven land",
+      "url": "https://www.groningen-seaports.com",
+      "category": "port-land",
+      "angle": "Port authority land with green power + subsea/backhaul, a known hyperscaler cluster.",
+      "country": "NL",
+      "source": "seed",
+      "confidence": 0.75,
+      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
+      "reason": "already in sources.json"
+    },
+    {
+      "name": "Bundesnetzagentur — grid & connection data",
+      "url": "https://www.bundesnetzagentur.de",
+      "category": "grid-capacity",
+      "angle": "Federal grid-connection and Netzentwicklungsplan data to target upgrade corridors.",
+      "country": "DE",
+      "source": "seed",
+      "confidence": 0.75,
+      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
+      "reason": "already in sources.json"
+    },
+    {
+      "name": "Gewerbegebiete / GENIOS industrial land registers",
+      "url": "https://www.geoportal.de",
+      "category": "industrial-land",
+      "angle": "State Gewerbegebiet layers for pre-zoned commercial/industrial plots.",
+      "country": "DE",
+      "source": "seed",
+      "confidence": 0.75,
+      "rationale": "Curated new-angle seed source for datacenter plot discovery.",
+      "reason": "already in sources.json"
+    },
+    {
+      "name": "Braunfeld/brownfield & Konversionsflächen registers",
+      "url": "https://www.bbsr.bund.de",
+      "category": "brownfield",
+      "angle": "Former industrial/military conversion land — fast-track power + planning.",
+      "country": "DE",
       "source": "seed",
       "confidence": 0.75,
       "rationale": "Curated new-angle seed source for datacenter plot discovery.",
@@ -195,10 +195,10 @@
     }
   ],
   "evaluation": {
-    "date": "2026-08-05",
-    "run_at": "2026-08-05T09:19:21.932Z",
-    "quality_score": 65,
-    "reachability": 0.7777777777777778,
+    "date": "2026-08-20",
+    "run_at": "2026-08-20T03:36:42.200Z",
+    "quality_score": 60,
+    "reachability": 0.6666666666666666,
     "reachability_checked": 9,
     "country_coverage": 1,
     "category_diversity": 0.918,
@@ -226,6 +226,10 @@
     },
     "dead_links": [
       {
+        "url": "https://www.bbsr.bund.de",
+        "status": "timeout"
+      },
+      {
         "url": "https://www.sepes.es",
         "status": "error"
       },
@@ -237,24 +241,19 @@
   },
   "tuning": {
     "changes": [
-      "countryEmphasis.NL 1 -> 0.9 (coverage 2/1.8)",
-      "countryEmphasis.DE 1 -> 0.9 (coverage 2/1.8)",
-      "countryEmphasis.ES 1 -> 0.9 (coverage 3/1.8)",
-      "categoryEmphasis.brownfield 1 -> 1.3 (count 1 vs mean 1.1)",
-      "categoryEmphasis.permitting 1 -> 1.3 (count 0 vs mean 1.1)",
-      "categoryEmphasis.renewable 1 -> 1.3 (count 0 vs mean 1.1)",
-      "categoryEmphasis.cadastral 1 -> 1.3 (count 0 vs mean 1.1)",
-      "categoryEmphasis.connectivity 1 -> 1.3 (count 0 vs mean 1.1)"
+      "countryEmphasis.NL 0.9 -> 0.8 (coverage 2/1.8)",
+      "countryEmphasis.DE 0.9 -> 0.8 (coverage 2/1.8)",
+      "countryEmphasis.ES 0.9 -> 0.8 (coverage 3/1.8)"
     ],
     "params": {
       "minConfidence": 0.7,
       "maxCandidatesPerCountry": 6,
       "countryEmphasis": {
-        "NL": 0.9,
+        "NL": 0.8,
         "BE": 1,
-        "DE": 0.9,
+        "DE": 0.8,
         "PL": 1,
-        "ES": 0.9
+        "ES": 0.8
       },
       "categoryEmphasis": {
         "brownfield": 1.3,

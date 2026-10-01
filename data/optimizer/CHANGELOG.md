@@ -14,3 +14,12 @@
   - categoryEmphasis.cadastral 1 -> 1.3 (count 0 vs mean 1.1)
   - categoryEmphasis.connectivity 1 -> 1.3 (count 0 vs mean 1.1)
 
+## 2026-08-20
+- Briefing: none; themes: none
+- Quality score: **60/100** (reachability 67%, coverage 100%, diversity 0.92).
+- Promoted 0 new source(s) into sources.json; 0 added to review backlog; 15 rejected/duplicate.
+- Self-tuning:
+  - countryEmphasis.NL 0.9 -> 0.8 (coverage 2/1.8)
+  - countryEmphasis.DE 0.9 -> 0.8 (coverage 2/1.8)
+  - countryEmphasis.ES 0.9 -> 0.8 (coverage 3/1.8)
+
