@@ -26,6 +26,7 @@ function loadJson(file, fallback) {
 }
 const gridExpansion = loadJson('grid-expansion.json', []);
 const renewableZones = loadJson('renewable-zones.json', []);
+const powerSuppliers = loadJson('power-suppliers.json', {});
 
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
@@ -157,6 +158,72 @@ const REF = {
 function nearestKm(lat, lng, points) {
   if (!points || !points.length) return Infinity;
   return Math.min(...points.map(([a, b]) => haversineKm(lat, lng, a, b)));
+}
+
+// ── Power suppliers (TSO + regional DSO) serving a given location ──────────
+// `power-suppliers.json` lists, per country, the national TSO(s) and the
+// regional DSOs with an approximate set of anchor coordinates (representative
+// cities within their service area). We pick the operator whose anchor is
+// closest to the plot — a reasonable proxy for "which supplier covers this
+// area" absent precise GIS service-territory boundaries. Always verify with
+// the supplier directly (link provided) before relying on this for due
+// diligence.
+function nearestOperator(lat, lng, candidates) {
+  if (!candidates || !candidates.length) return null;
+  if (candidates.length === 1) return { ...candidates[0], km: 0 };
+  let best = null;
+  for (const c of candidates) {
+    const km = nearestKm(lat, lng, c.anchors);
+    if (!best || km < best.km) best = { ...c, km: Math.round(km) };
+  }
+  return best;
+}
+
+// Grid-expansion projects attributable to a given operator (handles combined
+// entries like "50Hertz/TenneT" by substring matching either direction).
+function projectsForOperator(lat, lng, cc, operatorName, radiusKm) {
+  if (!operatorName) return [];
+  const needle = operatorName.toLowerCase();
+  return gridExpansion
+    .filter(g => (!g.country || g.country === cc) && Number.isFinite(g.lat) && g.operator)
+    .filter(g => {
+      const hay = g.operator.toLowerCase();
+      return hay.includes(needle) || needle.includes(hay);
+    })
+    .map(g => ({ ...g, km: Math.round(haversineKm(lat, lng, g.lat, g.lng)) }))
+    .filter(g => g.km <= radiusKm)
+    .sort((a, b) => a.km - b.km);
+}
+
+// Identify up to two power suppliers (one TSO, one DSO) operating around the
+// plot, with a "capacity now" proxy (nearest known HV infrastructure) and
+// "future plans" (mapped grid-expansion projects attributed to that operator).
+function identifyPowerSuppliers(lat, lng, cc) {
+  const entry = powerSuppliers[cc];
+  if (!entry) return [];
+
+  const picks = [
+    { role: 'TSO (transmission)', pick: nearestOperator(lat, lng, entry.tso) },
+    { role: 'DSO (distribution)', pick: nearestOperator(lat, lng, entry.dso) }
+  ].filter(p => p.pick);
+
+  return picks.map(({ role, pick }) => {
+    const projects = projectsForOperator(lat, lng, cc, pick.name, 100);
+    const nearest = projects[0] || null;
+    return {
+      role,
+      name: pick.name,
+      url: pick.url,
+      capacity_map: pick.capacity_map,
+      capacity_now: nearest
+        ? `Nearest known ${pick.name} infrastructure: ${nearest.name} (${nearest.km} km, ${nearest.voltage_kv ? nearest.voltage_kv + ' kV' : nearest.type}). Confirm exact available headroom via the live capacity map.`
+        : `No mapped ${pick.name} infrastructure within 100 km — consult the live capacity map for exact available headroom.`,
+      future_plans: projects.slice(0, 5).map(p => ({
+        name: p.name, km: p.km, type: p.type, timeline: p.timeline,
+        voltage_kv: p.voltage_kv || null, description: p.description || null, source_url: p.source_url || null
+      }))
+    };
+  });
 }
 
 // Live municipality lookup (OSM Nominatim). Cached per rounded coordinate;
@@ -332,6 +399,36 @@ async function buildAssessment(input) {
       'Request available grid capacity at the nearest 110/220/380 kV substation',
       'Model a green PPA with the nearest wind/solar zones vs. grid supply',
       'Evaluate on-site generation / battery storage for resilience and peak shaving'
+    ]
+  });
+
+  // ── 6. Power suppliers in the area (TSO + DSO, capacity & plans) ──
+  const suppliers = identifyPowerSuppliers(lat, lng, cc);
+  sections.push({
+    id: 'power_suppliers',
+    title: 'Power suppliers in the area',
+    status: status(suppliers.length >= 2 ? 'favorable' : (suppliers.length === 1 ? 'review' : 'unknown')),
+    summary: suppliers.length >= 2
+      ? `Identified ${suppliers.length} power suppliers serving this location — ${suppliers.map(s => `${s.name} (${s.role})`).join(' and ')}. Capacity shown below is an indicative signal; confirm exact available headroom with each supplier's live capacity map.`
+      : (suppliers.length === 1
+        ? `Only one power supplier could be identified for this location (${suppliers[0].name}, ${suppliers[0].role}). A second (TSO or DSO) could not be mapped — verify locally.`
+        : 'No power suppliers could be identified for this country from the current dataset.'),
+    items: suppliers.flatMap(s => ([
+      { label: `${s.role} — operator`, detail: s.name, url: s.url },
+      { label: `${s.name} — capacity map`, detail: 'Live available connection capacity', url: s.capacity_map },
+      { label: `${s.name} — capacity now`, detail: s.capacity_now },
+      ...s.future_plans.map(p => ({
+        label: `${s.name} — future plan: ${p.name} (${p.km} km)`,
+        detail: `${p.type || 'project'}${p.voltage_kv ? ' · ' + p.voltage_kv + 'kV' : ''}${p.timeline ? ' · ' + p.timeline : ''}${p.description ? ' · ' + p.description : ''}`,
+        url: p.source_url || null
+      })),
+      ...(s.future_plans.length === 0 ? [{ label: `${s.name} — future plans`, detail: 'No mapped expansion projects within 100 km; ask the operator for their investment/development plan.' }] : [])
+    ])),
+    checklist: [
+      'Request a formal capacity/connection offer from both the TSO and the DSO identified above',
+      'Cross-check the two suppliers\u2019 service-area boundary for this exact parcel (anchors above are indicative)',
+      'Align the development timeline with each supplier\u2019s published expansion/investment plan',
+      'Ask each supplier for present headroom (MW) and the earliest connection date at this location'
     ]
   });
 

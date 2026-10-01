@@ -1,0 +1,61 @@
+{
+  "NL": {
+    "tso": [
+      { "name": "TenneT", "url": "https://www.tennet.eu", "capacity_map": "https://capaciteitskaart.netbeheernederland.nl", "anchors": [[52.1, 5.2]] }
+    ],
+    "dso": [
+      { "name": "Liander", "url": "https://www.liander.nl", "capacity_map": "https://www.liander.nl/transportschaarste", "anchors": [[52.37, 4.90], [51.98, 5.91], [53.20, 5.79], [52.37, 5.22]] },
+      { "name": "Stedin", "url": "https://www.stedin.net", "capacity_map": "https://www.stedin.net/zakelijk/aansluitingen/capaciteit-op-het-net", "anchors": [[51.92, 4.48], [52.09, 5.12], [52.08, 4.31]] },
+      { "name": "Enexis", "url": "https://www.enexis.nl", "capacity_map": "https://www.enexis.nl/zakelijk/capaciteit-op-het-net", "anchors": [[51.44, 5.48], [53.22, 6.57], [52.52, 6.08], [50.85, 5.69]] }
+    ]
+  },
+  "BE": {
+    "tso": [
+      { "name": "Elia", "url": "https://www.elia.be", "capacity_map": "https://www.elia.be/en/grid-data", "anchors": [[50.6, 4.5]] }
+    ],
+    "dso": [
+      { "name": "Fluvius", "url": "https://www.fluvius.be", "capacity_map": "https://www.fluvius.be/capaciteit", "anchors": [[51.22, 4.40], [51.05, 3.73], [51.21, 3.22]] },
+      { "name": "ORES", "url": "https://www.ores.be", "capacity_map": "https://www.ores.be", "anchors": [[50.41, 4.44], [50.45, 3.95]] },
+      { "name": "RESA", "url": "https://www.resa.be", "capacity_map": "https://www.resa.be", "anchors": [[50.63, 5.57]] },
+      { "name": "Sibelga", "url": "https://www.sibelga.be", "capacity_map": "https://www.sibelga.be", "anchors": [[50.85, 4.35]] }
+    ]
+  },
+  "DE": {
+    "tso": [
+      { "name": "TenneT", "url": "https://www.tennet.eu", "capacity_map": "https://www.netzausbau.de", "anchors": [[53.08, 8.80], [53.55, 10.00], [52.27, 10.52]] },
+      { "name": "50Hertz", "url": "https://www.50hertz.com", "capacity_map": "https://www.50hertz.com/de/Netz/Netzanschluss", "anchors": [[52.52, 13.40], [51.05, 13.74], [53.87, 10.69], [51.34, 12.37]] },
+      { "name": "Amprion", "url": "https://www.amprion.net", "capacity_map": "https://www.amprion.net/Netzausbau/", "anchors": [[51.23, 6.78], [50.94, 6.96], [50.11, 8.68], [51.51, 7.47]] },
+      { "name": "TransnetBW", "url": "https://www.transnetbw.de", "capacity_map": "https://www.transnetbw.de/de/netzausbau", "anchors": [[48.78, 9.18], [48.40, 9.99], [47.99, 7.84]] }
+    ],
+    "dso": [
+      { "name": "Westnetz", "url": "https://www.westnetz.de", "capacity_map": "https://www.westnetz.de/netzanschluss", "anchors": [[51.23, 6.78], [50.94, 6.96], [50.73, 7.10]] },
+      { "name": "Bayernwerk Netz", "url": "https://www.bayernwerk.de", "capacity_map": "https://www.bayernwerk.de/netzanschluss", "anchors": [[49.01, 12.10], [48.78, 11.43], [49.45, 11.08]] },
+      { "name": "Avacon Netz", "url": "https://www.avacon-netz.de", "capacity_map": "https://www.avacon-netz.de", "anchors": [[52.27, 10.52], [52.13, 11.63]] },
+      { "name": "Netze BW", "url": "https://www.netze-bw.de", "capacity_map": "https://www.netze-bw.de/netzanschluss", "anchors": [[48.78, 9.18], [48.40, 9.99]] },
+      { "name": "E.DIS Netz", "url": "https://www.e-dis.de", "capacity_map": "https://www.e-dis.de", "anchors": [[53.87, 10.69], [53.33, 13.08]] },
+      { "name": "Syna", "url": "https://www.syna.de", "capacity_map": "https://www.syna.de", "anchors": [[50.11, 8.68], [50.08, 8.24]] }
+    ]
+  },
+  "PL": {
+    "tso": [
+      { "name": "PSE", "url": "https://www.pse.pl", "capacity_map": "https://www.pse.pl/dane-systemowe", "anchors": [[52.0, 19.5]] }
+    ],
+    "dso": [
+      { "name": "Tauron Dystrybucja", "url": "https://www.tauron-dystrybucja.pl", "capacity_map": "https://www.tauron-dystrybucja.pl/przylaczanie", "anchors": [[50.06, 19.94], [50.26, 19.02], [51.11, 17.03]] },
+      { "name": "PGE Dystrybucja", "url": "https://www.pgedystrybucja.pl", "capacity_map": "https://www.pgedystrybucja.pl/przylaczenia", "anchors": [[51.25, 22.57], [53.13, 23.16], [51.76, 19.46], [50.04, 21.99]] },
+      { "name": "Enea Operator", "url": "https://www.operator.enea.pl", "capacity_map": "https://www.operator.enea.pl/przylaczenia", "anchors": [[52.41, 16.93], [51.94, 15.51], [53.12, 18.00]] },
+      { "name": "Energa-Operator", "url": "https://www.energa-operator.pl", "capacity_map": "https://www.energa-operator.pl/przylaczenia", "anchors": [[54.35, 18.65], [53.01, 18.60], [51.76, 18.08]] },
+      { "name": "Stoen Operator", "url": "https://www.stoen-operator.pl", "capacity_map": "https://www.stoen-operator.pl", "anchors": [[52.23, 21.01]] }
+    ]
+  },
+  "ES": {
+    "tso": [
+      { "name": "Red Eléctrica de España", "url": "https://www.ree.es", "capacity_map": "https://www.ree.es/es/clientes/generador/acceso-conexion/mapa-capacidad-acceso", "anchors": [[40.0, -3.7]] }
+    ],
+    "dso": [
+      { "name": "i-DE (Iberdrola)", "url": "https://www.i-de.es", "capacity_map": "https://www.i-de.es/conexion-red-electrica/capacidad-acceso", "anchors": [[43.26, -2.93], [41.65, -4.73], [42.88, -8.54]] },
+      { "name": "e-distribución (Endesa)", "url": "https://www.edistribucion.com", "capacity_map": "https://www.edistribucion.com/es/red-electrica/mapa-capacidad-acceso.html", "anchors": [[41.39, 2.16], [37.39, -5.99], [39.57, 2.65], [28.10, -15.43]] },
+      { "name": "UFD (Naturgy)", "url": "https://www.ufd.es", "capacity_map": "https://www.ufd.es", "anchors": [[40.42, -3.70]] }
+    ]
+  }
+}
