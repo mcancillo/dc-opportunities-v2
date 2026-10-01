@@ -4,7 +4,7 @@
 
 Generated: 2026-07-22 · Deployed: 2026-07-22 (Sweden Central)
 
-> **Deployment Result (2026-07-22):** ✅ Live. All 14 resources provisioned to `rf-dcopps-prod` in **Sweden Central** (moved from West Europe due to a subscription SQL provisioning restriction there). Both App Services deployed and returning HTTP 200 via Front Door.
+> **Deployment Result (2026-07-22):** ✅ Live. All 14 resources provisioned to `rg-dcopps-prod` in **Sweden Central** (moved from West Europe due to a subscription SQL provisioning restriction there). Both App Services deployed and returning HTTP 200 via Front Door.
 >
 > | Endpoint | URL | Health |
 > |----------|-----|--------|

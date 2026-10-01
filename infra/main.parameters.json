@@ -9,7 +9,7 @@
       "value": "${AZURE_LOCATION}"
     },
     "resourceGroupName": {
-      "value": "${AZURE_RESOURCE_GROUP=rf-dcopps-prod}"
+      "value": "${AZURE_RESOURCE_GROUP=rg-dcopps-prod}"
     },
     "sqlAdminObjectId": {
       "value": "${SQL_ADMIN_OBJECT_ID=152ac45e-e0f3-4c02-96bc-4fe700f205cd}"
